@@ -1,0 +1,430 @@
+databaseChangeLog:
+  - changeSet:
+      id: DatabaseCreation
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometrics
+            tableName: role
+            remarks: Table to store system roles information
+            columns:
+              - column:
+                  name: name
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: role_pk
+              - column:
+                  name: description
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometrics
+            tableName: user
+            remarks: Table to store users information
+            columns:
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: user_pk
+              - column:
+                  name: password
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: Varchar(1024)
+              - column:
+                  name: surname
+                  type: Varchar(1024)
+              - column:
+                  name: confirmed_at
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometrics
+            tableName: user_roles
+            remarks: Table to store the role associated to a user
+            columns:
+              - column:
+                  name: name
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_role
+                    references: role(name)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user
+                    references: user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometrics
+            tableName: project
+            remarks: Table to store users information
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: project_pk
+              - column:
+                  name: name
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometrics
+            tableName: project_managers
+            remarks: Table to store the list of managers for each project
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_managers
+                    references: project(projectid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_managers
+                    references: user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometrics
+            tableName: project_users
+            remarks: Table to store the list of users for each project
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_users
+                    references: project(projectid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_users
+                    references: user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometrics
+            tableName: invited_managers
+            remarks: Table to store the list of invited managers for each project
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_invmanagers
+                    references: project(projectid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_invmanagers
+                    references: user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometrics
+            tableName: invited_users
+            remarks: Table to store the list of invited users for each project
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_invusers
+                    references: project(projectid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_invusers
+                    references: user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometrics
+            tableName: activity
+            remarks: Table to store activities information
+            columns:
+              - column:
+                  name: activityid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: activity_pk
+              - column:
+                  name: activitytype
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+                  defaultValue: "os"
+              - column:
+                  name: idle_activity
+                  type: Boolean
+                  constraints:
+                    nullable: false
+                  defaultValue: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_activity
+                    references: user(email)
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: Date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: Date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: executable_name
+                  type: Varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: browser_url
+                  type: Varchar(1024)
+              - column:
+                  name: browser_title
+                  type: Varchar(1024)
+              - column:
+                  name: ip_address
+                  type: Varchar(1024)
+              - column:
+                  name: mac_address
+                  type: Varchar(1024)
+              - column:
+                  name: value
+                  type: Varchar(1024)
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: Measure_tables_creation
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometrics
+            tableName: measurementtypes
+            remarks: Table to store the types of measurements that can be collected
+            columns:
+              - column:
+                  name: measurementtypeid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: measurementtypes_pk
+              - column:
+                  name: label
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(1024)
+              - column:
+                  name: weight
+                  type: float
+                  constraints:
+                    nullable: false
+              - column:
+                  name: scale
+                  type: float
+              - column:
+                  name: operation
+                  type: Varchar(100)
+              - column:
+                  name: isActive
+                  type: varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: "Y"
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometrics
+            tableName: measurements
+            remarks: Table the measurements collected by each data collector
+            columns:
+              - column:
+                  name: id
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: measurements_pk
+              - column:
+                  name: activityid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_activity_measurement
+                    references: activity(activityid)
+                    nullable: false
+              - column:
+                  name: measurementtypeid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_measuretype_measurement
+                    references: measurementtypes(measurementtypeid)
+                    nullable: false
+              - column:
+                  name: value
+                  type: float
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: rename_column
+      author: xvasquez
+      changes:
+        - renameColumn:
+            schemaName: innometrics
+            tableName: measurementtypes
+            columnDataType: varchar(1)
+            newColumnName: isactive
+            oldColumnName: isActive
