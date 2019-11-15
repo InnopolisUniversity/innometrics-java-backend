@@ -1,6 +1,11 @@
 databaseChangeLog:
   - changeSet:
-      id: DatabaseCreation
+      id: SchemaCreation_innometrics
+      author: xvasquez
+      changes:
+      - sql: "CREATE SCHEMA innometrics;"
+  - changeSet:
+      id: DatabaseCreation_innometrics
       author: xvasquez
       changes:
         - createTable:
@@ -105,14 +110,14 @@ databaseChangeLog:
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_role
-                    references: role(name)
+                    references: innometrics.role(name)
                     nullable: false
               - column:
                   name: email
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_user
-                    references: user(email)
+                    references: innometrics.user(email)
                     nullable: false
         - createTable:
             schemaName: innometrics
@@ -165,14 +170,14 @@ databaseChangeLog:
                   type: Integer
                   constraints:
                     foreignKeyName: fk_project_managers
-                    references: project(projectid)
+                    references: innometrics.project(projectid)
                     nullable: false
               - column:
                   name: email
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_user_managers
-                    references: user(email)
+                    references: innometrics.user(email)
                     nullable: false
         - createTable:
             schemaName: innometrics
@@ -184,14 +189,14 @@ databaseChangeLog:
                   type: Integer
                   constraints:
                     foreignKeyName: fk_project_users
-                    references: project(projectid)
+                    references: innometrics.project(projectid)
                     nullable: false
               - column:
                   name: email
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_user_users
-                    references: user(email)
+                    references: innometrics.user(email)
                     nullable: false
         - createTable:
             schemaName: innometrics
@@ -203,14 +208,14 @@ databaseChangeLog:
                   type: Integer
                   constraints:
                     foreignKeyName: fk_project_invmanagers
-                    references: project(projectid)
+                    references: innometrics.project(projectid)
                     nullable: false
               - column:
                   name: email
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_user_invmanagers
-                    references: user(email)
+                    references: innometrics.user(email)
                     nullable: false
         - createTable:
             schemaName: innometrics
@@ -222,14 +227,14 @@ databaseChangeLog:
                   type: Integer
                   constraints:
                     foreignKeyName: fk_project_invusers
-                    references: project(projectid)
+                    references: innometrics.project(projectid)
                     nullable: false
               - column:
                   name: email
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_user_invusers
-                    references: user(email)
+                    references: innometrics.user(email)
                     nullable: false
         - createTable:
             schemaName: innometrics
@@ -260,7 +265,7 @@ databaseChangeLog:
                   type: Varchar(256)
                   constraints:
                     foreignKeyName: fk_user_activity
-                    references: user(email)
+                    references: innometrics.user(email)
                     nullable: false
               - column:
                   name: start_time
@@ -386,14 +391,14 @@ databaseChangeLog:
                   type: Integer
                   constraints:
                     foreignKeyName: fk_activity_measurement
-                    references: activity(activityid)
+                    references: innometrics.activity(activityid)
                     nullable: false
               - column:
                   name: measurementtypeid
                   type: Integer
                   constraints:
                     foreignKeyName: fk_measuretype_measurement
-                    references: measurementtypes(measurementtypeid)
+                    references: innometrics.measurementtypes(measurementtypeid)
                     nullable: false
               - column:
                   name: value
