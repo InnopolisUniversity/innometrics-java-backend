@@ -3,30 +3,40 @@ package com.innopolis.innometrics.restapi.DTO;
 import java.io.Serializable;
 
 public class MeasurementReport implements Serializable {
-    private Integer measurementTypeId;
-    private Float value;
+    private String measurementTypeId;
+    private String value;
+    private String alternativeLabel;
 
     public MeasurementReport() {
     }
 
-    public MeasurementReport(Integer measurementTypeId, Float value) {
+    public MeasurementReport(String measurementTypeId, String value, String alternativeLabel) {
         this.measurementTypeId = measurementTypeId;
         this.value = value;
+        this.alternativeLabel = alternativeLabel;
     }
 
-    public Integer getMeasurementTypeId() {
+    public String getMeasurementTypeId() {
         return measurementTypeId;
     }
 
-    public void setMeasurementTypeId(Integer measurementTypeId) {
+    public void setMeasurementTypeId(String measurementTypeId) {
         this.measurementTypeId = measurementTypeId;
     }
 
-    public float getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getAlternativeLabel() {
+        return alternativeLabel;
+    }
+
+    public void setAlternativeLabel(String alternativeLabel) {
+        this.alternativeLabel = alternativeLabel;
     }
 }

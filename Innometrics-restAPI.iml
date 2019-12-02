@@ -140,69 +140,6 @@
     <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt:0.9.1" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.10.0" level="project" />
-    <orderEntry type="library" name="Maven: com.spotify:dockerfile-maven-plugin:1.4.13" level="project" />
-    <orderEntry type="library" name="Maven: com.spotify:docker-client:shaded:8.16.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.10.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.10.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-guava:2.10.0" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.jersey.connectors:jersey-apache-connector:2.29.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.18" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.10" level="project" />
-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.13" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.12" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jnr-unixsocket:0.18" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jnr-ffi:2.1.4" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jffi:1.2.15" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.github.jnr:jffi:native:1.2.15" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jnr-x86asm:1.0.2" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jnr-constants:0.9.8" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jnr-enxio:0.16" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jnr:jnr-posix:3.0.35" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.60" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.60" level="project" />
-    <orderEntry type="library" name="Maven: com.google.auth:google-auth-library-oauth2-http:0.6.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.auth:google-auth-library-credentials:0.6.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.http-client:google-http-client:1.19.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
-    <orderEntry type="library" name="Maven: com.google.http-client:google-http-client-jackson2:1.19.0" level="project" />
-    <orderEntry type="library" name="Maven: com.spotify:dockerfile-maven-extension:1.4.13" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.sisu:org.eclipse.sisu.plexus:0.3.3" level="project" />
-    <orderEntry type="library" name="Maven: javax.enterprise:cdi-api:1.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.annotation:jsr250-api:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-classworlds:2.5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-settings-builder:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-builder-support:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-repository-metadata:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-model-builder:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-resolver-provider:3.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven.resolver:maven-resolver-impl:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven.resolver:maven-resolver-api:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven.resolver:maven-resolver-spi:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven.resolver:maven-resolver-util:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-shared-utils:3.2.1" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.sisu:org.eclipse.sisu.inject:0.3.3" level="project" />
-    <orderEntry type="library" name="Maven: com.google.inject:guice:no_aop:4.2.0" level="project" />
-    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.7.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.9" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven:maven-archiver:3.2.0" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-archiver:3.5" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-io:3.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.iq80.snappy:snappy:0.4" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.tukaani:xz:1.6" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-interpolation:1.22" level="project" />
-    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-sec-dispatcher:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-cipher:1.4" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.200" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:2.2.1.RELEASE" level="project" />

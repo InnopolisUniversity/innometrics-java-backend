@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,11 @@ public class JwtToken implements Serializable {
     @Value("${jwt.secret}")
     private String secret;
 
+
+    @PostConstruct
+    protected void init() {
+        secret = Base64.getEncoder().encodeToString(secret.getBytes());
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);

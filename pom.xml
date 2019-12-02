@@ -12,7 +12,7 @@
     <artifactId>restapi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>restapi</name>
-    <description>Projecto for the rest API in the Innometrics system</description>
+    <description>Project for the rest API in the Innometrics system</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -66,11 +66,11 @@
             <version>0.9.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.spotify/dockerfile-maven-plugin -->
-        <dependency>
+        <!-- dependency>
             <groupId>com.spotify</groupId>
             <artifactId>dockerfile-maven-plugin</artifactId>
             <version>1.4.13</version>
-        </dependency>
+        </dependency -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -99,8 +99,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>InnoMetrics-RestAPI</finalName>
+                </configuration>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>1.4.13</version>
@@ -120,7 +123,7 @@
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>
-            </plugin>
+            </plugin -->
         </plugins>
     </build>
 

@@ -33,7 +33,7 @@ public class ActivityService {
         myActivity.setActivityID(activityReport.getActivityID());
         myActivity.setActivitytype(activityReport.getActivityType());
         myActivity.setIdle_activity(activityReport.getIdle_activity());
-        myActivity.setEmail(activityReport.getEmail());
+        myActivity.setEmail(activityReport.getUserID());
         myActivity.setStart_time(activityReport.getStart_time());
         myActivity.setEnd_time(activityReport.getEnd_time());
         myActivity.setExecutable_name(activityReport.getExecutable_name());
@@ -51,7 +51,7 @@ public class ActivityService {
             Measurement myMeasurement = new Measurement();
             myMeasurement.setActivity(myActivity);
 
-            MeasurementType myType = measurementTypeRepository.findByMeasurementtypeid(m.getMeasurementTypeId());
+            MeasurementType myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
             if(myType == null)
             {
                 throw new ValidationException("The measurement type select does not exist");

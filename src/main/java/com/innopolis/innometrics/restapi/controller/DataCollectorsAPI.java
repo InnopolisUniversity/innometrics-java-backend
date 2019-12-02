@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/V1")
+@RequestMapping(value = "/V1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DataCollectorsAPI {
 
     private static Logger LOG = LogManager.getLogger();
@@ -27,6 +28,8 @@ public class DataCollectorsAPI {
 
     @Autowired
     ActivityService activityService;
+
+    //@PostMapping(name = "/MeasurementType", produces = "application/json")
 
     //Project activities
     @GetMapping("/project/{ProjectName}/activity")
@@ -51,9 +54,9 @@ public class DataCollectorsAPI {
 
 
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
-        Date CreateionDate = new Date();
+        Date CreationDate = new Date();
         for (ActivityReport activity : report.getActivities()) {
-            activityService.CreateActivty(activity, UserName, CreateionDate);
+            activityService.CreateActivty(activity, UserName, CreationDate);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);

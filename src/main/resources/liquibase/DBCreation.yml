@@ -433,3 +433,19 @@ databaseChangeLog:
             columnDataType: varchar(1)
             newColumnName: isactive
             oldColumnName: isActive
+  - changeSet:
+      id: refactor_measurement_table
+      author: xvasquez
+      changes:
+        - modifyDataType:
+            schemaName: innometrics
+            tableName: measurements
+            columnName: value
+            newDataType: Varchar(128)
+        - addColumn:
+            schemaName: innometrics
+            tableName: measurements
+            columns:
+              - column:
+                  name: alternativelabel
+                  type: Varchar(256)

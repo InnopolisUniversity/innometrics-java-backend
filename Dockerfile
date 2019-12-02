@@ -1,4 +1,4 @@
 FROM openjdk:8
-COPY ./target/classes/ /tmp
-WORKDIR /tmp
-ENTRYPOINT ["java","Main"]
+ADD InnoMetrics-RestAPI.jar InnoMetrics-RestAPI.jar
+EXPOSE 9091
+ENTRYPOINT ["java", "-jar", "InnoMetrics-RestAPI.jar"]

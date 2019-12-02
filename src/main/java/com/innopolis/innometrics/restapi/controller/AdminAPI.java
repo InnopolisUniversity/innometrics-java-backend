@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/V1/Admin")
+@RequestMapping(value = "/V1/Admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminAPI {
 
     private static Logger LOG = LogManager.getLogger();
@@ -141,7 +142,7 @@ public class AdminAPI {
 
         userService.save(myUser);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
 
     }
 
@@ -259,7 +260,7 @@ public class AdminAPI {
 
         measurementTypeService.save(myType);
 
-        MeasurementTypeResponse response  = new MeasurementTypeResponse(myType);
+        MeasurementTypeResponse response = new MeasurementTypeResponse(myType);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

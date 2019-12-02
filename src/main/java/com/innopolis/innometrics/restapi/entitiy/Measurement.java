@@ -22,7 +22,10 @@ public class Measurement implements Serializable {
     private MeasurementType measurementType;
 
     @Column
-    private float value;
+    private String value;
+
+    @Column
+    private String alternativelabel;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
@@ -39,10 +42,11 @@ public class Measurement implements Serializable {
     public Measurement() {
     }
 
-    public Measurement(Activity activity, MeasurementType measurementType, float value, Date creationdate, String createdby, Date lastupdate, String updateby) {
+    public Measurement(Activity activity, MeasurementType measurementType, String value, String alternativelabel, Date creationdate, String createdby, Date lastupdate, String updateby) {
         this.activity = activity;
         this.measurementType = measurementType;
         this.value = value;
+        this.alternativelabel = alternativelabel;
         this.creationdate = creationdate;
         this.createdby = createdby;
         this.lastupdate = lastupdate;
@@ -73,12 +77,20 @@ public class Measurement implements Serializable {
         this.measurementType = measurementType;
     }
 
-    public float getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getAlternativelabel() {
+        return alternativelabel;
+    }
+
+    public void setAlternativelabel(String alternativelabel) {
+        this.alternativelabel = alternativelabel;
     }
 
     public Date getCreationdate() {

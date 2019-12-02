@@ -13,7 +13,7 @@ public class ActivityReport implements Serializable {
 
     private Boolean idle_activity;
 
-    private String email;
+    private String userID;
 
     private Date start_time;
 
@@ -34,11 +34,11 @@ public class ActivityReport implements Serializable {
     public ActivityReport() {
     }
 
-    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String email, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address, Set<MeasurementReport> measurements) {
+    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address, Set<MeasurementReport> measurements) {
         ActivityID = activityID;
         ActivityType = activityType;
         this.idle_activity = idle_activity;
-        this.email = email;
+        this.userID = userID;
         this.start_time = start_time;
         this.end_time = end_time;
         this.executable_name = executable_name;
@@ -73,12 +73,12 @@ public class ActivityReport implements Serializable {
         this.idle_activity = idle_activity;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public Date getStart_time() {
