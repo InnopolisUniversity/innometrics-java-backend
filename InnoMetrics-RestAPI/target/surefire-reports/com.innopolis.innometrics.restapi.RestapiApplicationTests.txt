@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.innopolis.innometrics.restapi.RestapiApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 307.022 s - in com.innopolis.innometrics.restapi.RestapiApplicationTests

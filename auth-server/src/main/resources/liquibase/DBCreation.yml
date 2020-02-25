@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: SchemaCreation_innometricsauth1
+      author: xvasquez
+      changes:
+        - sql: "CREATE SCHEMA innometricsauth;"
+  - changeSet:
+      id: DatabaseCreation_innometricsauth1
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: user
+            remarks: Table to store users information
+            columns:
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: user_pk
+              - column:
+                  name: password
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: Varchar(1024)
+              - column:
+                  name: surname
+                  type: Varchar(1024)
+              - column:
+                  name: confirmed_at
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
