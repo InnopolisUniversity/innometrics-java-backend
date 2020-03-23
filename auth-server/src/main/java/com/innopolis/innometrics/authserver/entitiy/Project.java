@@ -12,7 +12,7 @@ public class Project implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private String projectID;
+    private Integer projectID;
 
     @Column
     private String name;
@@ -52,7 +52,7 @@ public class Project implements Serializable {
     public Project() {
     }
 
-    public Project(String projectID, String name, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Set<User> managers, Set<User> users, Set<User> invited_managers, Set<User> invited_users) {
+    public Project(Integer projectID, String name, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Set<User> managers, Set<User> users, Set<User> invited_managers, Set<User> invited_users) {
         this.projectID = projectID;
         this.name = name;
         this.isactive = isactive;
@@ -68,11 +68,11 @@ public class Project implements Serializable {
         */
     }
 
-    public String getProjectID() {
+    public Integer getProjectID() {
         return projectID;
     }
 
-    public void setProjectID(String projectID) {
+    public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
 

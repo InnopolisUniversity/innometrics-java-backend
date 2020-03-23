@@ -1,9 +1,6 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.MeasurementTypeRequest;
-import com.innopolis.innometrics.restapi.DTO.MeasurementTypeResponse;
-import com.innopolis.innometrics.restapi.DTO.ProjectResponse;
-import com.innopolis.innometrics.restapi.DTO.UserRequest;
+import com.innopolis.innometrics.restapi.DTO.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
 import com.innopolis.innometrics.restapi.entitiy.Project;
@@ -13,7 +10,7 @@ import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.innopolis.innometrics.restapi.repository.ProjectRepository;
 import com.innopolis.innometrics.restapi.repository.RoleRepository;
-import com.innopolis.innometrics.restapi.repository.UserRepository;
+import com.innopolis.innometrics.restapi.service.AdminService;
 import com.innopolis.innometrics.restapi.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,14 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/V1/Admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminAPI {
 
@@ -46,6 +42,8 @@ public class AdminAPI {
     @Autowired
     ProjectRepository projectService;
 
+    @Autowired
+    AdminService adminService;
 
     @Autowired
     MeasurementTypeRepository measurementTypeService;
@@ -176,32 +174,18 @@ public class AdminAPI {
 
 
     //Add project
-    @PostMapping("/project")
-    public ResponseEntity<ProjectResponse> CreateProject(@RequestParam String name, @RequestHeader String Token) {
-        if (name == null) {
-            throw new ValidationException("Not enough data provided");
-        }
-
-        if (projectService.existsByName(name)) {
-            throw new ValidationException("Project already existed");
-        }
-
-        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
-
-        Project myProject = new Project();
-        myProject.setName(name);
-        myProject.setCreationdate(new Date());
-        myProject.setCreatedby(UserName);
-        myProject.setIsactive("Y");
-
-        projectService.save(myProject);
-
-        ProjectResponse response = new ProjectResponse(myProject);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-
+    @PostMapping("/Project")
+    public ResponseEntity<ProjectResponse> CreateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+        ProjectResponse response = adminService.CreateProject(project, Token);
+        return ResponseEntity.ok(response);
     }
 
+
+    @PutMapping("/Project")
+    public ResponseEntity<ProjectResponse> updateProject(@RequestBody ProjectRequest project, @RequestHeader(required = true) String Token) {
+        ProjectResponse response = adminService.updateProject(project, Token);
+        return ResponseEntity.ok(response);
+    }
 
     //Invite user in a project
     @PostMapping("/project/{ProjectName}")
@@ -268,9 +252,21 @@ public class AdminAPI {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
+    @GetMapping("/Project")
+    public ResponseEntity<ProjectListResponse> getActiveProjects() {
+        ProjectListResponse response = adminService.getActiveProjects();
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/Users")
+    public ResponseEntity<UserListResponse> getActiveUsers(@RequestParam(required = false) String ProjectId) {
+        UserListResponse response = adminService.getActiveUsers(ProjectId);
+        return ResponseEntity.ok(response);
+    }
+
+
     //accept invitation
 
     //Load user from request
-
 
 }

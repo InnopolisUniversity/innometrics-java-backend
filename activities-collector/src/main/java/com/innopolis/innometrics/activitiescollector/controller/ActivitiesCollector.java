@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+//@CrossOrigin
 @RequestMapping(value = "/V1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ActivitiesCollector {
 
@@ -44,8 +44,8 @@ public class ActivitiesCollector {
     }
 
     //Delete activity
-    @DeleteMapping("/activity")
-    public ResponseEntity<?> deleteActivity(@RequestParam Integer activity_id,
+    @DeleteMapping("/activity/{activity_id}")
+    public ResponseEntity<?> deleteActivity(@PathVariable Integer activity_id,
                                             @RequestHeader String Token) {
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
         if (activityService.DeleteActivity(activity_id, UserName)) {
@@ -55,16 +55,16 @@ public class ActivitiesCollector {
 
     }
 
-    @GetMapping("/activity")
-    public ResponseEntity<Report> getActivities(@RequestParam String email, @RequestHeader String Token) {
+    @GetMapping("/activity/{email}")
+    public ResponseEntity<Report> getActivities(@PathVariable String email, @RequestHeader String Token) {
         Report myReport = activityService.getActivitiesByEmail(email);
         return ResponseEntity.ok(myReport);
     }
 
     //Project activities
-    @GetMapping("/activity/{ProjectName}")
-    public ResponseEntity<Report> getActivitiesByProject(@PathVariable String ProjectName, @RequestHeader String Token) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    //@GetMapping("/activity/{ProjectName}")
+    //public ResponseEntity<Report> getActivitiesByProject(@PathVariable String ProjectName, @RequestHeader String Token) {
+    //    return new ResponseEntity<>(HttpStatus.OK);
+    //}
 
 }

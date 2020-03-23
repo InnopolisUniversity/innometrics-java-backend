@@ -3,23 +3,24 @@ package com.innopolis.innometrics.restapi.DTO;
 import java.io.Serializable;
 
 public class ProjectRequest implements Serializable {
-    private String projectID;
-
+    private Integer projectID;
     private String name;
+    private String isActive;
 
     public ProjectRequest() {
     }
 
-    public ProjectRequest(String projectID, String name) {
+    public ProjectRequest(Integer projectID, String name, String isActive) {
         this.projectID = projectID;
         this.name = name;
+        this.isActive = isActive;
     }
 
-    public String getProjectID() {
+    public Integer getProjectID() {
         return projectID;
     }
 
-    public void setProjectID(String projectID) {
+    public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
 
@@ -29,5 +30,13 @@ public class ProjectRequest implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
     }
 }

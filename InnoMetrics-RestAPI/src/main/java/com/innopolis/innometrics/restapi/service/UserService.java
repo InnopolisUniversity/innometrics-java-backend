@@ -25,10 +25,10 @@ import java.util.Map;
 public class UserService implements UserDetailsService {
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
-    BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -51,15 +51,20 @@ public class UserService implements UserDetailsService {
         return user != null;
     }
 
-    @HystrixCommand(fallbackMethod = "findByEmailFallback")
+    @HystrixCommand(commandKey = "findByEmail", fallbackMethod = "findByEmailFallback")
     public User findByEmail(String email) {
-        Map<String, String> vars = new HashMap<>();
-        vars.put("UserName", email);
-        UserRequest user = null;
+        UserRequest user = new UserRequest();
         String uri = baseURL + "/" + email;
 
-        user = restTemplate.getForObject(uri, UserRequest.class);
+        ResponseEntity<UserRequest> response = null;
 
+        HttpEntity<UserRequest> entity = new HttpEntity<>(null);
+        response = restTemplate.exchange(uri, HttpMethod.GET, entity, UserRequest.class);
+
+        HttpStatus status = response.getStatusCode();
+        user = response.getBody();
+
+        if (status == HttpStatus.NO_CONTENT) return null;
 
         User myUser = new User();
         myUser.setName(user.getName());
@@ -86,7 +91,7 @@ public class UserService implements UserDetailsService {
         return myUser;
     }
 
-    @HystrixCommand(fallbackMethod = "updateFallback")
+    @HystrixCommand(commandKey = "update", fallbackMethod = "updateFallback")
     public Boolean update(User myUser) {
 
         String uri = baseURL;// + "/User";
@@ -114,10 +119,10 @@ public class UserService implements UserDetailsService {
     }
 
     public Boolean updateFallback(User myUser) {
-        return  false;
+        return false;
     }
 
-    @HystrixCommand(fallbackMethod = "createFallback")
+    @HystrixCommand(commandKey = "create", fallbackMethod = "createFallback")
     public boolean create(User myUser) {
 
         String uri = baseURL;//"/User";
@@ -136,7 +141,7 @@ public class UserService implements UserDetailsService {
         HttpStatus status = response.getStatusCode();
         UserRequest restCall = response.getBody();
 
-        if (status == HttpStatus.OK) {
+        if (status == HttpStatus.CREATED) {
             return true;
         }
         return false;

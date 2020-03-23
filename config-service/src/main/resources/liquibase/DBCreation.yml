@@ -1,0 +1,115 @@
+databaseChangeLog:
+  - changeSet:
+      id: SchemaCreation_innometricscnf_
+      author: xvasquez
+      changes:
+      - sql: "CREATE SCHEMA innometricsconfig;"
+  - changeSet:
+      id: configtablecreation
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsconfig
+            tableName: cl_categories
+            remarks: Table to store categories availables to the classification module
+            columns:
+              - column:
+                  name: catid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: classCategories_pk
+              - column:
+                  name: catname
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: catdescription
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+
+        - createTable:
+            schemaName: innometricsconfig
+            tableName: cl_apps_categories
+            remarks: Table to store the apps belong to each category
+            columns:
+              - column:
+                  name: appid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: classApps_pk
+              - column:
+                  name: catid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_classCategories
+                    references: innometricsconfig.cl_categories(catid)
+                    nullable: false
+              - column:
+                  name: appname
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: appdescription
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: executablefile
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)

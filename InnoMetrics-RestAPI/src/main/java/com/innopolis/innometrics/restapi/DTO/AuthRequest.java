@@ -1,6 +1,8 @@
 package com.innopolis.innometrics.restapi.DTO;
 
-public class AuthRequest {
+import java.io.Serializable;
+
+public class AuthRequest  implements Serializable {
 
     private String email;
 

@@ -60,3 +60,145 @@ databaseChangeLog:
               - column:
                   name: updateby
                   type: Varchar(25)
+  - changeSet:
+      id: "Creating data structures to manage projects and roles"
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: role
+            remarks: Table to store system roles information
+            columns:
+              - column:
+                  name: name
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: role_auth_pk
+              - column:
+                  name: description
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsauth
+            tableName: user_roles
+            remarks: Table to store the role associated to a user
+            columns:
+              - column:
+                  name: name
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_role_auth
+                    references: innometricsauth.role(name)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_auth
+                    references: innometricsauth.user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometricsauth
+            tableName: project
+            remarks: Table to store users information
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: project_auth_pk
+              - column:
+                  name: name
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsauth
+            tableName: project_managers
+            remarks: Table to store the list of managers for each project
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_auth_managers
+                    references: innometricsauth.project(projectid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_auth_managers
+                    references: innometricsauth.user(email)
+                    nullable: false
+        - createTable:
+            schemaName: innometricsauth
+            tableName: project_users
+            remarks: Table to store the list of users for each project
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_auth_users
+                    references: innometricsauth.project(projectid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_auth_users
+                    references: innometricsauth.user(email)
+                    nullable: false

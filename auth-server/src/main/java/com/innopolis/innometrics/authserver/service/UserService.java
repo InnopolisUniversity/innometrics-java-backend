@@ -1,6 +1,9 @@
 package com.innopolis.innometrics.authserver.service;
 
 
+import com.innopolis.innometrics.authserver.DTO.UserListRequest;
+import com.innopolis.innometrics.authserver.DTO.UserListResponse;
+import com.innopolis.innometrics.authserver.DTO.UserResponse;
 import com.innopolis.innometrics.authserver.repository.UserRepository;
 import com.innopolis.innometrics.authserver.entitiy.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class UserService implements UserDetailsService {
@@ -27,15 +31,32 @@ public class UserService implements UserDetailsService {
                 new ArrayList<>());
     }
 
-    public Boolean existsByEmail(String email){
+    public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    public User findByEmail(String email){
+    public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public User save(User user){
+    public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public UserListResponse getActiveUsers(String request) {
+
+        request = request == "" ? null : request;
+        List<User> result = userRepository.findAllActive(request);
+
+        UserListResponse response = new UserListResponse();
+        for (User u : result) {
+            UserResponse temp = new UserResponse();
+            temp.setName(u.getName());
+            temp.setEmail(u.getEmail());
+            temp.setSurname(u.getSurname());
+            temp.setIsactive(u.getIsactive());
+            response.getUserList().add(temp);
+        }
+        return response;
     }
 }

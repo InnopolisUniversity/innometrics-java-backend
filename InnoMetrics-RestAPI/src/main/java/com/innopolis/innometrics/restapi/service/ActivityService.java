@@ -3,6 +3,7 @@ package com.innopolis.innometrics.restapi.service;
 import com.innopolis.innometrics.restapi.DTO.ActivityReport;
 import com.innopolis.innometrics.restapi.DTO.MeasurementReport;
 import com.innopolis.innometrics.restapi.DTO.Report;
+import com.innopolis.innometrics.restapi.DTO.UserRequest;
 import com.innopolis.innometrics.restapi.entitiy.Activity;
 import com.innopolis.innometrics.restapi.entitiy.Measurement;
 import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
@@ -11,6 +12,7 @@ import com.innopolis.innometrics.restapi.repository.ActivityRepository;
 import com.innopolis.innometrics.restapi.repository.MeasurementRepository;
 import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +26,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service("ActivityService")
-@Transactional
+@Service
 public class ActivityService {
 
     private static Logger LOG = LogManager.getLogger();
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
-    ActivityRepository activityRepository;
+    private ActivityRepository activityRepository;
 
     @Autowired
     MeasurementTypeRepository measurementTypeRepository;
@@ -45,26 +46,35 @@ public class ActivityService {
     private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/activity";
 
 
-    @HystrixCommand(fallbackMethod = "CreateActivityFallback")
+    @HystrixCommand( commandKey = "CreateActivity", fallbackMethod = "CreateActivityFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
     public boolean CreateActivity(Report report, String token) {
-        String uri = baseURL ;
+        String uri = baseURL;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
-        HttpEntity<Report> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+        HttpEntity<Report> entity = new HttpEntity<>(report, headers);
+        try {
+            ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
 
-        HttpStatus status = response.getStatusCode();
+            HttpStatus status = response.getStatusCode();
 
-        return status == HttpStatus.OK;
+            return status == HttpStatus.OK;
+        } catch (Exception e) {
+            LOG.warn(e);
+            return false;
+        }
+
     }
 
-    public boolean CreateActivityFallback(Report report, String token) {
+    public boolean CreateActivityFallback(Report report, String token, Throwable exception) {
         LOG.warn("CreateActivityFallback method used");
+        LOG.warn(exception);
         return false;
     }
-
+/*
     public boolean CreateActivity(ActivityReport activityReport, String UserName, Date CreationDate) {
         Activity myActivity = new Activity();
         myActivity.setActivityID(activityReport.getActivityID());
@@ -111,7 +121,7 @@ public class ActivityService {
         //activityRepository.save(myActivity);
 
         return true;
-    }
+    }*/
 
     public boolean DeleteActivity(Integer ActivityID, String UserName) {
         if (ActivityID == null || UserName == null) {
@@ -127,9 +137,11 @@ public class ActivityService {
         return true;
     }
 
-    @HystrixCommand(fallbackMethod = "getActivitiesByEmailFallback")
+    @HystrixCommand(commandKey = "getActivitiesByEmail", fallbackMethod = "getActivitiesByEmailFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
     public Report getActivitiesByEmail(String userName, String token) {
-        String uri = baseURL + "/{email}";
+        String uri = baseURL + "/" + userName;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
@@ -138,15 +150,16 @@ public class ActivityService {
         vars.put("email", userName);
 
         HttpEntity<Report> entity = new HttpEntity<>(headers);
-        ResponseEntity<Report> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Report.class, vars);
+        ResponseEntity<Report> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Report.class);
 
         HttpStatus status = response.getStatusCode();
 
         return response.getBody();
     }
 
-    public Report getActivitiesByEmailFallback(String userName, String token) {
+    public Report getActivitiesByEmailFallback(String userName, String token, Throwable exception) {
         LOG.warn("getActivitiesByEmailFallback method used");
+        LOG.warn(exception);
         Report myReport = new Report();
         ActivityReport myDefaultActivity = new ActivityReport();
         myDefaultActivity.setExecutable_name("Not info available");
@@ -184,7 +197,7 @@ public class ActivityService {
                 myMeasure.setMeasurementTypeId(m.getMeasurementType().getMeasurementtypeid().toString());
                 myMeasure.setValue(m.getValue());
                 myMeasure.setAlternativeLabel(m.getMeasurementType().getLabel());
-                myApp.getMeasurements().add(myMeasure);
+                //myApp.getMeasurements().add(myMeasure);
             }
 
             response.getActivities().add(myApp);

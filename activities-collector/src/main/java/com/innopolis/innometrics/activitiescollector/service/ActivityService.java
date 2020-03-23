@@ -1,13 +1,11 @@
 package com.innopolis.innometrics.activitiescollector.service;
 
-import com.innopolis.innometrics.activitiescollector.DTO.ActivityReport;
-import com.innopolis.innometrics.activitiescollector.DTO.MeasurementReport;
-import com.innopolis.innometrics.activitiescollector.DTO.Report;
-import com.innopolis.innometrics.activitiescollector.entity.Activity;
-import com.innopolis.innometrics.activitiescollector.entity.Measurement;
-import com.innopolis.innometrics.activitiescollector.entity.MeasurementType;
+import com.innopolis.innometrics.activitiescollector.DTO.*;
+import com.innopolis.innometrics.activitiescollector.entity.*;
 //import com.innopolis.innometrics.activitiescollector.exceptions.ValidationException;
+import com.innopolis.innometrics.activitiescollector.entity.Process;
 import com.innopolis.innometrics.activitiescollector.repository.ActivityRepository;
+import com.innopolis.innometrics.activitiescollector.repository.CumulativeReportRepository;
 import com.innopolis.innometrics.activitiescollector.repository.MeasurementRepository;
 import com.innopolis.innometrics.activitiescollector.repository.MeasurementTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +27,9 @@ public class ActivityService {
 
     @Autowired
     MeasurementRepository measurementRepository;
+
+    @Autowired
+    CumulativeReportRepository cumulativeReportRepository;
 
     public boolean CreateActivty(ActivityReport activityReport, String UserName, Date CreationDate) {
         Activity myActivity = new Activity();
@@ -126,4 +127,63 @@ public class ActivityService {
         return response;
     }
 
+    public ActivitiesReportByUserResponse getActivitiesReportByUser(ActivitiesReportByUserRequest request) {
+        List<IActivitiesReportByUser> result = activityRepository.getActivitiesReport(request.getProjectID(), request.getEmail(), request.getMin_Date(), request.getMax_Date());
+
+        ActivitiesReportByUserResponse response = new ActivitiesReportByUserResponse();
+        for (IActivitiesReportByUser a : result) {
+            ActivitiesReportByUser temp = new ActivitiesReportByUser();
+            if (a.getActivity_day() != null)
+                temp.setActivity_day(a.getActivity_day());
+            temp.setEmail(a.getEmail());
+            temp.setExecutable_name(a.getExecutable_name());
+            if (a.getTime_used() != null)
+                temp.setTime_used(a.getTime_used());
+            response.getReport().add(temp);
+        }
+        //response.getReport().addAll(result);
+
+        return response;
+    }
+
+
+    public TimeReportResponse getTimeReportByUser(TimeReportRequest request) {
+        List<ITimeReportByUser> result = activityRepository.getTimeReport(request.getProjectID(), request.getEmail(), request.getMin_Date(), request.getMax_Date());
+
+        TimeReportResponse response = new TimeReportResponse();
+        for (ITimeReportByUser a : result) {
+            TimeReportByUser temp = new TimeReportByUser();
+            if (a.getActivity_day() != null)
+                temp.setActivity_day(a.getActivity_day());
+            temp.setEmail(a.getEmail());
+            if (a.getTime_used() != null)
+                temp.setTime_used(a.getTime_used());
+            response.getReport().add(temp);
+        }
+        //response.getReport().addAll(result);
+
+        return response;
+    }
+
+
+    public CumulativeReportResponse getCumulativeReportByEmail(String email) {
+        List<CumulativeReport> myReport = cumulativeReportRepository.getAllByEmail(email);
+
+        CumulativeReportResponse response = new CumulativeReportResponse();
+
+        for (CumulativeReport r : myReport) {
+            CumulativeActivityReport myApp = new CumulativeActivityReport();
+            myApp.setEmail(r.getEmail());
+            myApp.setExecutable_name(r.getExecutable_name());
+            myApp.setCapturedDate(r.getCapturedDate().toString());
+            myApp.setDailySum(r.getDailySum().toString());
+            myApp.setMonthlySum(r.getMonthlySum().toString());
+            myApp.setYearlySum(r.getYearlySum().toString());
+            myApp.setUsed_time(r.getUsed_time().toString());
+
+            response.getActivityReports().add(myApp);
+        }
+
+        return response;
+    }
 }

@@ -29,12 +29,12 @@ public class ActivityReport implements Serializable {
 
     private String mac_address;
 
-    private Set<MeasurementReport> measurements = new HashSet<>();
+    //private Set<MeasurementReport> measurements = new HashSet<>();
 
     public ActivityReport() {
     }
 
-    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address, Set<MeasurementReport> measurements) {
+    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address) {
         ActivityID = activityID;
         ActivityType = activityType;
         this.idle_activity = idle_activity;
@@ -46,7 +46,6 @@ public class ActivityReport implements Serializable {
         this.browser_title = browser_title;
         this.ip_address = ip_address;
         this.mac_address = mac_address;
-        this.measurements = measurements;
     }
 
     public Integer getActivityID() {
@@ -135,13 +134,5 @@ public class ActivityReport implements Serializable {
 
     public void setMac_address(String mac_address) {
         this.mac_address = mac_address;
-    }
-
-    public Set<MeasurementReport> getMeasurements() {
-        return measurements;
-    }
-
-    public void setMeasurements(Set<MeasurementReport> measurements) {
-        this.measurements = measurements;
     }
 }

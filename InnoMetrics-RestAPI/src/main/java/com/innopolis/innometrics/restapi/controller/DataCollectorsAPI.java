@@ -1,11 +1,14 @@
 package com.innopolis.innometrics.restapi.controller;
 
-import com.innopolis.innometrics.restapi.DTO.Report;
+import com.innopolis.innometrics.restapi.DTO.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.service.ActivityService;
+import com.innopolis.innometrics.restapi.service.ProcessService;
+import com.innopolis.innometrics.restapi.service.ReportService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/V1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DataCollectorsAPI {
 
@@ -28,38 +31,22 @@ public class DataCollectorsAPI {
     @Autowired
     ActivityService activityService;
 
+    @Autowired
+    ProcessService processService;
 
-    //@PostMapping(name = "/MeasurementType", produces = "application/json")
 
-    //Project activities
-    @GetMapping("/project/{ProjectName}/activity")
-    public ResponseEntity<List<Report>> getActivitiesByProject(@PathVariable String ProjectName,
-                                                               @RequestParam Integer offset,
-                                                               @RequestParam Integer amount_to_return,
-                                                               @RequestParam String filters,
-                                                               @RequestParam Date start_time,
-                                                               @RequestParam Date end_time,
-                                                               @RequestHeader String Token) {
-
-        //SeachActivitiesDTO filter = new SeachActivitiesDTO(offset, amount_to_return, filters, start_time, end_time, Token);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    @Autowired
+    ReportService reportService;
 
     //add activity
     @PostMapping("/activity")
     public ResponseEntity<?> addReport(@RequestBody Report report,
                                        UriComponentsBuilder ucBuilder,
                                        @RequestHeader String Token) {
-
-
-        //String UserName = jwtTokenUtil.getUsernameFromToken(Token);
-        //Date CreationDate = new Date();
-        //for (ActivityReport activity : report.getActivities()) {
-        //    activityService.CreateActivty(activity, UserName, CreationDate);
-        //}
         Boolean result = activityService.CreateActivity(report, Token);
-        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        if (result) return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     //Delete activity
@@ -74,21 +61,6 @@ public class DataCollectorsAPI {
 
     }
 
-    //find activity
-    /*
-    @GetMapping("/activity")
-    public ResponseEntity<List<Report>> getActivities(@RequestParam Integer offset,
-                                                      @RequestParam Integer amount_to_return,
-                                                      @RequestParam String filters,
-                                                      @RequestParam Date start_time,
-                                                      @RequestParam Date end_time,
-                                                      @RequestHeader String Token) {
-
-        //SeachActivitiesDTO filter = new SeachActivitiesDTO(offset, amount_to_return, filters, start_time, end_time, Token);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
-
 
     @GetMapping("/activity")
     public ResponseEntity<Report> getActivities(@RequestParam String email, @RequestHeader String Token) {
@@ -96,4 +68,42 @@ public class DataCollectorsAPI {
         return ResponseEntity.ok(myReport);
     }
 
+    //add process report
+    @PostMapping("/process")
+    public ResponseEntity<?> addProcessReport(@RequestBody AddProcessReportRequest report,
+                                              UriComponentsBuilder ucBuilder,
+                                              @RequestHeader String Token) {
+        Boolean result = processService.CreateProcessReport(report, Token);
+        if (result) return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @GetMapping("/Reports/activitiesReport")
+    public ResponseEntity<ActivitiesReportByUserResponse> getReportActivities(@RequestParam(required = false) String projectID,
+                                                                              @RequestParam(required = false) String email,
+                                                                              @RequestParam(required = false) Date min_Date,
+                                                                              @RequestParam(required = false) Date max_Date) {
+
+        ActivitiesReportByUserResponse myReport = reportService.getReportActivities(projectID, email, min_Date, max_Date);
+        return ResponseEntity.ok(myReport);
+    }
+
+    @GetMapping("/Reports/timeReport")
+    public ResponseEntity<TimeReportResponse> getTimeReport(@RequestParam(required = false) String projectID,
+                                                            @RequestParam(required = false) String email,
+                                                            @RequestParam(required = false) Date min_Date,
+                                                            @RequestParam(required = false) Date max_Date) {
+
+        TimeReportResponse myReport = reportService.getTimeReport(projectID, email, min_Date, max_Date);
+        return ResponseEntity.ok(myReport);
+    }
+
+    @GetMapping("/Reports/cumulativeReport")
+    public ResponseEntity<CumulativeReportResponse> getCumulativeReport(@RequestParam(required = false) String email,
+                                                                        @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
+                                                                        @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
+        CumulativeReportResponse myReport = reportService.getCumulativeReport(email, min_Date, max_Date);
+        return ResponseEntity.ok(myReport);
+    }
 }

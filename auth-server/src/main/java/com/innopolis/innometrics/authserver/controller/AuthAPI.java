@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 @RestController
+//@CrossOrigin
 @RequestMapping("AuthAPI")
 public class AuthAPI {
 
@@ -89,6 +90,11 @@ public class AuthAPI {
         if (!UserName.isEmpty()) {
             User userDetails = userService.findByEmail(UserName);
             UserRequest myUser = new UserRequest();
+
+            if(userDetails == null)
+                return new ResponseEntity<>(myUser, HttpStatus.NO_CONTENT);
+
+
             myUser.setEmail(userDetails.getEmail());
             myUser.setPassword(userDetails.getPassword());
             myUser.setName(userDetails.getName());

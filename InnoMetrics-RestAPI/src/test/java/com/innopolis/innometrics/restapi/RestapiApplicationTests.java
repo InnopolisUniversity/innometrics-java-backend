@@ -121,7 +121,7 @@ class RestapiApplicationTests {
             measurementReport.setMeasurementTypeId("1");
             measurementReport.setValue("15.09");
 
-            actTemp.getMeasurements().add(measurementReport);
+            //actTemp.getMeasurements().add(measurementReport);
 
             report.getActivities().add(actTemp);
 
