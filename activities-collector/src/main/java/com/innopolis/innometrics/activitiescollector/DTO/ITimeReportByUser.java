@@ -6,4 +6,6 @@ public interface ITimeReportByUser {
     String getTime_used();
 
     String getActivity_day();
+
+    String getDateToSort();
 }

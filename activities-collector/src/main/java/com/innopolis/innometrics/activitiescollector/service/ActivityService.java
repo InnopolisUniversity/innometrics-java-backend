@@ -166,8 +166,8 @@ public class ActivityService {
     }
 
 
-    public CumulativeReportResponse getCumulativeReportByEmail(String email) {
-        List<CumulativeReport> myReport = cumulativeReportRepository.getAllByEmail(email);
+    public CumulativeReportResponse getCumulativeReportByEmail(String email, Date min_Date, Date max_Date) {
+        List<CumulativeReport> myReport = cumulativeReportRepository.getCumulativeReport(email, min_Date, max_Date);
 
         CumulativeReportResponse response = new CumulativeReportResponse();
 

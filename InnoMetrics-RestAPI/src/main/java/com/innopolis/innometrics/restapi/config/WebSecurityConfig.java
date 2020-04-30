@@ -85,6 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/V1/Admin/User",
                         "/V1/Admin/Users",
                         "/V1/Admin/Project",
+                        "/V1/Admin/Classification/**",
                         "/V1/Reports/**",
                         "/v2/api-docs",
                         "/configuration/ui",
@@ -93,7 +94,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html",
                         "/swagger-ui.html**",
                         "/swagger-ui.html/**",
-                        "/webjars/**").permitAll()
+                        "/webjars/**",
+                        "/csrf").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

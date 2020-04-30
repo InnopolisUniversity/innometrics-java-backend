@@ -46,7 +46,7 @@ public class ActivityReports {
     public ResponseEntity<CumulativeReportResponse> getCumulativeReport(@RequestParam(required = false) String email,
                                                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
                                                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
-        CumulativeReportResponse myReport = activityService.getCumulativeReportByEmail(email);
+        CumulativeReportResponse myReport = activityService.getCumulativeReportByEmail(email, min_Date, max_Date);
         return ResponseEntity.ok(myReport);
     }
 }

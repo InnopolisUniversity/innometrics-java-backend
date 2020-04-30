@@ -11,6 +11,7 @@ import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.innopolis.innometrics.restapi.repository.ProjectRepository;
 import com.innopolis.innometrics.restapi.repository.RoleRepository;
 import com.innopolis.innometrics.restapi.service.AdminService;
+import com.innopolis.innometrics.restapi.service.CategoryService;
 import com.innopolis.innometrics.restapi.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +49,9 @@ public class AdminAPI {
 
     @Autowired
     MeasurementTypeRepository measurementTypeService;
+
+    @Autowired
+    CategoryService categoryService;
 
     @GetMapping("/Role")
     public ResponseEntity<List<Role>> ListAllRoles(@RequestHeader String Token) {
@@ -265,6 +270,85 @@ public class AdminAPI {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @PostMapping("/Classification/Category")
+    public ResponseEntity<CategoryResponse> addCategory(@RequestBody CategoryRequest categoryRequest,
+                                                        UriComponentsBuilder ucBuilder,
+                                                        @RequestHeader(required = false) String Token) {
+
+        if(Token == null) Token = "";
+        CategoryResponse response = categoryService.addCategory(categoryRequest, Token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/Classification/Category/{CategoryId}")
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Integer CategoryId, @RequestHeader(required = false) String Token) {
+
+        if(Token == null) Token = "";
+        CategoryResponse response = categoryService.getCategoryById(CategoryId, Token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/Classification/Category")
+    public ResponseEntity<CategoryResponse> UpdateCategory(@RequestBody CategoryRequest categoryRequest,
+                                                           UriComponentsBuilder ucBuilder,
+                                                           @RequestHeader(required = false) String Token) {
+
+        if(Token == null) Token = "";
+        CategoryResponse response = categoryService.UpdateCategory(categoryRequest, Token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
+    @PostMapping("/Classification/App")
+    public ResponseEntity<AppCategoryResponse> addAppCategory(@RequestBody AppCategoryRequest appCategoryRequest,
+                                                              UriComponentsBuilder ucBuilder,
+                                                              @RequestHeader(required = false) String Token) {
+
+
+        if(Token == null) Token = "";
+        AppCategoryResponse response = categoryService.addAppCategory(appCategoryRequest, Token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/Classification/App/{AppId}")
+    public ResponseEntity<AppCategoryResponse> getAppCategoryById(@PathVariable Integer AppId, @RequestHeader(required = false) String Token) {
+
+        if(Token == null) Token = "";
+        AppCategoryResponse response = categoryService.getAppCategoryById(AppId, Token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/Classification/App")
+    public ResponseEntity<AppCategoryResponse> UpdateAppCategory(@RequestBody AppCategoryRequest appCategoryRequest,
+                                                                 UriComponentsBuilder ucBuilder,
+                                                                 @RequestHeader(required = false) String Token) {
+
+        if(Token == null) Token = "";
+        AppCategoryResponse response = categoryService.UpdateAppCategory(appCategoryRequest, Token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     //accept invitation
 
     //Load user from request

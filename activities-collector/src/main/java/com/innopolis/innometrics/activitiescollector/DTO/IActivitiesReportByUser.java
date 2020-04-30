@@ -10,4 +10,6 @@ public interface IActivitiesReportByUser {
     String getTime_used();
 
     String getActivity_day();
+
+    String getDateToSort();
 }

@@ -665,3 +665,146 @@ databaseChangeLog:
               - column:
                   name: updateby
                   type: Varchar(25)
+  - changeSet:
+      id: "Create classification activities configurations"
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometrics
+            tableName: actcategories
+            remarks: Table to store the information about the set of categories availables into the system.
+            columns:
+              - column:
+                  name: categoryid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: category_pk
+              - column:
+                  name: categoryname
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: "Y"
+              - column:
+                  name: creationdate
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: timestamp
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometrics
+            tableName: actappxcategory
+            remarks: Table to store the information about the set of apps related to each category
+            columns:
+              - column:
+                  name: appid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: actappxcategory_pk
+              - column:
+                  name: appname
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: categoryid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_categoryid
+                    references: innometrics.actcategories(categoryid)
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: "Y"
+              - column:
+                  name: creationdate
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: timestamp
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: "Category column to activities"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometrics
+            tableName: activity
+            columns:
+              - column:
+                  name: categoryname
+                  type: Varchar(256)
+  - changeSet:
+      id: classification_trigger_Creation
+      author: xvasquez
+      changes:
+        - sql:
+            endDelimiter: "/"
+            splitStatements: false
+            sql: "create or replace function ClassificationAppProcess()
+                  returns trigger as
+                $$
+                declare
+                  catergory Varchar(256);
+                Begin
+                  select into NEW.categoryname categoryname
+                    from innometrics.actappxcategory a, innometrics.actcategories c
+                   where a.categoryid = c.categoryid
+                     and a.appname = new.executable_name
+                     and a.isactive = 'Y';
+
+                  return new;
+                end;
+                $$ LANGUAGE plpgsql;
+
+                DROP TRIGGER IF EXISTS ClasifficationAppTrg on innometrics.activity;
+
+                create trigger ClasifficationAppTrg after insert on innometrics.activity
+                for each row execute PROCEDURE ClassificationAppProcess();/"
+  - changeSet:
+      id: report_index_creation
+      author: xvasquez
+      changes:
+        - sql:
+            endDelimiter: "/"
+            splitStatements: false
+            sql: "CREATE INDEX projectid_idx_project_users ON innometricsauth.project_users (email, CAST(projectID AS TEXT));/"
+        - sql:
+            endDelimiter: "/"
+            splitStatements: false
+            sql: "CREATE INDEX email_idx_cumulativerep ON innometrics.cumlativerepactivity (email, captureddate);/"

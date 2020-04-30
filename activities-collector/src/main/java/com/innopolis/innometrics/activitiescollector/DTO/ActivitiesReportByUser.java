@@ -9,6 +9,7 @@ public class ActivitiesReportByUser implements IActivitiesReportByUser {
     private String Executable_name;
     private String Time_used;
     private String Activity_day;
+    private String DateToSort;
 
     public ActivitiesReportByUser() {
     }
@@ -41,6 +42,11 @@ public class ActivitiesReportByUser implements IActivitiesReportByUser {
         return Activity_day;
     }
 
+    @Override
+    public String getDateToSort() {
+        return DateToSort;
+    }
+
     public void setEmail(String email) {
         Email = email;
     }
@@ -55,5 +61,9 @@ public class ActivitiesReportByUser implements IActivitiesReportByUser {
 
     public void setActivity_day(String activity_day) {
         Activity_day = activity_day;
+    }
+
+    public void setDateToSort(String dateToSort) {
+        DateToSort = dateToSort;
     }
 }

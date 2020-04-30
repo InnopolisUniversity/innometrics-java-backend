@@ -4,6 +4,7 @@ public class TimeReportByUser implements ITimeReportByUser {
     private String Email;
     private String Time_used;
     private String Activity_day;
+    private String DateToSort;
 
     public TimeReportByUser() {
     }
@@ -30,6 +31,11 @@ public class TimeReportByUser implements ITimeReportByUser {
         return Activity_day;
     }
 
+    @Override
+    public String getDateToSort() {
+        return DateToSort;
+    }
+
     public void setEmail(String email) {
         Email = email;
     }
@@ -40,5 +46,9 @@ public class TimeReportByUser implements ITimeReportByUser {
 
     public void setActivity_day(String activity_day) {
         Activity_day = activity_day;
+    }
+
+    public void setDateToSort(String dateToSort) {
+        DateToSort = dateToSort;
     }
 }

@@ -44,7 +44,6 @@ public class ReportService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectID", projectID)
                 .queryParam("email", email)
@@ -126,8 +125,8 @@ public class ReportService {
     }
 
     public CumulativeReportResponse getCumulativeReportFallback(String email,
-                                                                Date min_Date,
-                                                                Date max_Date, Throwable exception) {
+                                                                 Date min_Date,
+                                                                 Date max_Date, Throwable exception) {
         LOG.warn("getCumulativeReportFallback method used");
         LOG.warn(exception);
         return new CumulativeReportResponse();
