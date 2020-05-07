@@ -7,14 +7,18 @@ public class AgentResponse implements Serializable {
     private Integer agentid;
     private String agentname;
     private String description;
+    private String oauthuri;
+    private String authenticationmethod;
 
     public AgentResponse() {
     }
 
-    public AgentResponse(Integer agentid, String agentname, String description) {
+    public AgentResponse(Integer agentid, String agentname, String description, String oauthuri, String authenticationmethod) {
         this.agentid = agentid;
         this.agentname = agentname;
         this.description = description;
+        this.oauthuri = oauthuri;
+        this.authenticationmethod = authenticationmethod;
     }
 
     public Integer getAgentid() {
@@ -39,5 +43,21 @@ public class AgentResponse implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOauthuri() {
+        return oauthuri;
+    }
+
+    public void setOauthuri(String oauthuri) {
+        this.oauthuri = oauthuri;
+    }
+
+    public String getAuthenticationmethod() {
+        return authenticationmethod;
+    }
+
+    public void setAuthenticationmethod(String authenticationmethod) {
+        this.authenticationmethod = authenticationmethod;
     }
 }

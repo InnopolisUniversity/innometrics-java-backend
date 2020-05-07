@@ -29,6 +29,12 @@ public class Agentconfig {
     private String repoidfield;
 
     @Column
+    private String oauthuri;
+
+    @Column
+    private String authenticationmethod;
+
+    @Column
     private String isactive;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
@@ -104,6 +110,22 @@ public class Agentconfig {
 
     public void setRepoidfield(String repoidfield) {
         this.repoidfield = repoidfield;
+    }
+
+    public String getOauthuri() {
+        return oauthuri;
+    }
+
+    public void setOauthuri(String oauthuri) {
+        this.oauthuri = oauthuri;
+    }
+
+    public String getAuthenticationmethod() {
+        return authenticationmethod;
+    }
+
+    public void setAuthenticationmethod(String authenticationmethod) {
+        this.authenticationmethod = authenticationmethod;
     }
 
     public String getIsactive() {

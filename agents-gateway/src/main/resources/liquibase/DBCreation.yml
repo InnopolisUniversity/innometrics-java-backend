@@ -389,3 +389,21 @@ databaseChangeLog:
               - column:
                   name: eventtype
                   type: Varchar(256)
+  - changeSet:
+      id: "adding OAuth field to agent configuration"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: oauthuri
+                  type: Varchar(256)
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: authenticationmethod
+                  type: Varchar(256)

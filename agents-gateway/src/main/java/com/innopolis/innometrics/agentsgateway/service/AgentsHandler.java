@@ -144,7 +144,7 @@ public class AgentsHandler {
                         datasource.getEventdatefield() + " eventdate";
                 String queryStr = "select " + fields + " from " + source + " where " + agent.getRepoidfield() + " = ?1";
 
-                LOG.info(queryStr);
+                //LOG.info(queryStr);
                 try {
                     Query query = entityManager.createNativeQuery(queryStr);
                     query.setParameter(1, repo.getRepoid());

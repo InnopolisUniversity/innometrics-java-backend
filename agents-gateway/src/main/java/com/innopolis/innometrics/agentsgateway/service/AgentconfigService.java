@@ -29,6 +29,8 @@ public class AgentconfigService {
             tmp.setAgentid(a.getAgentid());
             tmp.setAgentname(a.getAgentname());
             tmp.setDescription(a.getDescription());
+            tmp.setOauthuri(a.getOauthuri());
+            tmp.setAuthenticationmethod(a.getAuthenticationmethod());
             response.getAgentList().add(tmp);
         }
 
