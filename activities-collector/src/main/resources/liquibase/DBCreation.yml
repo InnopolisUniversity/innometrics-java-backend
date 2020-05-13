@@ -808,3 +808,46 @@ databaseChangeLog:
             endDelimiter: "/"
             splitStatements: false
             sql: "CREATE INDEX email_idx_cumulativerep ON innometrics.cumlativerepactivity (email, captureddate);/"
+  - changeSet:
+      id: "adding fields to link activities and process metrics"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometrics
+            tableName: activity
+            columns:
+              - column:
+                  name: pid
+                  type: Varchar(256)
+        - addColumn:
+            schemaName: innometrics
+            tableName: process
+            columns:
+              - column:
+                  name: pid
+                  type: Varchar(256)
+        - addColumn:
+            schemaName: innometrics
+            tableName: process
+            columns:
+              - column:
+                  name: collectedtime
+                  type: timestamp
+  - changeSet:
+      id: "adding fields to store os version"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometrics
+            tableName: activity
+            columns:
+              - column:
+                  name: osversion
+                  type: Varchar(256)
+        - addColumn:
+            schemaName: innometrics
+            tableName: process
+            columns:
+              - column:
+                  name: osversion
+                  type: Varchar(256)

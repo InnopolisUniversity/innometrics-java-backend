@@ -26,6 +26,15 @@ public class Process implements Serializable {
     private String executable_name;
 
     @Column
+    private String pid;
+
+    @Column
+    private String osversion;
+
+    @Column
+    private Date collectedtime;
+
+    @Column
     private String ip_address;
 
     @Column
@@ -80,6 +89,30 @@ public class Process implements Serializable {
 
     public void setExecutable_name(String executable_name) {
         this.executable_name = executable_name;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public Date getCollectedtime() {
+        return collectedtime;
+    }
+
+    public void setCollectedtime(Date collectedtime) {
+        this.collectedtime = collectedtime;
+    }
+
+    public String getOsversion() {
+        return osversion;
+    }
+
+    public void setOsversion(String osversion) {
+        this.osversion = osversion;
     }
 
     public String getIp_address() {

@@ -31,7 +31,9 @@ public class ProcessService {
         myProcess.setExecutable_name(processReport.getProcessName());
         myProcess.setIp_address(processReport.getIp_address());
         myProcess.setMac_address(processReport.getMac_address());
-
+        myProcess.setPid(processReport.getPid());
+        myProcess.setCollectedtime(processReport.getCollectedTime());
+        myProcess.setOsversion(processReport.getOsversion());
         myProcess.setCreationdate(CreationDate);
         myProcess.setCreatedby(UserName);
 

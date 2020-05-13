@@ -97,7 +97,7 @@ databaseChangeLog:
                   type: Varchar(25)
                   constraints:
                     nullable: false
-                  defaultValue: USER
+                  defaultValueComputed: USER
               - column:
                   name: lastupdate
                   type: Date
@@ -157,7 +157,7 @@ databaseChangeLog:
                   type: Varchar(25)
                   constraints:
                     nullable: false
-                  defaultValue: USER
+                  defaultValueComputed: USER
               - column:
                   name: lastupdate
                   type: Date

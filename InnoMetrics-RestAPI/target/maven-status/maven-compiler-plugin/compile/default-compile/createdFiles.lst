@@ -7,9 +7,12 @@ com\innopolis\innometrics\restapi\DTO\MeasurementReport.class
 com\innopolis\innometrics\restapi\DTO\UserListRequest.class
 com\innopolis\innometrics\restapi\DTO\CumulativeReportResponse.class
 com\innopolis\innometrics\restapi\exceptions\BaseErrorHandler.class
+com\innopolis\innometrics\restapi\DTO\CategoryRequest.class
+com\innopolis\innometrics\restapi\DTO\CategoryResponse.class
 com\innopolis\innometrics\restapi\repository\MeasurementRepository.class
 com\innopolis\innometrics\restapi\DTO\TimeReportByUser.class
 com\innopolis\innometrics\restapi\DTO\ProjectResponse.class
+com\innopolis\innometrics\restapi\DTO\AppCategoryRequest.class
 com\innopolis\innometrics\restapi\repository\ActivityRepository.class
 com\innopolis\innometrics\restapi\DTO\AddProcessReportRequest.class
 com\innopolis\innometrics\restapi\DTO\UserListResponse.class
@@ -28,6 +31,7 @@ com\innopolis\innometrics\restapi\controller\AdminAPI.class
 com\innopolis\innometrics\restapi\DTO\Report.class
 com\innopolis\innometrics\restapi\config\WebConfig.class
 com\innopolis\innometrics\restapi\controller\DataCollectorsAPI.class
+com\innopolis\innometrics\restapi\DTO\AppCategoryResponse.class
 com\innopolis\innometrics\restapi\entitiy\User.class
 com\innopolis\innometrics\restapi\RestapiApplication.class
 com\innopolis\innometrics\restapi\DTO\AuthResponse.class
@@ -38,6 +42,7 @@ com\innopolis\innometrics\restapi\DTO\ProcessReport.class
 com\innopolis\innometrics\restapi\config\RestTemplateResponseErrorHandler.class
 com\innopolis\innometrics\restapi\service\ActivityService.class
 com\innopolis\innometrics\restapi\DTO\ProjectListResponse.class
+com\innopolis\innometrics\restapi\service\CategoryService.class
 com\innopolis\innometrics\restapi\DTO\ActivitiesReportByUser.class
 com\innopolis\innometrics\restapi\DTO\MeasurementTypeResponse.class
 com\innopolis\innometrics\restapi\entitiy\Project.class

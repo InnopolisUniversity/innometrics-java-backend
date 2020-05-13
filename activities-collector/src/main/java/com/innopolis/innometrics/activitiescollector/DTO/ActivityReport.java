@@ -1,5 +1,6 @@
 package com.innopolis.innometrics.activitiescollector.DTO;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,12 +30,16 @@ public class ActivityReport implements Serializable {
 
     private String mac_address;
 
+    private String pid;
+
+    private String osversion;
+
     private Set<MeasurementReport> measurements = new HashSet<>();
 
     public ActivityReport() {
     }
 
-    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address, Set<MeasurementReport> measurements) {
+    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address, String pid, String osversion, Set<MeasurementReport> measurements) {
         ActivityID = activityID;
         ActivityType = activityType;
         this.idle_activity = idle_activity;
@@ -46,6 +51,8 @@ public class ActivityReport implements Serializable {
         this.browser_title = browser_title;
         this.ip_address = ip_address;
         this.mac_address = mac_address;
+        this.pid = pid;
+        this.osversion = osversion;
         this.measurements = measurements;
     }
 
@@ -135,6 +142,22 @@ public class ActivityReport implements Serializable {
 
     public void setMac_address(String mac_address) {
         this.mac_address = mac_address;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getOsversion() {
+        return osversion;
+    }
+
+    public void setOsversion(String osversion) {
+        this.osversion = osversion;
     }
 
     public Set<MeasurementReport> getMeasurements() {

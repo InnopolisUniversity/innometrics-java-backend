@@ -44,6 +44,8 @@ public class ActivityService {
         myActivity.setBrowser_title(activityReport.getBrowser_title());
         myActivity.setIp_address(activityReport.getIp_address());
         myActivity.setMac_address(activityReport.getMac_address());
+        myActivity.setPid(activityReport.getPid());
+        myActivity.setOsversion(activityReport.getOsversion());
 
         myActivity.setCreationdate(CreationDate);
         myActivity.setCreatedby(UserName);
@@ -111,6 +113,7 @@ public class ActivityService {
             myApp.setBrowser_title(a.getBrowser_title());
             myApp.setIp_address(a.getIp_address());
             myApp.setMac_address(a.getMac_address());
+            myApp.setPid(a.getPid());
 
             for (Measurement m : a.getMeasurements()) {
                 MeasurementReport myMeasure = new MeasurementReport();

@@ -25,6 +25,10 @@ public class ActivityReport implements Serializable {
 
     private String browser_title;
 
+    private String pid;
+
+    private String osversion;
+
     private String ip_address;
 
     private String mac_address;
@@ -34,7 +38,7 @@ public class ActivityReport implements Serializable {
     public ActivityReport() {
     }
 
-    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address) {
+    public ActivityReport(Integer activityID, String activityType, Boolean idle_activity, String userID, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String pid, String osversion, String ip_address, String mac_address) {
         ActivityID = activityID;
         ActivityType = activityType;
         this.idle_activity = idle_activity;
@@ -44,6 +48,8 @@ public class ActivityReport implements Serializable {
         this.executable_name = executable_name;
         this.browser_url = browser_url;
         this.browser_title = browser_title;
+        this.pid = pid;
+        this.osversion = osversion;
         this.ip_address = ip_address;
         this.mac_address = mac_address;
     }
@@ -118,6 +124,22 @@ public class ActivityReport implements Serializable {
 
     public void setBrowser_title(String browser_title) {
         this.browser_title = browser_title;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getOsversion() {
+        return osversion;
+    }
+
+    public void setOsversion(String osversion) {
+        this.osversion = osversion;
     }
 
     public String getIp_address() {

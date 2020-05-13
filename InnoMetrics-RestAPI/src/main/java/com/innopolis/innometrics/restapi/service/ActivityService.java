@@ -74,54 +74,6 @@ public class ActivityService {
         LOG.warn(exception);
         return false;
     }
-/*
-    public boolean CreateActivity(ActivityReport activityReport, String UserName, Date CreationDate) {
-        Activity myActivity = new Activity();
-        myActivity.setActivityID(activityReport.getActivityID());
-        myActivity.setActivitytype(activityReport.getActivityType());
-        myActivity.setIdle_activity(activityReport.getIdle_activity());
-        myActivity.setEmail(activityReport.getUserID());
-        myActivity.setStart_time(activityReport.getStart_time());
-        myActivity.setEnd_time(activityReport.getEnd_time());
-        myActivity.setExecutable_name(activityReport.getExecutable_name());
-        myActivity.setBrowser_url(activityReport.getBrowser_url());
-        myActivity.setBrowser_title(activityReport.getBrowser_title());
-        myActivity.setIp_address(activityReport.getIp_address());
-        myActivity.setMac_address(activityReport.getMac_address());
-
-        myActivity.setCreationdate(CreationDate);
-        myActivity.setCreatedby(UserName);
-
-        myActivity = activityRepository.save(myActivity);
-
-        for (MeasurementReport m : activityReport.getMeasurements()) {
-            Measurement myMeasurement = new Measurement();
-            myMeasurement.setActivity(myActivity);
-            MeasurementType myType = new MeasurementType();
-            try {
-                myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
-            } catch (Exception e) {
-                myType = measurementTypeRepository.findByMeasurementtypeid(1);
-            }
-
-            if (myType == null) {
-                throw new ValidationException("The measurement type select does not exist");
-            }
-            myMeasurement.setMeasurementType(myType);
-            myMeasurement.setValue(m.getValue());
-            myMeasurement.setCreationdate(CreationDate);
-            myMeasurement.setCreatedby(UserName);
-
-            myMeasurement = measurementRepository.save(myMeasurement);
-
-
-            myActivity.getMeasurements().add(myMeasurement);
-        }
-
-        //activityRepository.save(myActivity);
-
-        return true;
-    }*/
 
     public boolean DeleteActivity(Integer ActivityID, String UserName) {
         if (ActivityID == null || UserName == null) {

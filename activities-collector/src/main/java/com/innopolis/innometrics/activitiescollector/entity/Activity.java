@@ -41,6 +41,12 @@ public class Activity implements Serializable {
     private String browser_title;
 
     @Column
+    private String pid;
+
+    @Column
+    private String osversion;
+
+    @Column
     private String ip_address;
 
     @Column
@@ -66,25 +72,6 @@ public class Activity implements Serializable {
     private Set<Measurement> measurements = new HashSet<Measurement>();
 
     public Activity() {
-    }
-
-    public Activity(String activitytype, Boolean idle_activity, String email, Date start_time, Date end_time, String executable_name, String browser_url, String browser_title, String ip_address, String mac_address, String value, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Set<Measurement> measurements) {
-        activitytype = activitytype;
-        this.idle_activity = idle_activity;
-        this.email = email;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.executable_name = executable_name;
-        this.browser_url = browser_url;
-        this.browser_title = browser_title;
-        this.ip_address = ip_address;
-        this.mac_address = mac_address;
-        this.value = value;
-        this.creationdate = creationdate;
-        this.createdby = createdby;
-        this.lastupdate = lastupdate;
-        this.updateby = updateby;
-        this.measurements = measurements;
     }
 
     public Integer getActivityID() {
@@ -157,6 +144,22 @@ public class Activity implements Serializable {
 
     public void setBrowser_title(String browser_title) {
         this.browser_title = browser_title;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getOsversion() {
+        return osversion;
+    }
+
+    public void setOsversion(String osversion) {
+        this.osversion = osversion;
     }
 
     public String getIp_address() {
