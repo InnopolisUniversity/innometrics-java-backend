@@ -2,6 +2,8 @@ package com.innopolis.innometrics.authserver.controller;
 
 import com.innopolis.innometrics.authserver.DTO.*;
 import com.innopolis.innometrics.authserver.config.JwtToken;
+import com.innopolis.innometrics.authserver.entitiy.Project;
+import com.innopolis.innometrics.authserver.entitiy.User;
 import com.innopolis.innometrics.authserver.exceptions.ValidationException;
 import com.innopolis.innometrics.authserver.service.ProjectService;
 import com.innopolis.innometrics.authserver.service.UserService;
@@ -75,5 +77,28 @@ public class AdminAPI {
 
         UserListResponse response = userService.getActiveUsers(projectId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Users/projects/{UserName}")
+    public ResponseEntity<ProjectListResponse> getProjectsByUsername(@PathVariable String UserName) {
+        if (!UserName.isEmpty()) {
+            User userDetails = userService.findByEmail(UserName);
+
+            if(userDetails == null)
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+
+            ProjectListResponse response =  new ProjectListResponse();
+            for (Project p: userDetails.getProjects()) {
+                ProjectResponse pTemp = new ProjectResponse();
+                pTemp.setName(p.getName());
+                pTemp.setProjectID(p.getProjectID());
+                pTemp.setIsActive(p.getIsactive());
+                response.getProjectList().add(pTemp);
+            }
+
+
+            return ResponseEntity.ok(response);
+        } else
+            throw new ValidationException("Not enough data provided");
     }
 }

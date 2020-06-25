@@ -1,24 +1,18 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.*;
-import com.innopolis.innometrics.restapi.entitiy.User;
-import com.innopolis.innometrics.restapi.repository.UserRepository;
+import com.innopolis.innometrics.restapi.DTO.ActivitiesReportByUserResponse;
+import com.innopolis.innometrics.restapi.DTO.CumulativeReportResponse;
+import com.innopolis.innometrics.restapi.DTO.TimeReportResponse;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 @Service

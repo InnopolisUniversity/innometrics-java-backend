@@ -7,18 +7,16 @@ public class AgentResponse implements Serializable {
     private Integer agentid;
     private String agentname;
     private String description;
-    private String oauthuri;
-    private String authenticationmethod;
+    private String isconnected;
 
     public AgentResponse() {
     }
 
-    public AgentResponse(Integer agentid, String agentname, String description, String oauthuri, String authenticationmethod) {
+    public AgentResponse(Integer agentid, String agentname, String description, String isconnected) {
         this.agentid = agentid;
         this.agentname = agentname;
         this.description = description;
-        this.oauthuri = oauthuri;
-        this.authenticationmethod = authenticationmethod;
+        this.isconnected = isconnected;
     }
 
     public Integer getAgentid() {
@@ -45,19 +43,11 @@ public class AgentResponse implements Serializable {
         this.description = description;
     }
 
-    public String getOauthuri() {
-        return oauthuri;
+    public String getIsconnected() {
+        return isconnected;
     }
 
-    public void setOauthuri(String oauthuri) {
-        this.oauthuri = oauthuri;
-    }
-
-    public String getAuthenticationmethod() {
-        return authenticationmethod;
-    }
-
-    public void setAuthenticationmethod(String authenticationmethod) {
-        this.authenticationmethod = authenticationmethod;
+    public void setIsconnected(String isconnected) {
+        this.isconnected = isconnected;
     }
 }

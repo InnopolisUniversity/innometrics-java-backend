@@ -1,6 +1,7 @@
 package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.entitiy.User;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -150,4 +151,25 @@ public class AdminService {
         return null;
     }
 
+
+    @HystrixCommand(commandKey = "getProjectsByUsername",
+            fallbackMethod = "getProjectsByUsernameFallback",
+            commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
+    public ProjectListResponse getProjectsByUsername(String userName) {
+        //ProjectListResponse response = new ProjectListResponse();
+        String uri = baseURL + "/Users/projects/" + userName;
+
+        ResponseEntity<ProjectListResponse> response = null;
+
+        HttpEntity<String> entity = new HttpEntity<>(null);
+        response = restTemplate.exchange(uri, HttpMethod.GET, entity, ProjectListResponse.class);
+
+        return response.getBody();
+    }
+
+    public ProjectListResponse getProjectsByUsernameFallback(String userName, Throwable exception) {
+        LOG.warn("getProjectsByUsernameFallback method used");
+        LOG.warn(exception);
+        return null;
+    }
 }

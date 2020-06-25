@@ -2,36 +2,26 @@ package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.UserRequest;
 import com.innopolis.innometrics.restapi.entitiy.User;
-import com.innopolis.innometrics.restapi.repository.UserRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class UserService implements UserDetailsService {
 
     @Autowired
     private RestTemplate restTemplate;
-
-    @Autowired
-    private BCryptPasswordEncoder encoder;
-
-    @Autowired
-    private UserRepository userRepository;
 
     private String baseURL = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User";
 

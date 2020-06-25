@@ -6,12 +6,14 @@ import java.util.List;
 
 public class ProjectListRequest implements Serializable {
     private Integer AgentId;
-    private String operation;
-    private List<ParamsConfigDTO> params;
+    private Integer ProjectId;
+    //private String operation;
 
-    public ProjectListRequest() {
+    //private List<ParamsConfigDTO> params;
+
+    /*public ProjectListRequest() {
         params = new ArrayList<>();
-    }
+    }*/
 
     public Integer getAgentId() {
         return AgentId;
@@ -21,6 +23,14 @@ public class ProjectListRequest implements Serializable {
         AgentId = agentId;
     }
 
+    public Integer getProjectId() {
+        return ProjectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        ProjectId = projectId;
+    }
+    /*
     public String getOperation() {
         return operation;
     }
@@ -36,4 +46,6 @@ public class ProjectListRequest implements Serializable {
     public void setParams(List<ParamsConfigDTO> params) {
         this.params = params;
     }
+    */
+
 }

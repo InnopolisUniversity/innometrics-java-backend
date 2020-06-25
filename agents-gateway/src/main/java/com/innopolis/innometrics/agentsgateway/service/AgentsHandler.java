@@ -4,27 +4,38 @@ import com.innopolis.innometrics.agentsgateway.DTO.*;
 import com.innopolis.innometrics.agentsgateway.entity.*;
 import com.innopolis.innometrics.agentsgateway.repository.AgentconfigRepository;
 import com.innopolis.innometrics.agentsgateway.repository.AgentconfigmethodsRepository;
+import com.innopolis.innometrics.agentsgateway.repository.AgentsxprojectRepository;
 import com.innopolis.innometrics.agentsgateway.repository.ReposxprojectRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+/*import org.springframework.security.oauth.consumer.client.OAuthRestTemplate;
+import org.springframework.social.connect.ConnectionValues;
+import org.springframework.social.connect.UserProfile;
+import org.springframework.social.connect.support.OAuth1ConnectionFactory;
+import org.springframework.social.oauth1.*;*/
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.EntityManager;
-import javax.ws.rs.core.Response;
-
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+//import org.springframework.social.connect.ApiAdapter;
 
 @Service
 public class AgentsHandler {
     private static Logger LOG = LogManager.getLogger();
+
+    final private static String GetReposList = "ProjectList";
+    final private static String ConnectRepo = "";
 
     @Autowired
     AgentconfigRepository agentconfigRepository;
@@ -35,17 +46,20 @@ public class AgentsHandler {
     @Autowired
     ReposxprojectRepository reposxprojectRepository;
 
+    @Autowired
+    AgentsxprojectRepository agentsxprojectRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public ProjectListResponse getProjectList(ProjectListRequest request) throws NoSuchFieldException, IllegalAccessException {
+    public ProjectListResponse getProjectList(Integer AgentID, Integer ProjectId) throws NoSuchFieldException, IllegalAccessException {
 
         ProjectListResponse ProjectList = new ProjectListResponse();
-        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(request.getAgentId(), request.getOperation());
-
+        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(AgentID, GetReposList);
+        Agentsxproject  agentskeys =agentsxprojectRepository.findByAgentidAndProjectid(AgentID, ProjectId);
         String uri = agentConfig.getEndpoint();//"http://innometric.guru:9098/keytoken";//
 
         HttpHeaders headers = new HttpHeaders();
@@ -54,21 +68,27 @@ public class AgentsHandler {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
 
-        for (ParamsConfigDTO d : request.getParams()) {
+        Class<?> requestMapping = Agentsxproject.class;
+
+        for (Agentconfigdetails param : agentConfig.getParams()) {
+            String paramValue = "";
+            Field f = requestMapping.getDeclaredField( param.getRequestparam());
+            f.setAccessible(true);
+            paramValue = f.get(agentskeys).toString();
+
             builder.queryParam(
-                    d.getParamname(),
-                    d.getValue()
+                    param.getParamname(),
+                    paramValue
             );
         }
 
         HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
 
-
         ResponseEntity<LinkedHashMap[]> response = restTemplate.exchange(builder.toUriString(), requestMethod/*HttpMethod.POST*/, null, LinkedHashMap[].class);
 
         HttpStatus status = response.getStatusCode();
         Class<?> responseMapping = ProjectDTO.class;
-        ProjectList.setAgentId(request.getAgentId());
+        ProjectList.setAgentId(AgentID);
         for (LinkedHashMap element : response.getBody()) {
             ProjectDTO projectTmp = new ProjectDTO();
             for (Agentresponseconfig responseF : agentConfig.getResponseParams()) {
@@ -80,14 +100,14 @@ public class AgentsHandler {
             ProjectList.getProjectList().add(projectTmp);
         }
 
-
         return ProjectList;
     }
 
 
     public Boolean getConnectProject(ConnectProjectRequest request) throws NoSuchFieldException, IllegalAccessException {
 
-        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(request.getAgentId(), request.getOperation());
+        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(request.getAgentId(), ConnectRepo);
+        Agentsxproject  agentskeys =agentsxprojectRepository.findByAgentidAndProjectid(request.getAgentId(), request.getProjectID());
 
         String uri = agentConfig.getEndpoint();
 
@@ -96,6 +116,20 @@ public class AgentsHandler {
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
+
+        Class<?> requestMapping = Agentsxproject.class;
+
+        for (Agentconfigdetails param : agentConfig.getParams()) {
+            String paramValue = "";
+            Field f = requestMapping.getDeclaredField( param.getRequestparam());
+            f.setAccessible(true);
+            paramValue = f.get(agentskeys).toString();
+
+            builder.queryParam(
+                    param.getParamname(),
+                    paramValue
+            );
+        }
 
         for (ParamsConfigDTO d : request.getParams()) {
             builder.queryParam(
@@ -106,7 +140,7 @@ public class AgentsHandler {
 
         HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
 
-        ResponseEntity<LinkedHashMap[]> response = restTemplate.exchange(builder.toUriString(), requestMethod/*HttpMethod.POST*/, null, LinkedHashMap[].class);
+        ResponseEntity<LinkedHashMap[]> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, LinkedHashMap[].class);
 
         HttpStatus status = response.getStatusCode();
 
@@ -177,5 +211,8 @@ public class AgentsHandler {
             default:
                 return null;
         }
+
+
     }
+
 }

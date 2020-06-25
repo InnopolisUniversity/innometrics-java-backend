@@ -33,7 +33,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer > {
             "   and captureddate < date(COALESCE(cast(:max_date as text), '12/31/2999'))\n" +
             "   and pu.email = a.email\n" +
             " group by a.email, executable_name, date_trunc('day', captureddate)\n" +
-            " order by activity_day asc, 1 asc;", nativeQuery = true)
+            " order by date_trunc('day', captureddate) asc, 1 asc;", nativeQuery = true)
     List<IActivitiesReportByUser> getActivitiesReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") Date min_date, @Param("max_date") Date max_date);
 
 
@@ -49,7 +49,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer > {
             "   and captureddate < date(COALESCE(cast(:max_date as text), '12/31/2999'))\n" +
             "   and pu.email = a.email\n" +
             " group by a.email, date_trunc('day', captureddate)\n" +
-            " order by activity_day asc, 1 asc;", nativeQuery = true)
+            " order by date_trunc('day', captureddate) asc, 1 asc;", nativeQuery = true)
     List<ITimeReportByUser> getTimeReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") Date min_date, @Param("max_date") Date max_date);
 
 }

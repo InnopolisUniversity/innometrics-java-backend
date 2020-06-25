@@ -19,18 +19,17 @@ public class AgentconfigService {
     @Autowired
     AgentconfigmethodsRepository agentconfigmethodsRepository;
 
-    public AgentListResponse getAgentList() {
-        List<Agentconfig> result = agentconfigRepository.findAll();
+    public AgentListResponse getAgentList(Integer projectId) {
+        List<IAgentStatus> result = agentconfigRepository.getAgentList(projectId);
 
         AgentListResponse response = new AgentListResponse();
-        for (Agentconfig a : result) {
+        for (IAgentStatus a : result) {
             AgentResponse tmp = new AgentResponse();
 
-            tmp.setAgentid(a.getAgentid());
+            tmp.setAgentid(Integer.valueOf(a.getAgentid()));
             tmp.setAgentname(a.getAgentname());
             tmp.setDescription(a.getDescription());
-            tmp.setOauthuri(a.getOauthuri());
-            tmp.setAuthenticationmethod(a.getAuthenticationmethod());
+            tmp.setIsconnected(a.getIsconnected());
             response.getAgentList().add(tmp);
         }
 

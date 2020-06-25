@@ -1,10 +1,17 @@
 package com.innopolis.innometrics.authserver.entitiy;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
 public class Project implements Serializable {
@@ -20,6 +27,8 @@ public class Project implements Serializable {
     @Column
     private String isactive;
 
+
+
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
 
@@ -31,6 +40,8 @@ public class Project implements Serializable {
 
     @Column(name = "updateby", insertable = false)
     private String updateby;
+
+
 
     //@JsonIgnore
     //@OneToMany(fetch = FetchType.LAZY, mappedBy = "role")//, cascade = CascadeType.ALL)
@@ -48,7 +59,7 @@ public class Project implements Serializable {
     //@OneToMany(fetch = FetchType.LAZY, mappedBy = "role")//, cascade = CascadeType.ALL)
     //private Set<User> invited_users = new HashSet<>();
 
-
+    /*
     public Project() {
     }
 
@@ -65,7 +76,7 @@ public class Project implements Serializable {
         this.users = users;
         this.invited_managers = invited_managers;
         this.invited_users = invited_users;
-        */
+        * /
     }
 
     public Integer getProjectID() {
@@ -124,7 +135,7 @@ public class Project implements Serializable {
         this.updateby = updateby;
     }
 
-    /*
+
     public Set<User> getManagers() {
         return managers;
     }

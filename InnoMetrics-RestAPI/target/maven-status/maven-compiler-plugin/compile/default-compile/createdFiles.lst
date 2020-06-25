@@ -29,7 +29,6 @@ com\innopolis\innometrics\restapi\DTO\ActivityReport.class
 com\innopolis\innometrics\restapi\entitiy\Role.class
 com\innopolis\innometrics\restapi\controller\AdminAPI.class
 com\innopolis\innometrics\restapi\DTO\Report.class
-com\innopolis\innometrics\restapi\config\WebConfig.class
 com\innopolis\innometrics\restapi\controller\DataCollectorsAPI.class
 com\innopolis\innometrics\restapi\DTO\AppCategoryResponse.class
 com\innopolis\innometrics\restapi\entitiy\User.class

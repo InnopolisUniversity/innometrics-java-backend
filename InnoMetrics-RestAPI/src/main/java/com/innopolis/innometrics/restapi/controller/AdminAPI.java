@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT})
 @RequestMapping(value = "/V1/Admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminAPI {
 
@@ -269,7 +269,12 @@ public class AdminAPI {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/Users/projects/{UserName}")
+    public ResponseEntity<ProjectListResponse> getProjectsByUsername(@PathVariable String UserName,@RequestHeader String Token) {
 
+        ProjectListResponse response = adminService.getProjectsByUsername(UserName);
+        return ResponseEntity.ok(response);
+    }
 
 
 

@@ -4,26 +4,24 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "agentconfigdetails")
-public class Agentconfigdetails {
-
+@Table(name = "agents_x_project")
+public class Agentsxproject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "configdetid", updatable = false)
-    private Integer configDetId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "methodid")
-    private Agentconfigmethods agentconfigmethods;
+    @Column(updatable = false)
+    private Integer configid;
 
     @Column
-    private String paramname;
+    private Integer agentid;
 
     @Column
-    private String paramtype;
+    private Integer projectid;
 
     @Column
-    private String requestparam;
+    private String key;
+
+    @Column
+    private String token;
 
     @Column
     private String isactive;
@@ -40,47 +38,47 @@ public class Agentconfigdetails {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Agentconfigdetails() {
+    public Agentsxproject() {
     }
 
-    public Integer getConfigDetId() {
-        return configDetId;
+    public Integer getConfigid() {
+        return configid;
     }
 
-    public void setConfigDetId(Integer configDetId) {
-        this.configDetId = configDetId;
+    public void setConfigid(Integer configid) {
+        this.configid = configid;
     }
 
-    public Agentconfigmethods getAgentconfigmethods() {
-        return agentconfigmethods;
+    public Integer getAgentid() {
+        return agentid;
     }
 
-    public void setAgentconfigmethods(Agentconfigmethods agentconfigmethods) {
-        this.agentconfigmethods = agentconfigmethods;
+    public void setAgentid(Integer agentid) {
+        this.agentid = agentid;
     }
 
-    public String getParamname() {
-        return paramname;
+    public Integer getProjectid() {
+        return projectid;
     }
 
-    public void setParamname(String paramname) {
-        this.paramname = paramname;
+    public void setProjectid(Integer projectid) {
+        this.projectid = projectid;
     }
 
-    public String getParamtype() {
-        return paramtype;
+    public String getKey() {
+        return key;
     }
 
-    public void setParamtype(String paramtype) {
-        this.paramtype = paramtype;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public String getRequestparam() {
-        return requestparam;
+    public String getToken() {
+        return token;
     }
 
-    public void setRequestparam(String requestparam) {
-        this.requestparam = requestparam;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getIsactive() {

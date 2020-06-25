@@ -1,10 +1,17 @@
 package com.innopolis.innometrics.authserver.entitiy;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
 public class User implements Serializable {
@@ -24,6 +31,14 @@ public class User implements Serializable {
 
     @Column(name = "confirmed_at", insertable = false, updatable = false)
     private Date confirmed_at;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_users",
+            joinColumns = @JoinColumn(name = "email"),
+            inverseJoinColumns = @JoinColumn(name = "projectid"))
+    Set<Project> projects;
+
 
     @Column
     private String isactive;
@@ -47,6 +62,7 @@ public class User implements Serializable {
 
 
      */
+    /*
     public User() {
     }
 

@@ -35,6 +35,21 @@ public class Agentconfig {
     private String authenticationmethod;
 
     @Column
+    private String apikey;
+
+    @Column
+    private String apisecret;
+
+    @Column
+    private String accesstokenendpoint;
+
+    @Column
+    private String authorizationbaseurl;
+
+    @Column
+    private String requesttokenendpoint;
+
+    @Column
     private String isactive;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
@@ -190,5 +205,45 @@ public class Agentconfig {
 
     public void setReposconfig(Set<Reposxproject> reposconfig) {
         this.reposconfig = reposconfig;
+    }
+
+    public String getAccesstokenendpoint() {
+        return accesstokenendpoint;
+    }
+
+    public void setAccesstokenendpoint(String accesstokenendpoint) {
+        this.accesstokenendpoint = accesstokenendpoint;
+    }
+
+    public String getAuthorizationbaseurl() {
+        return authorizationbaseurl;
+    }
+
+    public void setAuthorizationbaseurl(String authorizationbaseurl) {
+        this.authorizationbaseurl = authorizationbaseurl;
+    }
+
+    public String getRequesttokenendpoint() {
+        return requesttokenendpoint;
+    }
+
+    public void setRequesttokenendpoint(String requesttokenendpoint) {
+        this.requesttokenendpoint = requesttokenendpoint;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
+
+    public String getApisecret() {
+        return apisecret;
+    }
+
+    public void setApisecret(String apisecret) {
+        this.apisecret = apisecret;
     }
 }

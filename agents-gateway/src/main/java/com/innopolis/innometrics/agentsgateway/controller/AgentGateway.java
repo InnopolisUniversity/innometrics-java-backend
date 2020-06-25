@@ -1,14 +1,23 @@
 package com.innopolis.innometrics.agentsgateway.controller;
 
+//import com.github.scribejava.apis.;
+
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.model.*;
+import com.github.scribejava.core.oauth.OAuth10aService;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import com.innopolis.innometrics.agentsgateway.DTO.*;
-import com.innopolis.innometrics.agentsgateway.service.AgentconfigService;
-import com.innopolis.innometrics.agentsgateway.service.AgentsHandler;
+import com.innopolis.innometrics.agentsgateway.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping(value = "/AgentGateway", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -19,9 +28,12 @@ public class AgentGateway {
     @Autowired
     AgentsHandler agentsHandler;
 
+    @Autowired
+    private OAuthService oAuthService;
+
     @GetMapping("/AgentList")
-    public ResponseEntity<AgentListResponse> getAgentList() {
-        AgentListResponse response = agentconfigService.getAgentList();
+    public ResponseEntity<AgentListResponse> getAgentList(@RequestParam Integer ProjectId) {
+        AgentListResponse response = agentconfigService.getAgentList(ProjectId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -31,13 +43,14 @@ public class AgentGateway {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/projectList")
-    public ResponseEntity<ProjectListResponse> getProjectList(@RequestBody ProjectListRequest request,
+    @GetMapping("/projectList")
+    public ResponseEntity<ProjectListResponse> getProjectList(@RequestParam Integer AgentID,
+                                                              @RequestParam Integer ProjectId,
                                                               UriComponentsBuilder ucBuilder) {
 
         ProjectListResponse response = null;
         try {
-            response = agentsHandler.getProjectList(request);
+            response = agentsHandler.getProjectList(AgentID, ProjectId);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -72,5 +85,33 @@ public class AgentGateway {
         RepoDataPerProjectResponse response = agentsHandler.getRepoDataPerProject(ProjectId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/me/{AgentId}/{projectid}")
+    public void me(HttpServletResponse response, @PathVariable Integer AgentId, @PathVariable Integer projectid) throws InterruptedException, ExecutionException, IOException {
+        String AuthURL =  oAuthService.getAuthorizationURL(AgentId, projectid);
+
+        response.setHeader("Location", AuthURL);
+        response.setHeader("Accept", "application/json");
+        response.setStatus(302);
+    }
+
+    @GetMapping("/OAuth/{AgentId}/{userid}")
+    public String OAuth(@PathVariable Integer AgentId,
+                        @PathVariable Integer userid,
+                        @RequestParam String oauth_token,
+                        @RequestParam String oauth_verifier) {
+
+        oAuthService.storeToken(AgentId, userid, oauth_verifier);
+        return oauth_verifier;
+    }
+
+
+    @GetMapping("/OAuth20/")
+    public String OAuth20(@RequestParam Integer agentid,
+                        @RequestParam Integer projectid,
+                        @RequestParam String code) {
+        oAuthService.storeToken(agentid, projectid, code);
+        return code;
     }
 }
