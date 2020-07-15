@@ -276,19 +276,14 @@ public class AdminAPI {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/Classification/Category")
+    public ResponseEntity<CategoryListResponse> getAllCategories(@RequestHeader(required = false) String Token) {
 
+        if(Token == null) Token = "";
+        CategoryListResponse response = categoryService.getAllCategories(Token);
 
-
-
-
-
-
-
-
-
-
-
-
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PostMapping("/Classification/Category")
     public ResponseEntity<CategoryResponse> addCategory(@RequestBody CategoryRequest categoryRequest,

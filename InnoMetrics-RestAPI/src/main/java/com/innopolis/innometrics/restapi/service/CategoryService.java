@@ -194,4 +194,71 @@ public class CategoryService {
         LOG.warn(exception);
         return new AppCategoryResponse();
     }
+
+
+
+
+    @HystrixCommand(commandKey = "getAllCategories", fallbackMethod = "getAllCategoriesFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public CategoryListResponse getAllCategories(String token) {
+        String uri = baseURL + "/Category/GetAll";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", token);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
+
+        ResponseEntity<CategoryListResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CategoryListResponse.class);
+
+        HttpStatus status = response.getStatusCode();
+
+        return response.getBody();
+    }
+
+    public CategoryListResponse getAllCategoriesFallback(String token, Throwable exception) {
+        LOG.warn("getAppCategoryByIdFallback method used");
+        LOG.warn(exception);
+        return new CategoryListResponse();
+    }
+
+
+
+
+
+    @HystrixCommand(commandKey = "getTimeReport", fallbackMethod = "getTimeReportFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public CategoriesTimeReportResponse getTimeReport(String projectID,
+                                            String email,
+                                            Date min_Date,
+                                            Date max_Date) {
+        String uri = baseURL + "/timeReport";
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+                .queryParam("projectID", projectID)
+                .queryParam("email", email)
+                .queryParam("min_Date", min_Date)
+                .queryParam("max_Date", max_Date);
+        ResponseEntity<CategoriesTimeReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CategoriesTimeReportResponse.class);
+
+        HttpStatus status = response.getStatusCode();
+
+        return response.getBody();
+
+    }
+
+    public CategoriesTimeReportResponse getTimeReportFallback(String projectID,
+                                                    String email,
+                                                    Date min_Date,
+                                                    Date max_Date, Throwable exception) {
+        LOG.warn("getTimeReportFallback method used");
+        LOG.warn(exception);
+        return new CategoriesTimeReportResponse();
+    }
 }

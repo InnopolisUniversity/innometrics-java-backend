@@ -1,14 +1,20 @@
 package com.innopolis.innometrics.activitiescollector.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "actappxcategory")
+@Table(name = "cl_apps_categories", schema = "innometricsconfig")
 public class ActAppxCategory implements Serializable {
 
     @Id
@@ -17,10 +23,16 @@ public class ActAppxCategory implements Serializable {
     private Integer appid;
 
     @Column
+    private Integer catid;
+
+    @Column
     private String appname;
 
     @Column
-    private Integer categoryid;
+    private String appdescription;
+
+    @Column
+    private String executablefile;
 
     @Column
     private String isactive;
@@ -37,70 +49,5 @@ public class ActAppxCategory implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public ActAppxCategory() {
-    }
 
-    public Integer getAppid() {
-        return appid;
-    }
-
-    public void setAppid(Integer appid) {
-        this.appid = appid;
-    }
-
-    public String getAppname() {
-        return appname;
-    }
-
-    public void setAppname(String appname) {
-        this.appname = appname;
-    }
-
-    public Integer getCategoryid() {
-        return categoryid;
-    }
-
-    public void setCategoryid(Integer categoryid) {
-        this.categoryid = categoryid;
-    }
-
-    public String getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(String isactive) {
-        this.isactive = isactive;
-    }
-
-    public Date getCreationdate() {
-        return creationdate;
-    }
-
-    public void setCreationdate(Date creationdate) {
-        this.creationdate = creationdate;
-    }
-
-    public String getCreatedby() {
-        return createdby;
-    }
-
-    public void setCreatedby(String createdby) {
-        this.createdby = createdby;
-    }
-
-    public Date getLastupdate() {
-        return lastupdate;
-    }
-
-    public void setLastupdate(Date lastupdate) {
-        this.lastupdate = lastupdate;
-    }
-
-    public String getUpdateby() {
-        return updateby;
-    }
-
-    public void setUpdateby(String updateby) {
-        this.updateby = updateby;
-    }
 }

@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ActAppxCategoryRepository extends JpaRepository<ActAppxCategory, Integer > {
-    ActAppxCategory findByCategoryid(Integer categoryId);
+    ActAppxCategory findByCatid(Integer categoryId);
 }

@@ -1,13 +1,11 @@
 package com.innopolis.innometrics.activitiescollector.controller;
 
 
-import com.innopolis.innometrics.activitiescollector.DTO.AppCategoryRequest;
-import com.innopolis.innometrics.activitiescollector.DTO.AppCategoryResponse;
-import com.innopolis.innometrics.activitiescollector.DTO.CategoryRequest;
-import com.innopolis.innometrics.activitiescollector.DTO.CategoryResponse;
+import com.innopolis.innometrics.activitiescollector.DTO.*;
 import com.innopolis.innometrics.activitiescollector.config.JwtToken;
 import com.innopolis.innometrics.activitiescollector.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +32,14 @@ public class ClassificationConfig {
             UserName = jwtTokenUtil.getUsernameFromToken(Token);
 
         CategoryResponse response = categoryService.CreateCategory(categoryRequest, UserName);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/Category/GetAll")
+    public ResponseEntity<CategoryListResponse> getAllCategories(@RequestHeader(required = false) String Token) {
+
+        CategoryListResponse response = categoryService.getAllCategories();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -93,5 +99,17 @@ public class ClassificationConfig {
         AppCategoryResponse response = categoryService.UpdateAppCategory(appCategoryRequest, UserName);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/timeReport")
+    public ResponseEntity<CategoriesTimeReportResponse> getTimeReport(@RequestParam(required = false) String projectID,
+                                                            @RequestParam(required = false) String email,
+                                                            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
+                                                            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
+        projectID = projectID == "" ? null : projectID;
+        email = email == "" ? null : email;
+        TimeReportRequest request = new TimeReportRequest(projectID, email, min_Date, max_Date);
+        CategoriesTimeReportResponse myReport = categoryService.getTimeReport(request);
+        return ResponseEntity.ok(myReport);
     }
 }

@@ -3,6 +3,7 @@ package com.innopolis.innometrics.restapi.controller;
 import com.innopolis.innometrics.restapi.DTO.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.service.ActivityService;
+import com.innopolis.innometrics.restapi.service.CategoryService;
 import com.innopolis.innometrics.restapi.service.ProcessService;
 import com.innopolis.innometrics.restapi.service.ReportService;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +38,9 @@ public class DataCollectorsAPI {
 
     @Autowired
     ReportService reportService;
+
+    @Autowired
+    CategoryService categoryService;
 
     //add activity
     @PostMapping("/activity")
@@ -104,6 +108,16 @@ public class DataCollectorsAPI {
                                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
                                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
         CumulativeReportResponse myReport = reportService.getCumulativeReport(email, min_Date, max_Date);
+        return ResponseEntity.ok(myReport);
+    }
+
+    @GetMapping("/Reports/categorytimeReport")
+    public ResponseEntity<CategoriesTimeReportResponse> getCatTimeReport(@RequestParam(required = false) String projectID,
+                                                            @RequestParam(required = false) String email,
+                                                            @RequestParam(required = false) Date min_Date,
+                                                            @RequestParam(required = false) Date max_Date) {
+
+        CategoriesTimeReportResponse myReport = categoryService.getTimeReport(projectID, email, min_Date, max_Date);
         return ResponseEntity.ok(myReport);
     }
 }

@@ -18,14 +18,13 @@ public interface AgentconfigRepository extends JpaRepository<Agentconfig, Intege
 
 
     @Modifying
-    @Query( value ="select agent.agentid,\n" +
+    @Query( value ="select distinct agent.agentid,\n" +
             "       agent.agentname,\n" +
             "       agent.description,\n" +
             "       case when project.configid is not null then 'Y' else 'N' end isconnected\n" +
             "from innometricsagents.agentconfig agent\n" +
             "left outer join innometricsagents.agents_x_project project\n" +
-            "on agent.agentid = project.agentid\n" +
-            "where COALESCE (cast(project.projectid as text), cast(:ProjectID as text), '0' ) = COALESCE(cast(:ProjectID as text), '0')\n" +
-            "and agent.isactive = 'Y';", nativeQuery = true)
+            "  on agent.agentid = project.agentid\n" +
+            "  and cast(project.projectid  as text) = cast(:ProjectID as text);", nativeQuery = true)
     List<IAgentStatus> getAgentList(@Param("ProjectID") Integer projectID);
 }

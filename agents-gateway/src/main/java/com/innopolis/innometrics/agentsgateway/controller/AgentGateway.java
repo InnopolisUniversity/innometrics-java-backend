@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping(value = "/AgentGateway", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT})
 public class AgentGateway {
     @Autowired
     AgentconfigService agentconfigService;
@@ -88,8 +89,8 @@ public class AgentGateway {
     }
 
     @GetMapping(value = "/me/{AgentId}/{projectid}")
-    public void me(HttpServletResponse response, @PathVariable Integer AgentId, @PathVariable Integer projectid) throws InterruptedException, ExecutionException, IOException {
-        String AuthURL =  oAuthService.getAuthorizationURL(AgentId, projectid);
+    public void me(HttpServletResponse response, @PathVariable Integer AgentId, @PathVariable Integer projectid, @RequestParam String cb) throws InterruptedException, ExecutionException, IOException {
+        String AuthURL =  oAuthService.getAuthorizationURL(AgentId, projectid, cb);
 
         response.setHeader("Location", AuthURL);
         response.setHeader("Accept", "application/json");
@@ -97,21 +98,33 @@ public class AgentGateway {
     }
 
     @GetMapping("/OAuth/{AgentId}/{userid}")
-    public String OAuth(@PathVariable Integer AgentId,
+    public void OAuth(HttpServletResponse response,
+                        @PathVariable Integer AgentId,
                         @PathVariable Integer userid,
                         @RequestParam String oauth_token,
-                        @RequestParam String oauth_verifier) {
+                        @RequestParam String oauth_verifier,
+                        @RequestParam String cb) {
 
-        oAuthService.storeToken(AgentId, userid, oauth_verifier);
-        return oauth_verifier;
+        oAuthService.storeToken(AgentId, userid, oauth_verifier, cb);
+        //return oauth_verifier;
+
+        response.setHeader("Location", cb);
+        response.setHeader("Accept", "application/json");
+        response.setStatus(302);
     }
 
 
     @GetMapping("/OAuth20/")
-    public String OAuth20(@RequestParam Integer agentid,
-                        @RequestParam Integer projectid,
-                        @RequestParam String code) {
-        oAuthService.storeToken(agentid, projectid, code);
-        return code;
+    public void OAuth20(HttpServletResponse response,
+                          @RequestParam Integer agentid,
+                          @RequestParam Integer projectid,
+                          @RequestParam String code,
+                          @RequestParam String cb) {
+        oAuthService.storeToken(agentid, projectid, code, cb);
+        //return code;
+
+        response.setHeader("Location", cb);
+        response.setHeader("Accept", "application/json");
+        response.setStatus(302);
     }
 }

@@ -1,8 +1,15 @@
 package com.innopolis.innometrics.agentsgateway.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "agentconfigdetails")
 public class Agentconfigdetails {
@@ -26,6 +33,9 @@ public class Agentconfigdetails {
     private String requestparam;
 
     @Column
+    private String requesttype;
+
+    @Column
     private String isactive;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
@@ -40,86 +50,4 @@ public class Agentconfigdetails {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Agentconfigdetails() {
-    }
-
-    public Integer getConfigDetId() {
-        return configDetId;
-    }
-
-    public void setConfigDetId(Integer configDetId) {
-        this.configDetId = configDetId;
-    }
-
-    public Agentconfigmethods getAgentconfigmethods() {
-        return agentconfigmethods;
-    }
-
-    public void setAgentconfigmethods(Agentconfigmethods agentconfigmethods) {
-        this.agentconfigmethods = agentconfigmethods;
-    }
-
-    public String getParamname() {
-        return paramname;
-    }
-
-    public void setParamname(String paramname) {
-        this.paramname = paramname;
-    }
-
-    public String getParamtype() {
-        return paramtype;
-    }
-
-    public void setParamtype(String paramtype) {
-        this.paramtype = paramtype;
-    }
-
-    public String getRequestparam() {
-        return requestparam;
-    }
-
-    public void setRequestparam(String requestparam) {
-        this.requestparam = requestparam;
-    }
-
-    public String getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(String isactive) {
-        this.isactive = isactive;
-    }
-
-    public Date getCreationdate() {
-        return creationdate;
-    }
-
-    public void setCreationdate(Date creationdate) {
-        this.creationdate = creationdate;
-    }
-
-    public String getCreatedby() {
-        return createdby;
-    }
-
-    public void setCreatedby(String createdby) {
-        this.createdby = createdby;
-    }
-
-    public Date getLastupdate() {
-        return lastupdate;
-    }
-
-    public void setLastupdate(Date lastupdate) {
-        this.lastupdate = lastupdate;
-    }
-
-    public String getUpdateby() {
-        return updateby;
-    }
-
-    public void setUpdateby(String updateby) {
-        this.updateby = updateby;
-    }
 }

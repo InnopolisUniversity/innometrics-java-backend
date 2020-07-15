@@ -1,32 +1,41 @@
 databaseChangeLog:
   - changeSet:
-      id: SchemaCreation_innometricscnf_
-      author: xvasquez
-      changes:
-        - sql: "CREATE SCHEMA innometricsconfig;"
-  - changeSet:
-      id: configtablecreation
+      id: "update db structure agents"
       author: xvasquez
       changes:
         - createTable:
-            schemaName: innometricsconfig
-            tableName: cl_categories
-            remarks: Table to store categories availables to the classification module
+            schemaName: innometricsagents
+            tableName: agents_x_company
+            remarks: "Table to store the configuration for an agent linked to on particular company"
             columns:
               - column:
-                  name: catid
+                  name: configid
                   type: Integer
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    primaryKeyName: classCategories_pk
+                    primaryKeyName: agentscompany_pk
               - column:
-                  name: catname
+                  name: companyid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_company_agents
+                    references: innometricsauth.company(companyid)
+                    nullable: false
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agent_projects
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: key
                   type: Varchar(1024)
                   constraints:
                     nullable: false
               - column:
-                  name: catdescription
+                  name: token
                   type: Varchar(1024)
                   constraints:
                     nullable: false
@@ -54,38 +63,34 @@ databaseChangeLog:
               - column:
                   name: updateby
                   type: Varchar(25)
-
         - createTable:
-            schemaName: innometricsconfig
-            tableName: cl_apps_categories
-            remarks: Table to store the apps belong to each category
+            schemaName: innometricsagents
+            tableName: externalproject_x_team
+            remarks: Table to store teams information
             columns:
               - column:
-                  name: appid
+                  name: configid
                   type: Integer
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    primaryKeyName: classApps_pk
+                    primaryKeyName: externalproject_pk
               - column:
-                  name: catid
+                  name: teamid
                   type: Integer
                   constraints:
-                    foreignKeyName: fk_classCategories
-                    references: innometricsconfig.cl_categories(catid)
+                    foreignKeyName: fk_teams_auth_project
+                    references: innometricsauth.teams(teamid)
                     nullable: false
               - column:
-                  name: appname
-                  type: Varchar(1024)
+                  name: agentid
+                  type: Integer
                   constraints:
+                    foreignKeyName: fk_agentconfig_fetching
+                    references: innometricsagents.agentconfig(agentid)
                     nullable: false
               - column:
-                  name: appdescription
-                  type: Varchar(1024)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: executablefile
+                  name: repoid
                   type: Varchar(1024)
                   constraints:
                     nullable: false

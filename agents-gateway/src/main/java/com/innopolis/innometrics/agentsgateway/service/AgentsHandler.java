@@ -35,7 +35,7 @@ public class AgentsHandler {
     private static Logger LOG = LogManager.getLogger();
 
     final private static String GetReposList = "ProjectList";
-    final private static String ConnectRepo = "";
+    final private static String ConnectRepo = "ProjectConnect";
 
     @Autowired
     AgentconfigRepository agentconfigRepository;
@@ -117,13 +117,22 @@ public class AgentsHandler {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
 
-        Class<?> requestMapping = Agentsxproject.class;
+        Class<?> agentConfigMapping = Agentsxproject.class;
+
+        Class<?> requestMapping = ConnectProjectRequest.class;
 
         for (Agentconfigdetails param : agentConfig.getParams()) {
             String paramValue = "";
-            Field f = requestMapping.getDeclaredField( param.getRequestparam());
-            f.setAccessible(true);
-            paramValue = f.get(agentskeys).toString();
+
+            if(("request").equalsIgnoreCase(param.getRequesttype())){
+                Field f = requestMapping.getDeclaredField(param.getRequestparam());
+                f.setAccessible(true);
+                paramValue = f.get(request).toString();
+            }else{
+                Field f = agentConfigMapping.getDeclaredField(param.getRequestparam());
+                f.setAccessible(true);
+                paramValue = f.get(agentskeys).toString();
+            }
 
             builder.queryParam(
                     param.getParamname(),
@@ -131,12 +140,14 @@ public class AgentsHandler {
             );
         }
 
+        /*
         for (ParamsConfigDTO d : request.getParams()) {
             builder.queryParam(
                     d.getParamname(),
                     d.getValue()
             );
         }
+        */
 
         HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
 
@@ -145,7 +156,7 @@ public class AgentsHandler {
         HttpStatus status = response.getStatusCode();
 
         if (status == HttpStatus.CREATED || status == HttpStatus.OK) {
-            Agentconfig agent = agentconfigRepository.getOne(request.getAgentId());
+            /*Agentconfig agent = agentconfigRepository.getOne(request.getAgentId());
             String repoID = "";
             Reposxproject newrepo = new Reposxproject();
             newrepo.setAgentConfig(agent);
@@ -157,7 +168,7 @@ public class AgentsHandler {
             }
             newrepo.setRepoid(repoID);
 
-            reposxprojectRepository.save(newrepo);
+            reposxprojectRepository.save(newrepo);*/
             return true;
         }
 

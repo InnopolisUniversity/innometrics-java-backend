@@ -1,47 +1,18 @@
 package com.innopolis.innometrics.agentsgateway.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectProjectRequest {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ConnectProjectRequest implements Serializable {
     private Integer AgentId;
-    private String operation;
     private Integer projectID;
-    private List<ParamsConfigDTO> params;
-
-    public ConnectProjectRequest() {
-        params = new ArrayList<>();
-    }
-
-    public Integer getAgentId() {
-        return AgentId;
-    }
-
-    public void setAgentId(Integer agentId) {
-        AgentId = agentId;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public Integer getProjectID() {
-        return projectID;
-    }
-
-    public void setProjectID(Integer projectID) {
-        this.projectID = projectID;
-    }
-
-    public List<ParamsConfigDTO> getParams() {
-        return params;
-    }
-
-    public void setParams(List<ParamsConfigDTO> params) {
-        this.params = params;
-    }
+    private String RepoReference;
 }

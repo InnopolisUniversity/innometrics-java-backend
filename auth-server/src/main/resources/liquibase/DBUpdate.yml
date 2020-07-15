@@ -1,0 +1,159 @@
+databaseChangeLog:
+  - changeSet:
+      id: "update db structure"
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: company
+            remarks: "Table to store companies information"
+            columns:
+              - column:
+                  name: companyid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: companyid_pk
+              - column:
+                  name: companyname
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsauth
+            tableName: teams
+            remarks: Table to store teams information
+            columns:
+              - column:
+                  name: teamid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: teamid_pk
+              - column:
+                  name: teamname
+                  type: Varchar(256)
+              - column:
+                  name: description
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: companyid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_companyid
+                    references: innometricsauth.company(companyid)
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsauth
+            tableName: teammembers
+            remarks: "Table to store team members information"
+            columns:
+              - column:
+                  name: memberid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: memberid_pk
+              - column:
+                  name: teamid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_team
+                    references: innometricsauth.teams(teamid)
+                    nullable: false
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_team
+                    references: innometricsauth.user(email)
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: "add column for unsubcription"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometrics
+            tableName: user
+            columns:
+              - column:
+                  name: email_subscription
+                  type: boolean
+                  defaultValue: true

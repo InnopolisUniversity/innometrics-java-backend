@@ -30,15 +30,15 @@ public class OAuthImp implements OAuthService {
     AgentsxprojectRepository agentsxprojectRepository;
 
     @Override
-    public String getAuthorizationURL(Integer agentid, Integer projectid) {
+    public String getAuthorizationURL(Integer agentid, Integer projectid, String cb) {
         Agentconfig config = agentconfigRepository.findByAgentid(agentid);
         switch (config.getAuthenticationmethod()) {
             case "OAuth1a":
-                return getAuthorizationURL1a(config, projectid);
+                return getAuthorizationURL1a(config, projectid, cb);
             //break;
             case "OAuth20":
             case "OAuth20J":
-                return getAuthorizationURL20(config, projectid);
+                return getAuthorizationURL20(config, projectid, cb);
             //break;
             default:
         }
@@ -46,7 +46,7 @@ public class OAuthImp implements OAuthService {
     }
 
     @Override
-    public String storeToken(Integer agentid, Integer projectId, String oauth_verifier) {
+    public String storeToken(Integer agentid, Integer projectId, String oauth_verifier, String cb) {
         Agentconfig config = agentconfigRepository.findByAgentid(agentid);
         String token = "";
         switch (config.getAuthenticationmethod()) {
@@ -54,10 +54,10 @@ public class OAuthImp implements OAuthService {
                 token = getToken1a(config, projectId, oauth_verifier);
                 break;
             case "OAuth20":
-                token = getToken20(config, projectId, oauth_verifier);
+                token = getToken20(config, projectId, oauth_verifier, cb);
                 break;
             case  "OAuth20J":
-                token = getToken20j(config, projectId, oauth_verifier);
+                token = getToken20j(config, projectId, oauth_verifier, cb);
                 break;
             default:
         }
@@ -72,7 +72,7 @@ public class OAuthImp implements OAuthService {
         return token;
     }
 
-    private String getAuthorizationURL1a(Agentconfig config, Integer projectid) {
+    private String getAuthorizationURL1a(Agentconfig config, Integer projectid, String cb) {
         CustomOAuth1 client = new CustomOAuth1(); //CustomOAuth1.instance();
         client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
         client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
@@ -81,7 +81,7 @@ public class OAuthImp implements OAuthService {
         try {
             OAuth10aService service = new ServiceBuilder(config.getApikey()).debug()
                     .apiSecret(config.getApisecret())
-                    .callback(DEFAULT_CALLBACK1a + config.getAgentid() + "/" + projectid)
+                    .callback(DEFAULT_CALLBACK1a + config.getAgentid() + "/" + projectid + "?cb=" + cb)
                     .userAgent("InnoMetrics")
                     .build(client);
             OAuth1RequestToken requestToken = service.getRequestToken();
@@ -98,7 +98,7 @@ public class OAuthImp implements OAuthService {
         }
     }
 
-    private String getAuthorizationURL20(Agentconfig config, Integer projectid) {
+    private String getAuthorizationURL20(Agentconfig config, Integer projectid, String cb) {
         CustomOAuth2 client = new CustomOAuth2(); //CustomOAuth1.instance();
         client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
         client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
@@ -106,7 +106,7 @@ public class OAuthImp implements OAuthService {
         try {
             OAuth20Service service = new ServiceBuilder(config.getApikey()).debug()
                     .apiSecret(config.getApisecret())
-                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectid)
+                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectid + "&cb=" + cb)
                     .userAgent("InnoMetrics")
                     .build(client);
             return service.getAuthorizationUrl();
@@ -139,7 +139,7 @@ public class OAuthImp implements OAuthService {
         }
     }
 
-    private String getToken20(Agentconfig config, Integer projectId, String oauth_verifier) {
+    private String getToken20(Agentconfig config, Integer projectId, String oauth_verifier, String cb) {
         CustomOAuth2 client = new CustomOAuth2();
         client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
         client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
@@ -151,7 +151,7 @@ public class OAuthImp implements OAuthService {
                     .apiSecret(config.getApisecret())
                     .defaultScope("api")
                     //.callback(DEFAULT_CALLBACK20)
-                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectId)
+                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectId + "&cb=" + cb)
                     .userAgent("InnoMetrics")
                     .build(client);
 
@@ -164,7 +164,7 @@ public class OAuthImp implements OAuthService {
         }
     }
 
-    private String getToken20j(Agentconfig config, Integer projectId, String oauth_verifier) {
+    private String getToken20j(Agentconfig config, Integer projectId, String oauth_verifier, String cb) {
         CustomOAuth2J client = new CustomOAuth2J();
         client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());
         client.set_AuthorizationBaseUrl(config.getAuthorizationbaseurl());
@@ -173,7 +173,7 @@ public class OAuthImp implements OAuthService {
             OAuth20Service service = new ServiceBuilder(config.getApikey()).debug()
                     .apiSecret(config.getApisecret())
                     .defaultScope("api")
-                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectId)
+                    .callback(DEFAULT_CALLBACK20 + "?agentid=" + config.getAgentid() + "&projectid=" + projectId + "&cb=" + cb)
                     .userAgent("InnoMetrics")
                     .build(client);
 
