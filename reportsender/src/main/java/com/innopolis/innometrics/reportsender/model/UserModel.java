@@ -20,4 +20,6 @@ public class UserModel {
     @Id
     String email;
 
+    boolean email_subscription;
+
 }

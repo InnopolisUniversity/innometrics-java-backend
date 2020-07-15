@@ -6,20 +6,28 @@ import com.innopolis.innometrics.reportsender.repository.ClCategoriesRepository;
 import com.innopolis.innometrics.reportsender.repository.CumlativeRepActivityRepository;
 import com.innopolis.innometrics.reportsender.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.stringtemplate.v4.*;
+
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class MailSenderService{
 
     @Autowired
@@ -36,6 +44,10 @@ public class MailSenderService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private Environment env;
+
 
     @Autowired
     EntityManager em;
@@ -110,12 +122,12 @@ public class MailSenderService{
         String query;
 
         query = String.format("select a.email, extract(epoch from sum(a.dailysum))\n" +
-                        "           from ( select email, executable_name, max(dailysum) dailysum\n" +
-                        "                         from innometrics.cumlativerepactivity \n" +
-                        "                            where date_trunc('day', captureddate) = date('%s')\n" +
-                        "                            group by email, executable_name ) as a\n" +
-                        "           group by email",
-                dateNow.toString().substring(0, 10));
+                "           from ( select email, executable_name, max(dailysum) dailysum\n" +
+                "                         from innometrics.cumlativerepactivity \n" +
+                "                            where date_trunc('day', captureddate) = date('%s')\n" +
+                "                            group by email, executable_name ) as a\n" +
+                "           group by email",
+                    dateNow.toString().substring(0, 10));
 
 
 
@@ -222,8 +234,11 @@ public class MailSenderService{
                     "      <br/>\n" +
                     "      Innometrics Team\n" +
                     "      <br/>\n" +
-                    "      If you don't want to receive daily report please click <a href=\n" +
-                    "=3D\"https://ya.ru\">here</a>\n" +
+                    "      If you don't want to receive daily report please click <a href=\n";
+
+            htmlStr+=
+                    env.getProperty("mail.sender.host")
+                            + "/unsubscribe/" + to +">here</a>\n" +
                     "    </div>\n" +
                     "\n" +
                     "  </body>\n" +
