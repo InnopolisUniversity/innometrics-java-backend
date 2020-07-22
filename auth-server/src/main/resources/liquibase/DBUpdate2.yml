@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: "add column role"
+      author: azag
+      changes:
+        - addColumn:
+            schemaName: innometricsauth
+            tableName: user
+            columns:
+              - column:
+                  name: role
+                  type: Varchar(256)
+                  defaultValue: "DEVELOPER"
+                  constraints:
+                    references: innometricsauth.role(name)
+                    foreignKeyName: fk_name
+#                    references: innometricsauth.company(companyid)
+                    nullable: false

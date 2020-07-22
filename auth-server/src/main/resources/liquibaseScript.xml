@@ -6,4 +6,7 @@
 
     <include file="liquibase/DBCreation.yml"/>
     <include file="liquibase/DBUpdate.yml"/>
+    <include file="liquibase/DBUpdate2.yml"/>
+    <include file="liquibase/DBUpdate3.yml"/>
+
 </databaseChangeLog>

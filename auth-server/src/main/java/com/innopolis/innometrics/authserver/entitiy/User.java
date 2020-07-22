@@ -3,10 +3,14 @@ package com.innopolis.innometrics.authserver.entitiy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -15,6 +19,7 @@ import java.util.Set;
 @Entity
 @Table
 public class User implements Serializable {
+//public class User implements Serializable {
 
     @Id
     @Column(updatable = false)
@@ -55,11 +60,16 @@ public class User implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "role", insertable = false, updatable = false)
+    //@JoinColumn(name="role", referencedColumnName = "name", insertable = false, updatable = false)
+    private Role role;
+
     /*
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role")//, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")//, cascade = CascadeType.ALL)
     private Set<Role> roles = new HashSet<>();
-
 
      */
     /*
@@ -171,8 +181,48 @@ public class User implements Serializable {
 
      */
 
-    @PreUpdate
-    public void preUpdate(){
-        this.lastupdate = new Date();
-    }
+
+
+
+
+
+
+
+//
+//    @PreUpdate
+//    public void preUpdate(){
+//        this.lastupdate = new Date();
+//    }
+//
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return new HashSet<Role>(){{
+//            add(getRole());
+//        }};
+//    }
+//
+//    @Override
+//    public String getUsername() {
+//        return email;
+//    }
+//
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isAccountNonLocked() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isEnabled() {
+//        return true;
+//    }
 }

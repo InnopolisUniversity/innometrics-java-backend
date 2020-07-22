@@ -55,6 +55,8 @@ public class UserService implements UserDetailsService {
             temp.setEmail(u.getEmail());
             temp.setSurname(u.getSurname());
             temp.setIsactive(u.getIsactive());
+            temp.setRole(u.getRole());
+//            temp.setPermissions(u.getRole().getPermissions());
             response.getUserList().add(temp);
         }
         return response;

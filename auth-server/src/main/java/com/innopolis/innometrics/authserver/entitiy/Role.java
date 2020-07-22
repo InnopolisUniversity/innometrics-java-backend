@@ -1,12 +1,19 @@
 package com.innopolis.innometrics.authserver.entitiy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
 public class Role implements Serializable {
+//public class Role implements Serializable{
     @Id
     @Column(updatable = false)
     private String name;
@@ -28,6 +35,21 @@ public class Role implements Serializable {
 
     @Column(name = "updateby", insertable = false)
     private String updateby;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    private Set<User> users;
+
+    @OneToMany(mappedBy = "role")
+    private Set<Permission> permissions;
+
+
+
+
+    public List<String> getPermissions()
+    {
+     return permissions.stream().map( permission -> permission.getPage()).collect(Collectors.toList());
+    }
 
     public Role() {
     }
@@ -102,4 +124,17 @@ public class Role implements Serializable {
     public void preUpdate(){
         this.lastupdate = new Date();
     }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+//    @Override
+//    public String getAuthority() {
+//        return getName();
+//    }
 }
