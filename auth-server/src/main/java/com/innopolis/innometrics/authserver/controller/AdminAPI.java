@@ -2,10 +2,10 @@ package com.innopolis.innometrics.authserver.controller;
 
 import com.innopolis.innometrics.authserver.DTO.*;
 import com.innopolis.innometrics.authserver.config.JwtToken;
-import com.innopolis.innometrics.authserver.entitiy.Project;
-import com.innopolis.innometrics.authserver.entitiy.User;
+import com.innopolis.innometrics.authserver.entitiy.*;
 import com.innopolis.innometrics.authserver.exceptions.ValidationException;
 import com.innopolis.innometrics.authserver.service.ProjectService;
+import com.innopolis.innometrics.authserver.service.RoleService;
 import com.innopolis.innometrics.authserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("AdminAPI")
@@ -26,6 +28,9 @@ public class AdminAPI {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     @PostMapping("/Project")
     public ResponseEntity<ProjectResponse> CreateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
@@ -101,4 +106,30 @@ public class AdminAPI {
         } else
             throw new ValidationException("Not enough data provided");
     }
+
+
+    @GetMapping("/Role/Permissions/{RoleName}")
+    public PageListResponse getPages(@PathVariable String RoleName){
+        return roleService.getPagesWithIconsForRole(RoleName);
+    }
+
+    @GetMapping("/User/Permissions/{UserName}")
+    public ResponseEntity<PermissionResponse> getPermissions(@PathVariable String UserName){
+        if (!UserName.isEmpty()) {
+            User userDetails = userService.findByEmail(UserName);
+
+            if(userDetails == null)
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+
+            PermissionResponse response =  new PermissionResponse();
+            for (Permission p: userDetails.getRole().getPermissions()) {
+                response.setRole(p.getRole());
+                response.addPage(p.getPage());
+            }
+
+            return ResponseEntity.ok(response);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
 }

@@ -37,12 +37,12 @@ public class User implements Serializable {
     @Column(name = "confirmed_at", insertable = false, updatable = false)
     private Date confirmed_at;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_users",
             joinColumns = @JoinColumn(name = "email"),
             inverseJoinColumns = @JoinColumn(name = "projectid"))
-    Set<Project> projects;
+    Set<Project> projects ;
 
 
     @Column
@@ -62,8 +62,7 @@ public class User implements Serializable {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "role", insertable = false, updatable = false)
-    //@JoinColumn(name="role", referencedColumnName = "name", insertable = false, updatable = false)
+    @JoinColumn(nullable = false, name = "role" , referencedColumnName = "name", insertable = false, updatable = false)
     private Role role;
 
     /*

@@ -145,15 +145,15 @@ databaseChangeLog:
               - column:
                   name: updateby
                   type: Varchar(25)
-  - changeSet:
-      id: "add column for unsubcription"
-      author: xvasquez
-      changes:
-        - addColumn:
-            schemaName: innometrics
-            tableName: user
-            columns:
-              - column:
-                  name: email_subscription
-                  type: boolean
-                  defaultValue: true
+#  - changeSet:
+#      id: "add column for unsubcription"
+#      author: xvasquez
+#      changes:
+#        - addColumn:
+#            schemaName: innometrics
+#            tableName: user
+#            columns:
+#              - column:
+#                  name: email_subscription
+#                  type: boolean
+#                  defaultValue: true

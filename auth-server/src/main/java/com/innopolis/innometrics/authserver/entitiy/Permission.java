@@ -1,21 +1,23 @@
 package com.innopolis.innometrics.authserver.entitiy;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
+@IdClass(Permission_id.class)
 public class Permission {
-    @Id
-     private String page;
 
+    @Id
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "page", referencedColumnName = "page")
+    private Page page;
+
+    @Id
     @Column
     private String role;
 
-    public Permission(String page, String role) {
+    public Permission(Page page, String role) {
         this.page = page;
         this.role = role;
     }
@@ -23,11 +25,13 @@ public class Permission {
     public Permission() {
     }
 
-    public String getPage() {
+    public Page getPage() {
         return page;
     }
 
     public String getRole() {
         return role;
     }
+
+
 }
