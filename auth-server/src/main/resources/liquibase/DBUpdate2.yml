@@ -13,6 +13,6 @@ databaseChangeLog:
                   defaultValue: "DEVELOPER"
                   constraints:
                     references: innometricsauth.role(name)
-                    foreignKeyName: fk_name
+                    foreignKeyName: fk_role
 #                    references: innometricsauth.company(companyid)
                     nullable: false

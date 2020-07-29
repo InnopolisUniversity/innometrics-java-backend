@@ -1,15 +1,16 @@
-package com.innopolis.innometrics.authserver.DTO;
-import com.innopolis.innometrics.authserver.entitiy.Page;
-import com.innopolis.innometrics.authserver.entitiy.Permission;
-import com.innopolis.innometrics.authserver.entitiy.User;
+package com.innopolis.innometrics.restapi.DTO;
+
+
+
+import com.innopolis.innometrics.restapi.entitiy.Page;
+import com.innopolis.innometrics.restapi.entitiy.Permission;
+import com.innopolis.innometrics.restapi.entitiy.User;
 
 import javax.persistence.PreUpdate;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.io.Serializable;
 
 public class RoleRequest implements Serializable {
 
@@ -28,6 +29,7 @@ public class RoleRequest implements Serializable {
     private String updateby;
 
     private List<PageRequest> pages ;
+
 
     public RoleRequest() {
     }
@@ -111,5 +113,4 @@ public class RoleRequest implements Serializable {
     public void setPages(List<PageRequest> pages) {
         this.pages = pages;
     }
-
 }

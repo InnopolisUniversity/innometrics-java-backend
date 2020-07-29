@@ -6,6 +6,7 @@ import com.innopolis.innometrics.authserver.DTO.UserRequest;
 import com.innopolis.innometrics.authserver.config.JwtToken;
 import com.innopolis.innometrics.authserver.entitiy.Project;
 import com.innopolis.innometrics.authserver.entitiy.User;
+import com.innopolis.innometrics.authserver.service.RoleService;
 import com.innopolis.innometrics.authserver.service.UserService;
 import com.innopolis.innometrics.authserver.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,10 @@ public class AuthAPI {
     @Autowired
     private UserService userService;
 
+
+    @Autowired
+    private RoleService roleService;
+
     @PostMapping("/User")
     public ResponseEntity<UserRequest> CreateUser(@RequestBody UserRequest user, @RequestHeader(required = false) String Token) {
         System.out.println("Create user method started");
@@ -43,6 +48,10 @@ public class AuthAPI {
         if (userService.existsByEmail(user.getEmail()))
             throw new ValidationException("Username already existed");
 
+        if (roleService.findByName(user.getRole())== null) {
+            throw new ValidationException("No such role");
+        }
+
         if (Token != null)
             UserName = jwtToken.getUsernameFromToken(Token);
 
@@ -55,18 +64,24 @@ public class AuthAPI {
         myUser.setSurname(user.getSurname());
         myUser.setCreationdate(new Date());
         myUser.setCreatedby(UserName);
+        myUser.setRole(roleService.findByName(user.getRole()));
         myUser.setIsactive("Y");
 
-        userService.save(myUser);
+        myUser = userService.save(myUser);
         System.out.println("New user saved...");
 
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.fromUserToUserRequest(myUser), HttpStatus.CREATED);
     }
 
     @PutMapping("/User")
     public ResponseEntity<UserRequest> updateUser(@RequestBody  UserRequest user, @RequestHeader(required = true) String Token) {
         if (user != null) {
             User myUser  = userService.findByEmail(user.getEmail());
+
+            if (roleService.findByName(user.getRole())== null) {
+                throw new ValidationException("No such role");
+            }
+
             if(myUser != null){
                 String UserName = Token != null ? jwtToken.getUsernameFromToken(Token) : "API";
 
@@ -78,10 +93,11 @@ public class AuthAPI {
                 myUser.setLastupdate(new Date());
                 myUser.setIsactive(user.getIsactive());
                 myUser.setConfirmed_at(user.getConfirmed_at());
+                myUser.setRole(roleService.findByName(user.getRole()));
 
-                userService.save(myUser);
+                myUser = userService.save(myUser);
 
-                return ResponseEntity.ok(user);
+                return ResponseEntity.ok(userService.fromUserToUserRequest(myUser));
             }
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else
@@ -92,18 +108,12 @@ public class AuthAPI {
     public ResponseEntity<UserRequest> getUserByName(@PathVariable String UserName) {
         if (!UserName.isEmpty()) {
             User userDetails = userService.findByEmail(UserName);
-            UserRequest myUser = new UserRequest();
 
             if(userDetails == null)
-                return new ResponseEntity<>(myUser, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new UserRequest(), HttpStatus.NO_CONTENT);
 
+            UserRequest myUser = userService.fromUserToUserRequest(userDetails);
 
-            myUser.setEmail(userDetails.getEmail());
-            myUser.setPassword(userDetails.getPassword());
-            myUser.setName(userDetails.getName());
-            myUser.setSurname(userDetails.getSurname());
-            myUser.setConfirmed_at(userDetails.getConfirmed_at());
-            myUser.setIsactive(userDetails.getIsactive());
             return ResponseEntity.ok(myUser);
         } else
             throw new ValidationException("Not enough data provided");

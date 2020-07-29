@@ -1,6 +1,8 @@
-package com.innopolis.innometrics.authserver.DTO;
+package com.innopolis.innometrics.restapi.DTO;
 
-public class PageRequest {
+import java.io.Serializable;
+
+public class PageRequest implements Serializable {
     private String page;
 
     private String icon;

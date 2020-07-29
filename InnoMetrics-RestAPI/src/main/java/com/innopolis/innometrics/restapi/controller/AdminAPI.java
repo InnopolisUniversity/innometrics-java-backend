@@ -2,17 +2,12 @@ package com.innopolis.innometrics.restapi.controller;
 
 import com.innopolis.innometrics.restapi.DTO.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
-import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
-import com.innopolis.innometrics.restapi.entitiy.Project;
-import com.innopolis.innometrics.restapi.entitiy.Role;
-import com.innopolis.innometrics.restapi.entitiy.User;
+import com.innopolis.innometrics.restapi.entitiy.*;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.innopolis.innometrics.restapi.repository.ProjectRepository;
 import com.innopolis.innometrics.restapi.repository.RoleRepository;
-import com.innopolis.innometrics.restapi.service.AdminService;
-import com.innopolis.innometrics.restapi.service.CategoryService;
-import com.innopolis.innometrics.restapi.service.UserService;
+import com.innopolis.innometrics.restapi.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +31,10 @@ public class AdminAPI {
     private JwtToken jwtTokenUtil;
 
     @Autowired
-    RoleRepository roleService;
+    RoleRepository roleRepository;
+
+    @Autowired
+    RoleService roleService;
 
     @Autowired
     UserService userService;
@@ -53,9 +51,17 @@ public class AdminAPI {
     @Autowired
     CategoryService categoryService;
 
-    @GetMapping("/Role")
-    public ResponseEntity<List<Role>> ListAllRoles(@RequestHeader String Token) {
-        List<Role> lTemp = roleService.findAll();
+    @Autowired
+    PermissionService permissionService;
+
+    @GetMapping("/Role/Permissions/{RoleName}")
+    public ResponseEntity<List<Page>> ListRolePermissions(@PathVariable String RoleName) {
+
+        if (roleService.getRole(RoleName)== null) {
+            throw new ValidationException("No such role");
+        }
+
+        List<Page> lTemp = roleService.getPagesWithIconsForRole(RoleName);
         if (lTemp.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -63,57 +69,118 @@ public class AdminAPI {
         return new ResponseEntity<>(lTemp, HttpStatus.OK);
     }
 
-    @GetMapping("/Role/ById")
-    public ResponseEntity<Role> GetRoleById(@RequestParam String RoleId, @RequestHeader String Token) {
-        Role myRole = roleService.findByName(RoleId);
-        if (myRole == null) {
+    @GetMapping("/Role/{RoleName}")
+    public ResponseEntity<RoleResponse> GetRoleByName(@PathVariable String RoleName, @RequestHeader(required = false) String Token) {
+        RoleResponse role = roleService.getRole(RoleName);
+        if (role == null) {
             throw new ValidationException("The role doesn't exist");
         }
 
-        return new ResponseEntity<>(myRole, HttpStatus.OK);
+        return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
     @PostMapping("/Role")
-    public ResponseEntity<Role> CreateRole(@RequestParam String RoleId, @RequestParam String RoleDescription, @RequestHeader String Token) {
+    public ResponseEntity<RoleResponse> CreateRole(@RequestBody RoleRequest roleRequest, @RequestHeader(required = false) String Token) {
+        if (roleRequest == null) {
+            throw new ValidationException("Not enough data provided");
+        }
 
-        if (roleService.findByName(RoleId) != null) {
+        if (roleService.getRole(roleRequest.getName()) != null) {
             throw new ValidationException("The role already existed");
         }
 
-        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        if (roleRequest.getName() == null || roleRequest.getPages() == null || roleRequest.getDescription() == null ) {
+            throw new ValidationException("Not enough data provided");
+        }
 
-        Role myRole = new Role();
-        myRole.setName(RoleId);
-        myRole.setDescription(RoleDescription);
-        myRole.setCreatedby(UserName);
-        myRole.setCreationdate(new Date());
-        myRole.setIsactive("Y");
+        RoleResponse myRole = roleService.createRole(roleRequest);
 
-        myRole = roleService.save(myRole);
 
         return new ResponseEntity<>(myRole, HttpStatus.CREATED);
     }
 
+    @PostMapping("/Role/Permissions")
+    public ResponseEntity<PermissionResponse> CreatePermissions(@RequestBody PermissionResponse permissionResponse, @RequestHeader(required = false) String Token) {
+        if (permissionResponse == null) {
+            throw new ValidationException("Not enough data provided");
+        }
+
+        if (roleService.getRole(permissionResponse.getRole()) == null) {
+            throw new ValidationException("The role does not exist");
+        }
+
+
+        PermissionResponse permissionResponseOut = permissionService.createPermissios(permissionResponse);
+
+        return new ResponseEntity<>(permissionResponseOut, HttpStatus.CREATED);
+    }
+
+
+
 
     @PutMapping("/Role")
-    public ResponseEntity<Role> UpdateRole(@RequestParam String RoleId, @RequestParam String RoleDescription, @RequestHeader String Token) {
-
-
-        Role myRole = roleService.findByName(RoleId);
-        if (myRole == null) {
-            throw new ValidationException("The role doesn't exist");
+    public ResponseEntity<RoleResponse> UpdateRole(@RequestBody RoleRequest roleRequest, @RequestHeader(required = false) String Token) {
+        if (roleRequest == null) {
+            throw new ValidationException("Not enough data provided");
         }
-        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
 
-        myRole.setDescription(RoleDescription);
-        myRole.setLastupdate(new Date());
-        myRole.setUpdateby(UserName);
+        if (roleRequest.getName() == null || roleRequest.getPages() == null || roleRequest.getDescription() == null ) {
+            throw new ValidationException("Not enough data provided");
+        }
 
+        if (roleService.getRole(roleRequest.getName()) == null) {
+            RoleResponse myRole = roleService.createRole(roleRequest);
+            return new ResponseEntity<>(myRole, HttpStatus.CREATED);
+        }
 
-        myRole = roleService.save(myRole);
+        RoleResponse myRole = roleService.updateRole(roleRequest);
 
-        return new ResponseEntity<>(myRole, HttpStatus.OK);
+        return ResponseEntity.ok(myRole);
     }
+
+
+    @GetMapping("/Role")
+    public ResponseEntity<RoleListResponse> ListAllRoles(@RequestHeader(required = false) String Token) {
+        RoleListResponse lTemp = roleService.getRoles();
+        if (lTemp.getRoleList().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(lTemp, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/User/Permissions/{UserName}")
+    public ResponseEntity<PermissionResponse> GetPermissionsOfUser(@PathVariable String UserName, @RequestHeader(required = false) String Token) {
+
+        if (!userService.existsByEmail(UserName)) {
+            throw new ValidationException("Username does not existed");
+        }
+        PermissionResponse permissionResponse = permissionService.getPermissiosOfUser(UserName);
+
+        return new ResponseEntity<>(permissionResponse, HttpStatus.OK);
+
+    }
+
+
+    @PostMapping("/User/Role")
+    public ResponseEntity<UserResponse> SetRoleOfUser(@RequestParam String UserName, @RequestParam String RoleName , @RequestHeader(required = false) String Token) {
+
+        if (!userService.existsByEmail(UserName)) {
+            throw new ValidationException("Username does not existed");
+        }
+
+        if(roleService.getRole(RoleName) == null){
+            throw new ValidationException("No such role");
+        }
+
+        UserResponse userResponse = userService.setRole(UserName, RoleName);
+
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+
+    }
+
+
 
     @PostMapping("/User")
     public ResponseEntity<UserRequest> CreateUser(@RequestBody UserRequest user, @RequestHeader(required = false) String Token) {
@@ -130,23 +197,17 @@ public class AdminAPI {
             //return new ResponseEntity<>("Username already existed", HttpStatus.FOUND);
         }
 
+        if (roleService.getRole(user.getRole())== null) {
+            throw new ValidationException("No such role");
+        }
+
         String UserName = "API";
 
         if (Token != null) {
             UserName = jwtTokenUtil.getUsernameFromToken(Token);
         }
 
-        User myUser = new User();
-        myUser.setEmail(user.getEmail());
-        //myUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        myUser.setPassword(user.getPassword());
-        myUser.setName(user.getName());
-        myUser.setSurname(user.getSurname());
-        myUser.setCreationdate(new Date());
-        myUser.setCreatedby(UserName);
-        myUser.setIsactive("Y");
-
-        userService.create(myUser);
+        userService.create(user);
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
 
@@ -263,6 +324,7 @@ public class AdminAPI {
         ProjectListResponse response = adminService.getActiveProjects();
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/Users")
     public ResponseEntity<UserListResponse> getActiveUsers(@RequestParam(required = false) String ProjectId) {
         UserListResponse response = adminService.getActiveUsers(ProjectId);

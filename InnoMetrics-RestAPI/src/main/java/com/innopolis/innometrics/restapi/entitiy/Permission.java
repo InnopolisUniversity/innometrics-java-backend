@@ -1,4 +1,4 @@
-package com.innopolis.innometrics.authserver.entitiy;
+package com.innopolis.innometrics.restapi.entitiy;
 
 
 import javax.persistence.*;

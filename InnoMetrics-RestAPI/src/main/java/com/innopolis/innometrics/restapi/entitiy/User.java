@@ -40,17 +40,14 @@ public class User implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    /*
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role")//, cascade = CascadeType.ALL)
-    private Set<Role> roles = new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "role" , referencedColumnName = "name", insertable = false, updatable = false)
+    private Role role;
 
-
-     */
     public User() {
     }
 
-    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Set<Role> roles) {
+    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -61,7 +58,20 @@ public class User implements Serializable {
         this.createdby = createdby;
         this.lastupdate = lastupdate;
         this.updateby = updateby;
-        //this.roles = roles;
+        this.role = role;
+    }
+
+    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.confirmed_at = confirmed_at;
+        this.isactive = isactive;
+        this.creationdate = creationdate;
+        this.createdby = createdby;
+        this.lastupdate = lastupdate;
+        this.updateby = updateby;
     }
 
     public String getEmail() {
@@ -144,16 +154,16 @@ public class User implements Serializable {
         this.updateby = updateby;
     }
 
-    /*
-    public Set<Role> getRoles() {
-        return roles;
+
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-     */
+
 
     @PreUpdate
     public void preUpdate(){

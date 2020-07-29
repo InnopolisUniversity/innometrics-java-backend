@@ -1,18 +1,16 @@
-package com.innopolis.innometrics.authserver.DTO;
-import com.innopolis.innometrics.authserver.entitiy.Page;
-import com.innopolis.innometrics.authserver.entitiy.Permission;
-import com.innopolis.innometrics.authserver.entitiy.User;
+package com.innopolis.innometrics.restapi.DTO;
+
+
+import com.innopolis.innometrics.restapi.entitiy.Permission;
+import com.innopolis.innometrics.restapi.entitiy.User;
 
 import javax.persistence.PreUpdate;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.io.Serializable;
 
-public class RoleRequest implements Serializable {
-
+public class RoleResponse implements Serializable {
     private String name;
 
     private String description;
@@ -27,12 +25,12 @@ public class RoleRequest implements Serializable {
 
     private String updateby;
 
-    private List<PageRequest> pages ;
+    private PageListResponse pages;
 
-    public RoleRequest() {
+    public RoleResponse() {
     }
 
-    public RoleRequest(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, List<PageRequest> pages) {
+    public RoleResponse(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, PageListResponse pages ) {
         this.name = name;
         this.description = description;
         this.isactive = isactive;
@@ -104,12 +102,11 @@ public class RoleRequest implements Serializable {
         this.lastupdate = new Date();
     }
 
-    public List<PageRequest> getPages() {
+    public PageListResponse getPages() {
         return pages;
     }
 
-    public void setPages(List<PageRequest> pages) {
+    public void setPages(PageListResponse pages) {
         this.pages = pages;
     }
-
 }

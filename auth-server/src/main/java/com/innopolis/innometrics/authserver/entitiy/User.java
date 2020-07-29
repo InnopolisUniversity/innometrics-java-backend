@@ -19,7 +19,6 @@ import java.util.Set;
 @Entity
 @Table
 public class User implements Serializable {
-//public class User implements Serializable {
 
     @Id
     @Column(updatable = false)
@@ -62,124 +61,141 @@ public class User implements Serializable {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "role" , referencedColumnName = "name", insertable = false, updatable = false)
+    @JoinColumn(nullable = false, name = "role" , referencedColumnName = "name")
     private Role role;
 
-    /*
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")//, cascade = CascadeType.ALL)
-    private Set<Role> roles = new HashSet<>();
-
-     */
-    /*
-    public User() {
-    }
-
-    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Set<Role> roles) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.confirmed_at = confirmed_at;
-        this.isactive = isactive;
-        this.creationdate = creationdate;
-        this.createdby = createdby;
-        this.lastupdate = lastupdate;
-        this.updateby = updateby;
-        //this.roles = roles;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public Date getConfirmed_at() {
-        return confirmed_at;
-    }
-
-    public void setConfirmed_at(Date confirmed_at) {
-        this.confirmed_at = confirmed_at;
-    }
-
-    public String getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(String isactive) {
-        this.isactive = isactive;
-    }
-
-    public Date getCreationdate() {
-        return creationdate;
-    }
-
-    public void setCreationdate(Date creationdate) {
-        this.creationdate = creationdate;
-    }
-
-    public String getCreatedby() {
-        return createdby;
-    }
-
-    public void setCreatedby(String createdby) {
-        this.createdby = createdby;
-    }
-
-    public Date getLastupdate() {
-        return lastupdate;
-    }
-
-    public void setLastupdate(Date lastupdate) {
-        this.lastupdate = lastupdate;
-    }
-
-    public String getUpdateby() {
-        return updateby;
-    }
-
-    public void setUpdateby(String updateby) {
-        this.updateby = updateby;
-    }
-
-    /*
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-     */
-
+//    public User(String email, String password, String name, String surname, Date confirmed_at, Set<Project> projects, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Role role) {
+//        this.email = email;
+//        this.password = password;
+//        this.name = name;
+//        this.surname = surname;
+//        this.confirmed_at = confirmed_at;
+//        this.projects = projects;
+//        this.isactive = isactive;
+//        this.creationdate = creationdate;
+//        this.createdby = createdby;
+//        this.lastupdate = lastupdate;
+//        this.updateby = updateby;
+//        this.role = role;
+//    }
+//
+//    public User(String email, String password, String name, String surname, Date confirmed_at, Set<Project> projects, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
+//        this.email = email;
+//        this.password = password;
+//        this.name = name;
+//        this.surname = surname;
+//        this.confirmed_at = confirmed_at;
+//        this.projects = projects;
+//        this.isactive = isactive;
+//        this.creationdate = creationdate;
+//        this.createdby = createdby;
+//        this.lastupdate = lastupdate;
+//        this.updateby = updateby;
+//    }
+//
+//
+//
+//
+//    public User() {
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public String getSurname() {
+//        return surname;
+//    }
+//
+//    public void setSurname(String surname) {
+//        this.surname = surname;
+//    }
+//
+//    public Date getConfirmed_at() {
+//        return confirmed_at;
+//    }
+//
+//    public void setConfirmed_at(Date confirmed_at) {
+//        this.confirmed_at = confirmed_at;
+//    }
+//
+//    public Set<Project> getProjects() {
+//        return projects;
+//    }
+//
+//    public void setProjects(Set<Project> projects) {
+//        this.projects = projects;
+//    }
+//
+//    public String getIsactive() {
+//        return isactive;
+//    }
+//
+//    public void setIsactive(String isactive) {
+//        this.isactive = isactive;
+//    }
+//
+//    public Date getCreationdate() {
+//        return creationdate;
+//    }
+//
+//    public void setCreationdate(Date creationdate) {
+//        this.creationdate = creationdate;
+//    }
+//
+//    public String getCreatedby() {
+//        return createdby;
+//    }
+//
+//    public void setCreatedby(String createdby) {
+//        this.createdby = createdby;
+//    }
+//
+//    public Date getLastupdate() {
+//        return lastupdate;
+//    }
+//
+//    public void setLastupdate(Date lastupdate) {
+//        this.lastupdate = lastupdate;
+//    }
+//
+//    public String getUpdateby() {
+//        return updateby;
+//    }
+//
+//    public void setUpdateby(String updateby) {
+//        this.updateby = updateby;
+//    }
+//
+//    public Role getRole() {
+//        return role;
+//    }
+//
+//    public void setRole(Role role) {
+//        this.role = role;
+//    }
+//
+//
 
 
 
@@ -192,36 +208,5 @@ public class User implements Serializable {
 //    public void preUpdate(){
 //        this.lastupdate = new Date();
 //    }
-//
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return new HashSet<Role>(){{
-//            add(getRole());
-//        }};
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return email;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true;
-//    }
+
 }

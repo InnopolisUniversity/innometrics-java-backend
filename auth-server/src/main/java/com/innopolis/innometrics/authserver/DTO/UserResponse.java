@@ -1,9 +1,6 @@
 package com.innopolis.innometrics.authserver.DTO;
 
-import com.innopolis.innometrics.authserver.entitiy.Role;
-
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public class UserResponse implements Serializable {
@@ -15,29 +12,9 @@ public class UserResponse implements Serializable {
 
     private String isactive;
 
-    private Role role;
+    private String role;
 
-//    private List<String> permissions;
-//
-//    public void setPermissions(List<String> permissions) {
-//        this.permissions = permissions;
-//    }
-
-//    public List<String> getPermissions() {
-//        return permissions;
-//    }
-
-    public Role getRole() {
-        return role;
-    }
-
-//    public List<String> getPermissions(){
-//        return role.getPermissions();
-//    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    private List<PageResponse> pages;
 
     public String getEmail() {
         return email;
@@ -71,21 +48,31 @@ public class UserResponse implements Serializable {
         this.isactive = isactive;
     }
 
-    public UserResponse(String email, String name, String surname, String isactive) {
+    public UserResponse(String email, String name, String surname, String isactive, String role, List<PageResponse> pages) {
         this.email = email;
         this.name = name;
         this.surname = surname;
         this.isactive = isactive;
-    }
-
-    public UserResponse(String email, String name, String surname, String isactive, Role role) {
-        this.email = email;
-        this.name = name;
-        this.surname = surname;
-        this.isactive = isactive;
-        this.role = role;
+        this.role=role;
+        this.pages=pages;
     }
 
     public UserResponse() {
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public List<PageResponse> getPages() {
+        return pages;
+    }
+
+    public void setPages(List<PageResponse> pages) {
+        this.pages = pages;
     }
 }

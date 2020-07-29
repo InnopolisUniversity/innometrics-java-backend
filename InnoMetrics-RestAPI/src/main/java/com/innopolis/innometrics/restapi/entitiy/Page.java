@@ -1,13 +1,24 @@
-package com.innopolis.innometrics.authserver.DTO;
+package com.innopolis.innometrics.restapi.entitiy;
 
-public class PageRequest {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table
+public class Page {
+
+    @Id
+    @Column
     private String page;
 
+    @Column
     private String icon;
 
-    public PageRequest(){}
+    public Page(){}
 
-    public PageRequest(String page, String icon) {
+    public Page(String page, String icon) {
         this.page = page;
         this.icon = icon;
     }

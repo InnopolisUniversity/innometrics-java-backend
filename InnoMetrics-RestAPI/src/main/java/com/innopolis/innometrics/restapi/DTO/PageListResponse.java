@@ -1,9 +1,10 @@
-package com.innopolis.innometrics.authserver.DTO;
+package com.innopolis.innometrics.restapi.DTO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PageListResponse {
+public class PageListResponse implements Serializable {
     List<PageResponse> pageList;
 
     public PageListResponse() {

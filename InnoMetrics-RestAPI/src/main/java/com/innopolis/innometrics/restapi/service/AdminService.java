@@ -22,7 +22,6 @@ public class AdminService {
     @Autowired
     private RestTemplate restTemplate;
 
-    //private String baseURL = "http://INNOMETRICS-ADMIN-SERVER/AdminAPI";
     private String baseURL = "http://INNOMETRICS-AUTH-SERVER/AdminAPI";
 
 

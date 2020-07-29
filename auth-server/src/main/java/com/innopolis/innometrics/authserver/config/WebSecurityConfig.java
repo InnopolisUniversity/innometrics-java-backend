@@ -73,9 +73,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/AuthAPI/User",
+                .antMatchers("/AuthAPI/User/**",
                         "/**",
                         "/AuthAPI/login",
+                        "/AuthAPI/Role/**",
                         "/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
@@ -84,16 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html**",
                         "/swagger-ui.html/**",
                         "/webjars/**").permitAll()
-//                .antMatchers("/users/**","/settings/**", "/dashboard/**").hasRole("MANAGER")
-//                .antMatchers("/users/**","/settings/**", "/dashboard/**").hasRole("ADMIN")
-//                .antMatchers("/dashboard/**").hasRole("DEVELOPER")
                 .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .loginPage("/login")
-//                //redirect to main page after successful login
-//                .defaultSuccessUrl("/dashboard")
-//                .permitAll()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

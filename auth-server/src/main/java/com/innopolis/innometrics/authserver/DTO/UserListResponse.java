@@ -22,4 +22,5 @@ public class UserListResponse implements Serializable {
     public void setUserList(List<UserResponse> userList) {
         this.userList = userList;
     }
+
 }

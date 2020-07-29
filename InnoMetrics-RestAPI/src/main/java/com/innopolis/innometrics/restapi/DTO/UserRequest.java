@@ -1,5 +1,7 @@
 package com.innopolis.innometrics.restapi.DTO;
 
+import com.innopolis.innometrics.restapi.entitiy.Role;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,14 +19,17 @@ public class UserRequest implements Serializable {
 
     private String isactive;
 
+    private String role;
 
-    public UserRequest(String email, String password, String name, String surname, Date confirmed_at, String isactive) {
+
+    public UserRequest(String email, String password, String name, String surname, Date confirmed_at, String isactive, String role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.confirmed_at = confirmed_at;
         this.isactive = isactive;
+        this.role=role;
     }
 
     public UserRequest() {
@@ -76,5 +81,13 @@ public class UserRequest implements Serializable {
 
     public void setIsactive(String isactive) {
         this.isactive = isactive;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

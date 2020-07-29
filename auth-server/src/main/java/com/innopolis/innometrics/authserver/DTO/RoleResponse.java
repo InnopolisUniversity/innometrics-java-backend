@@ -25,20 +25,12 @@ public class RoleResponse implements Serializable {
 
     private String updateby;
 
-    private Set<User> users;
-
-
-    private Set<Permission> permissions ;
-
-//    public List<String> getPermissions()
-//    {
-//        return permissions.stream().map( permission -> permission.getPage()).collect(Collectors.toList());
-//    }
+    private PageListResponse pages;
 
     public RoleResponse() {
     }
 
-    public RoleResponse(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
+    public RoleResponse(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, PageListResponse pages ) {
         this.name = name;
         this.description = description;
         this.isactive = isactive;
@@ -46,6 +38,7 @@ public class RoleResponse implements Serializable {
         this.createdby = createdby;
         this.lastupdate = lastupdate;
         this.updateby = updateby;
+        this.pages=pages;
     }
 
     public String getName() {
@@ -109,11 +102,11 @@ public class RoleResponse implements Serializable {
         this.lastupdate = new Date();
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public PageListResponse getPages() {
+        return pages;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setPages(PageListResponse pages) {
+        this.pages = pages;
     }
 }
