@@ -9,6 +9,7 @@ import com.innopolis.innometrics.authserver.repository.PermissionRepository;
 import com.innopolis.innometrics.authserver.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -76,20 +77,18 @@ public class RoleService {
         Set<Permission> permissions = new HashSet<Permission>();
         for (PageRequest pageRequest : pages) {
             Page page = pageRepository.findByPage(pageRequest.getPage());
-            Permission permission;
+            Permission permission = permissionRepository.findByPageAndRole(page, roleRequest.getName());
             if (page != null){
-                permission = permissionRepository.findByPageAndRole(page, roleRequest.getName());
-                if(permission!=null){
-                    permissions.add(permission);
-                } else {
+                if(permission == null){
                     permission = new Permission(page, roleRequest.getName());
-                    permissionRepository.save(permission);
+                    permission = permissionRepository.save(permission);
                 }
             } else {
                 page = new Page(pageRequest.getPage(),pageRequest.getIcon());
+                page = pageRepository.save(page);
                 permission = new Permission(page, roleRequest.getName());
-                permissionRepository.save(permission);
-                pageRepository.save(page);
+                permission = permissionRepository.save(permission);
+
             }
 
             permissions.add(permission);
@@ -102,6 +101,7 @@ public class RoleService {
         return RoleResponseFromRole(role);
     }
 
+    @Transactional
     public RoleResponse updateRole(RoleRequest roleRequest){
         Role role = roleRepository.findByName(roleRequest.getName());
 
@@ -113,21 +113,59 @@ public class RoleService {
         role.setLastupdate(roleRequest.getLastupdate());
         role.setUpdateby(roleRequest.getUpdateby());
 
+
+
+        // delete previous
+//        Set<Permission> permissionSet = roleRepository.findByName(roleRequest.getName()).getPermissions();
+//        for (Permission permission : permissionSet) {
+//            Page page = permission.getPage();
+//            permissionRepository.findAllByPage();
+//            permissionRepository.delete(permission);
+//        }
+
+//        List<PageRequest> pages = roleRequest.getPages();
+//        Set<Permission> permissions = new HashSet<Permission>();
+//        for (PageRequest pageRequest : pages) {
+//            Page page = pageRepository.findByPage(pageRequest.getPage());
+//            Permission permission;
+//            if (page != null) {
+//                permission = permissionRepository.findByPageAndRole(page,roleRequest.getName());
+//                if(permission==null){
+//                    permission = new Permission(page, roleRequest.getName());
+//                    permissionRepository.save(permission);
+//                }
+//
+//            } else {
+//                page = new Page(pageRequest.getPage(), pageRequest.getIcon());
+//                permission = new Permission(page, roleRequest.getName());
+//                permissionRepository.save(permission);
+//                pageRepository.save(page);
+//            }
+//
+//            permissions.add(permission);
+//        }
+
+        //        //delete previous
+//        List<Permission> allPermissionsForRoleWithLast = permissionRepository.findAllByRole(roleRequest.getName());
+//        if(allPermissionsForRoleWithLast.size() > pages.size()){
+//            for (Permission permission : allPermissionsForRoleWithLast) {
+//                if(pages.contains())
+//            }
+//        }
+
+        permissionRepository.deleteAllByRole(roleRequest.getName());
+
+
         List<PageRequest> pages = roleRequest.getPages();
         Set<Permission> permissions = new HashSet<Permission>();
         for (PageRequest pageRequest : pages) {
             Page page = pageRepository.findByPage(pageRequest.getPage());
             Permission permission;
-            if (page != null){
-                permission = permissionRepository.findByPageAndRole(page, roleRequest.getName());
-                if(permission!=null){
-                    permissions.add(permission);
-                } else {
-                    permission = new Permission(page, roleRequest.getName());
-                    permissionRepository.save(permission);
-                }
+            if (page != null) {
+                permission = new Permission(page, roleRequest.getName());
+                permissionRepository.save(permission);
             } else {
-                page = new Page(pageRequest.getPage(),pageRequest.getIcon());
+                page = new Page(pageRequest.getPage(), pageRequest.getIcon());
                 permission = new Permission(page, roleRequest.getName());
                 permissionRepository.save(permission);
                 pageRepository.save(page);

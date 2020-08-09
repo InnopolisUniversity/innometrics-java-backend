@@ -1,15 +1,22 @@
 package com.innopolis.innometrics.authserver.entitiy;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @IdClass(Permission_id.class)
 public class Permission {
 
     @Id
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "page", referencedColumnName = "page")
     private Page page;
 
@@ -17,27 +24,5 @@ public class Permission {
     @Column
     private String role;
 
-    public Permission(Page page, String role) {
-        this.page = page;
-        this.role = role;
-    }
 
-    public Permission() {
-    }
-
-    public Page getPage() {
-        return page;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

@@ -77,6 +77,7 @@ public class AdminAPI {
         ProjectListResponse response = projectService.getProjectList();
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/Users")
     public ResponseEntity<UserListResponse> getActiveUsers(@RequestParam(required = false) String projectId) {
 
