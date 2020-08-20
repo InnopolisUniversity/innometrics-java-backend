@@ -1,12 +1,17 @@
 package com.innopolis.innometrics.restapi.entitiy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table
 public class Role implements Serializable {
+
     @Id
     @Column(updatable = false)
     private String name;
@@ -29,8 +34,30 @@ public class Role implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    private Set<User> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "role")
+    private Set<Permission> permissions = new HashSet<>();
+
+
+    public Set<Permission> getPermissions()
+    {
+        return permissions;
+    }
+
+
+    public void setPermissions(Set<Permission> permissions)
+    {
+        this.permissions=permissions;
+    }
+
+
     public Role() {
     }
+
+
 
     public Role(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
         this.name = name;
@@ -102,4 +129,13 @@ public class Role implements Serializable {
     public void preUpdate(){
         this.lastupdate = new Date();
     }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
 }

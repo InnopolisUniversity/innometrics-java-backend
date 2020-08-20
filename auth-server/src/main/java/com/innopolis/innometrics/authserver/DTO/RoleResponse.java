@@ -1,66 +1,36 @@
-package com.innopolis.innometrics.authserver.entitiy;
+package com.innopolis.innometrics.authserver.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.security.core.GrantedAuthority;
+import com.innopolis.innometrics.authserver.entitiy.Permission;
+import com.innopolis.innometrics.authserver.entitiy.User;
 
-import javax.persistence.*;
+import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity
-@Table
-public class Role implements Serializable {
-//public class Role implements Serializable{
-    @Id
-    @Column(updatable = false)
+public class RoleResponse implements Serializable {
     private String name;
 
-    @Column
     private String description;
 
-    @Column
     private String isactive;
 
-    @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
 
-    @Column(name = "createdby", insertable = false, updatable = false)
     private String createdby;
 
-    @Column(name = "lastupdate", insertable = false)
     private Date lastupdate;
 
-    @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "role")
-    private Set<User> users = new HashSet<>();
+    private PageListResponse pages;
 
-    @OneToMany(mappedBy = "role")
-    private Set<Permission> permissions = new HashSet<>();
-
-
-
-
-    public Set<Permission> getPermissions()
-    {
-        return permissions;
+    public RoleResponse() {
     }
 
-    public void setPermissions(Set<Permission> permissions)
-    {
-        this.permissions=permissions;
-    }
-
-    public Role() {
-    }
-
-    public Role(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
+    public RoleResponse(String name, String description, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, PageListResponse pages ) {
         this.name = name;
         this.description = description;
         this.isactive = isactive;
@@ -68,6 +38,7 @@ public class Role implements Serializable {
         this.createdby = createdby;
         this.lastupdate = lastupdate;
         this.updateby = updateby;
+        this.pages=pages;
     }
 
     public String getName() {
@@ -131,16 +102,11 @@ public class Role implements Serializable {
         this.lastupdate = new Date();
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public PageListResponse getPages() {
+        return pages;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setPages(PageListResponse pages) {
+        this.pages = pages;
     }
-
-//    @Override
-//    public String getAuthority() {
-//        return getName();
-//    }
 }

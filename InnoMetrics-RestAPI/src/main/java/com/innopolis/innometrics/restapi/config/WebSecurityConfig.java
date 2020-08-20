@@ -82,10 +82,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/login",
-                        "/V1/Admin/User",
+                        "/V1/Admin/User/**",
                         "/V1/Admin/Users",
                         "/V1/Admin/Project",
                         "/V1/Admin/Classification/**",
+                        "/V1/Admin/Role/**",
                         "/V1/Reports/**",
                         "/v2/api-docs",
                         "/configuration/ui",
@@ -109,17 +110,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    /*
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://innometrics-12856.firebaseapp.com/", "http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST"));;
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-    */
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("https://innometrics-12856.firebaseapp.com/", "http://localhost:3000"));
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST"));;
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
 
 }

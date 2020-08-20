@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, String > {
             nativeQuery = true
     )
     List<User> findAllActive(@Param("ProjectID") String projectID);
+
+    List<User> findAll();
 }

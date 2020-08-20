@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: "add table permissions"
+      author: azag
+
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: permission
+            remarks: Table to store permissions
+            columns:
+              - column:
+                  name: page
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: permissions_pk
+                    foreignKeyName: fk_page
+              - column:
+                  name: role
+                  type: Varchar(256)
+                  defaultValue: "DEVELOPER"
+                  constraints:
+                    references: innometricsauth.role(name)
+                    primaryKey: true
+                    primaryKeyName: permissions_pk
+                    foreignKeyName: fk_name
+                    nullable: false
+
+  - changeSet:
+      id: "add table pages"
+      author: azag
+
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: page
+            remarks: Table with icons for page
+            columns:
+              - column:
+                  name: page
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: page_pk
+                    nullable: false
+              - column:
+                  name: icon
+                  type: Varchar(256)
+
+
