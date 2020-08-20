@@ -38,6 +38,9 @@ public class Agentconfigdetails {
     @Column
     private String isactive;
 
+    @Column
+    private String defaultvalue;
+
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
 

@@ -59,7 +59,7 @@ public class AgentsHandler {
 
         ProjectListResponse ProjectList = new ProjectListResponse();
         Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(AgentID, GetReposList);
-        Agentsxproject  agentskeys =agentsxprojectRepository.findByAgentidAndProjectid(AgentID, ProjectId);
+        Agentsxproject agentskeys = agentsxprojectRepository.findByAgentidAndProjectid(AgentID, ProjectId);
         String uri = agentConfig.getEndpoint();//"http://innometric.guru:9098/keytoken";//
 
         HttpHeaders headers = new HttpHeaders();
@@ -72,9 +72,14 @@ public class AgentsHandler {
 
         for (Agentconfigdetails param : agentConfig.getParams()) {
             String paramValue = "";
-            Field f = requestMapping.getDeclaredField( param.getRequestparam());
-            f.setAccessible(true);
-            paramValue = f.get(agentskeys).toString();
+            if (param.getRequestparam() != null) {
+                Field f = requestMapping.getDeclaredField(param.getRequestparam());
+                f.setAccessible(true);
+                paramValue = f.get(agentskeys).toString();
+            } else {
+                paramValue = param.getDefaultvalue();
+            }
+
 
             builder.queryParam(
                     param.getParamname(),
@@ -107,7 +112,7 @@ public class AgentsHandler {
     public Boolean getConnectProject(ConnectProjectRequest request) throws NoSuchFieldException, IllegalAccessException {
 
         Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(request.getAgentId(), ConnectRepo);
-        Agentsxproject  agentskeys =agentsxprojectRepository.findByAgentidAndProjectid(request.getAgentId(), request.getProjectID());
+        Agentsxproject agentskeys = agentsxprojectRepository.findByAgentidAndProjectid(request.getAgentId(), request.getProjectID());
 
         String uri = agentConfig.getEndpoint();
 
@@ -124,11 +129,11 @@ public class AgentsHandler {
         for (Agentconfigdetails param : agentConfig.getParams()) {
             String paramValue = "";
 
-            if(("request").equalsIgnoreCase(param.getRequesttype())){
+            if (("request").equalsIgnoreCase(param.getRequesttype())) {
                 Field f = requestMapping.getDeclaredField(param.getRequestparam());
                 f.setAccessible(true);
                 paramValue = f.get(request).toString();
-            }else{
+            } else {
                 Field f = agentConfigMapping.getDeclaredField(param.getRequestparam());
                 f.setAccessible(true);
                 paramValue = f.get(agentskeys).toString();
@@ -151,7 +156,7 @@ public class AgentsHandler {
 
         HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
 
-        ResponseEntity<LinkedHashMap[]> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, LinkedHashMap[].class);
+        ResponseEntity<LinkedHashMap> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, LinkedHashMap.class);
 
         HttpStatus status = response.getStatusCode();
 
@@ -194,7 +199,7 @@ public class AgentsHandler {
                     Query query = entityManager.createNativeQuery(queryStr);
                     query.setParameter(1, repo.getRepoid());
                     List<Object[]> result = query.getResultList();
-                    for (Object[] row: result) {
+                    for (Object[] row : result) {
                         RepoEventDTO eventRow = new RepoEventDTO();
                         eventRow.setEventauthor(row[0].toString());
                         eventRow.setEventdescription(row[1].toString());

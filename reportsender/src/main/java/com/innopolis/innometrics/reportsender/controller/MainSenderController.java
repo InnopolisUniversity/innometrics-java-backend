@@ -11,7 +11,7 @@ public class MainSenderController {
     @Autowired
     MailSenderService mailSenderService;
 
-    @GetMapping(path = "/run")
+    @GetMapping("/run")
     public void run(){
         mailSenderService.sendNotificationToAdmins();
     }
