@@ -537,3 +537,16 @@ databaseChangeLog:
                   type: Varchar(256)
                   constraints:
                     nullable: true
+  - changeSet:
+      id: "adding default value for request param name to agentconfigdetails"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfigdetails
+            columns:
+              - column:
+                  name: defaultvalue
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true

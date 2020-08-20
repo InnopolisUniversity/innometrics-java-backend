@@ -39,7 +39,8 @@ public class AgentGateway {
     }
 
     @GetMapping("/AgentConfiguration")
-    public ResponseEntity<AgentConfigResponse> getAgentConfiguration(@RequestParam Integer AgentID, @RequestParam(required = false) String CallType) {
+    public ResponseEntity<AgentConfigResponse> getAgentConfiguration(@RequestParam Integer AgentID,
+                                                                     @RequestParam(required = false) String CallType) {
         AgentConfigResponse response = agentconfigService.getAgentConfig(AgentID, CallType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
