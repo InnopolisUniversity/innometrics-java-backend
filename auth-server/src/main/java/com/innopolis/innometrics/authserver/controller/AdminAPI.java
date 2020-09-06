@@ -4,6 +4,8 @@ import com.innopolis.innometrics.authserver.DTO.*;
 import com.innopolis.innometrics.authserver.config.JwtToken;
 import com.innopolis.innometrics.authserver.entitiy.*;
 import com.innopolis.innometrics.authserver.exceptions.ValidationException;
+import com.innopolis.innometrics.authserver.repository.ProfileRepository;
+import com.innopolis.innometrics.authserver.service.ProfileService;
 import com.innopolis.innometrics.authserver.service.ProjectService;
 import com.innopolis.innometrics.authserver.service.RoleService;
 import com.innopolis.innometrics.authserver.service.UserService;
@@ -31,6 +33,9 @@ public class AdminAPI {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private ProfileService profileService;
 
     @PostMapping("/Project")
     public ResponseEntity<ProjectResponse> CreateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
@@ -235,5 +240,18 @@ public class AdminAPI {
             throw new ValidationException("Not enough data provided");
     }
 
+//    @PostMapping("/User/Profile")
+//    public ResponseEntity<ProfileResponse> updateProfileOfUser(@RequestParam ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
+//        //change later to required = true and delete this line
+//        String email = "";
+//        if (Token != null)
+//            email = jwtToken.getUsernameFromToken(Token);
+//
+//        if(!profileService.existsByEmail(email, profileRequest.getMacAddress())){
+//            //create
+//        } else {
+//            //update
+//        }
+//    }
 
 }
