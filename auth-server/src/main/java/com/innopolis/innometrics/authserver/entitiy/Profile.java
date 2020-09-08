@@ -17,7 +17,7 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private int profileId;
+    private Integer profileId;
 
     @Column
     private String userEmail;

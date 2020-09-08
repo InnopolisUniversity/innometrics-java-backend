@@ -240,18 +240,33 @@ public class AdminAPI {
             throw new ValidationException("Not enough data provided");
     }
 
-//    @PostMapping("/User/Profile")
-//    public ResponseEntity<ProfileResponse> updateProfileOfUser(@RequestParam ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
-//        //change later to required = true and delete this line
-//        String email = "";
-//        if (Token != null)
-//            email = jwtToken.getUsernameFromToken(Token);
-//
-//        if(!profileService.existsByEmail(email, profileRequest.getMacAddress())){
-//            //create
-//        } else {
-//            //update
-//        }
-//    }
+    @PostMapping("/User/Profile")
+    public ResponseEntity<ProfileRequest> updateProfileOfUser(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
+        //change later to required = true and delete this line
+        String email = "";
+        if (Token != null)
+            email = jwtToken.getUsernameFromToken(Token);
+
+
+        ProfileRequest response;
+        if(!profileService.existsByEmail(email, profileRequest.getMacAddress())){
+            response = profileService.create(profileRequest);
+        } else {
+            response = profileService.update(profileRequest);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/User/Profile")
+    public ResponseEntity<ProfileRequest> deleteProfile(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String email = "";
+        if (Token != null)
+            email = jwtToken.getUsernameFromToken(Token);
+
+
+    }
+
 
 }

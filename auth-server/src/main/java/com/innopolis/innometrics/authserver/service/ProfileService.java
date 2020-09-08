@@ -1,8 +1,18 @@
 package com.innopolis.innometrics.authserver.service;
 
+import com.innopolis.innometrics.authserver.DTO.ProfileRequest;
+import com.innopolis.innometrics.authserver.entitiy.Profile;
 import com.innopolis.innometrics.authserver.repository.ProfileRepository;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Component
 public class ProfileService {
@@ -13,4 +23,80 @@ public class ProfileService {
         return profileRepository.existsByUserEmailAndMacAddress(email,macAddress);
     }
 
+    public Profile findByUid(Integer uid) {
+        return profileRepository.findById(uid).orElse(null);
+    }
+
+    public ProfileRequest create(ProfileRequest detail){
+        Profile entity = new Profile();
+        BeanUtils.copyProperties(detail,entity);
+
+        profileRepository.saveAndFlush(entity);
+
+
+        BeanUtils.copyProperties(entity,detail);
+        return detail;
+
+    }
+
+    public ProfileRequest findByID(Integer id){
+        Profile entity = profileRepository.findById(id).orElse(null);
+        assertNotNull(entity,
+                "No profile found by id " + id);
+
+        ProfileRequest detail = new ProfileRequest();
+
+        BeanUtils.copyProperties(entity,detail);
+
+        return detail;
+    }
+
+    public ProfileRequest findByMacAddress(String macAddress){
+
+    }
+
+    public ProfileRequest update(ProfileRequest detail){
+        Profile entity = profileRepository.findById(detail.getProfileId()).orElse(null);
+        assertNotNull(entity,
+                "No profile found by id " + detail.getProfileId());
+
+        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
+        profileRepository.saveAndFlush(entity);
+
+
+        return detail;
+    }
+
+
+    public ProfileRequest delete(ProfileRequest detail) {
+
+        Profile entity = profileRepository.findById(detail.getProfileId()).orElse(null);
+        assertNotNull(entity,
+                "No profile found by id " + detail.getProfileId());
+
+
+        profileRepository.delete(entity);
+
+        BeanUtils.copyProperties(entity,detail);
+
+        return detail;
+    }
+
+
+
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        Set emptyNames = new HashSet();
+
+        for(java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
+
+            if (src.getPropertyValue(descriptor.getName()) == null) {
+                emptyNames.add(descriptor.getName());
+            }
+        }
+
+        String[] result = new String[emptyNames.size()];
+        return (String[]) emptyNames.toArray(result);
+    }
 }

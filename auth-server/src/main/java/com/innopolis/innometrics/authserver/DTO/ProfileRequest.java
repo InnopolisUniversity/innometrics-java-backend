@@ -1,10 +1,13 @@
 package com.innopolis.innometrics.authserver.DTO;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class ProfileRequest implements Serializable {
 
-    //private int profileId;
+    private Integer profileId;
 
     private String userEmail;
 
