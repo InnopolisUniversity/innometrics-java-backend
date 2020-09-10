@@ -157,3 +157,17 @@ databaseChangeLog:
 #                  name: email_subscription
 #                  type: boolean
 #                  defaultValue: true
+  - changeSet:
+      id:  insert-example
+      author:  liquibase-docs
+      changes:
+        -  insert:
+             columns:
+               -  column:
+                    name:  name
+                    value:  DEVELOPER
+               -  column:
+                    name:  description
+                    value:  default role for developers
+             schemaName:  innometricsauth
+             tableName:  role
