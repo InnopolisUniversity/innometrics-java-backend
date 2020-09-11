@@ -31,7 +31,7 @@ public class ProfileService {
         Profile entity = new Profile();
         BeanUtils.copyProperties(detail,entity);
 
-        profileRepository.saveAndFlush(entity);
+        entity = profileRepository.saveAndFlush(entity);
 
 
         BeanUtils.copyProperties(entity,detail);
@@ -66,14 +66,16 @@ public class ProfileService {
     }
 
     public ProfileRequest update(ProfileRequest detail){
-        assertNotNull(detail.getProfileId(), "profile id has to be provided");
-        Profile entity = profileRepository.findById(detail.getProfileId()).orElse(null);
+        Profile entity = profileRepository.findByUserEmailAndMacAddress(
+                detail.getUserEmail(),
+                detail.getMacAddress()
+        );
         assertNotNull(entity,
-                "No profile found by id " + detail.getProfileId());
-
+                "No profile found by user email and macaddress " + detail.getProfileId());
+        detail.setProfileId(null);
         BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
-        profileRepository.saveAndFlush(entity);
-
+        entity=profileRepository.saveAndFlush(entity);
+        BeanUtils.copyProperties(entity,detail);
 
         return detail;
     }
