@@ -54,6 +54,9 @@ public class AdminAPI {
     @Autowired
     PermissionService permissionService;
 
+    @Autowired
+    ProfileService profileService;
+
     @GetMapping("/Role/Permissions/{RoleName}")
     public ResponseEntity<List<Page>> ListRolePermissions(@PathVariable String RoleName) {
 
@@ -409,6 +412,54 @@ public class AdminAPI {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/User/Profile")
+    public ResponseEntity<ProfileRequest> updateProfileOfUser(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
+        return new ResponseEntity<>(
+                profileService.updateProfileOfUser(profileRequest,Token),
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/User/Profile")
+    public boolean deleteProfile(@RequestParam Integer id, @RequestHeader(required = false) String token) {
+        return profileService.deleteProfile(id,token);
+
+    }
+
+    @GetMapping("User/Profile")
+    public ProfileRequest findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String token) {
+
+        return profileService.findByMacaddress(macaddress,token);
+    }
+
+
+
+
+//    @DeleteMapping("/User/Profile")
+//    public ResponseEntity<ProfileRequest> deleteProfile(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+//        //change later to required = true and delete this line
+//        String email = "";
+//        if (Token != null)
+//            email = jwtTokenUtil.getUsernameFromToken(Token);
+//
+//        profileService.delete(id);
+//
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @GetMapping("User/Profile")
+//    public ResponseEntity<ProfileRequest> findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String Token) {
+//        //change later to required = true and delete this line
+//        String email = "";
+//        if (Token != null)
+//            email = jwtTokenUtil.getUsernameFromToken(Token);
+//
+//
+//        return ResponseEntity.ok(
+//                profileService.findByMacAddress(macaddress)
+//        );
+//    }
 
 
     //accept invitation

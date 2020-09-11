@@ -52,10 +52,21 @@ public class ProfileService {
     }
 
     public ProfileRequest findByMacAddress(String macAddress){
+        Profile entity = profileRepository.findByMacAddress(macAddress);
+
+        assertNotNull(entity,
+                "No profile found by macAdress " + macAddress );
+
+        ProfileRequest detail = new ProfileRequest();
+
+        BeanUtils.copyProperties(entity,detail);
+
+        return detail;
 
     }
 
     public ProfileRequest update(ProfileRequest detail){
+        assertNotNull(detail.getProfileId(), "profile id has to be provided");
         Profile entity = profileRepository.findById(detail.getProfileId()).orElse(null);
         assertNotNull(entity,
                 "No profile found by id " + detail.getProfileId());
@@ -68,18 +79,14 @@ public class ProfileService {
     }
 
 
-    public ProfileRequest delete(ProfileRequest detail) {
+    public void delete(Integer id) {
 
-        Profile entity = profileRepository.findById(detail.getProfileId()).orElse(null);
+        Profile entity = profileRepository.findById(id).orElse(null);
         assertNotNull(entity,
-                "No profile found by id " + detail.getProfileId());
+                "No profile found by id " + id);
 
 
         profileRepository.delete(entity);
-
-        BeanUtils.copyProperties(entity,detail);
-
-        return detail;
     }
 
 

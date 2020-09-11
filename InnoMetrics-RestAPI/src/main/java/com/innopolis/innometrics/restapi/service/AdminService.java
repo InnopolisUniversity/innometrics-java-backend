@@ -133,7 +133,6 @@ public class AdminService {
         //HttpEntity<UserListRequest> entity = new HttpEntity<>(request, headers);
         try {
             ResponseEntity<UserListResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, UserListResponse.class);
-
             HttpStatus status = response.getStatusCode();
 
             return response.getBody();

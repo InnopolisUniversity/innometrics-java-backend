@@ -19,7 +19,7 @@ public class Profile {
     @Column(updatable = false)
     private Integer profileId;
 
-    @Column
+    @Column(name = "email")
     private String userEmail;
 
     @Column

@@ -243,13 +243,13 @@ public class AdminAPI {
     @PostMapping("/User/Profile")
     public ResponseEntity<ProfileRequest> updateProfileOfUser(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
         //change later to required = true and delete this line
-        String email = "";
-        if (Token != null)
-            email = jwtToken.getUsernameFromToken(Token);
+//        String email = "";
+//        if (Token != null && !Token.equals(""))
+//            email = jwtToken.getUsernameFromToken(Token);
 
 
         ProfileRequest response;
-        if(!profileService.existsByEmail(email, profileRequest.getMacAddress())){
+        if(!profileService.existsByEmail(profileRequest.getUserEmail(), profileRequest.getMacAddress())){
             response = profileService.create(profileRequest);
         } else {
             response = profileService.update(profileRequest);
@@ -259,13 +259,28 @@ public class AdminAPI {
     }
 
     @DeleteMapping("/User/Profile")
-    public ResponseEntity<ProfileRequest> deleteProfile(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token) {
+    public ResponseEntity<ProfileRequest> deleteProfile(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String email = "";
+        if (Token != null)
+            email = jwtToken.getUsernameFromToken(Token);
+
+        profileService.delete(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("User/Profile")
+    public ResponseEntity<ProfileRequest> findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String Token) {
         //change later to required = true and delete this line
         String email = "";
         if (Token != null)
             email = jwtToken.getUsernameFromToken(Token);
 
 
+        return ResponseEntity.ok(
+                profileService.findByMacAddress(macaddress)
+        );
     }
 
 

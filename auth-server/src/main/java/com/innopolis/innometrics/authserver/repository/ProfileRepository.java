@@ -14,6 +14,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer > {
 
     Profile findByUserEmailAndMacAddress(String email, String macAddress);
 
-    List
+    Profile findByMacAddress(String macAdress);
 
 }
