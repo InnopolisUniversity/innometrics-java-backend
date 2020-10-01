@@ -12,10 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -37,25 +34,11 @@ public class ProfileService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public ProfileRequest updateProfileOfUser(ProfileRequest profileRequest, String token){
-        //change later to required = true and delete this line
-//        String email = "";
-//        if (token != null)
-//            email = jwtToken.getUsernameFromToken(token);
-//
-//
-//        ProfileRequest response;
-//        if(!profileService.existsByEmail(email, profileRequest.getMacAddress())){
-//            response = profileService.create(profileRequest);
-//        } else {
-//            response = profileService.update(profileRequest);
-//        }
-//
-//        return ResponseEntity.ok(response);
 
         String uri = baseURL;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("token", token);
+        headers.set("Token", token);
 
         HttpEntity<ProfileRequest> entity = new HttpEntity<>(profileRequest, headers);
 
@@ -68,42 +51,59 @@ public class ProfileService {
     public ProfileRequest updateProfileOfUserFallback(ProfileRequest profileRequest, String token, Throwable exception) {
         LOG.warn("updateProfileOfUserFallback method used");
         LOG.warn(exception);
-        return new ProfileRequest();
+        return null;
     }
 
+    @HystrixCommand(commandKey = "deleteProfile", fallbackMethod = "deleteProfileFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
     public boolean deleteProfile(Integer id,String token) {
         String uri = baseURL;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("token", token);
+        headers.set("Token", token);
+
+        HttpEntity<ProfileRequest> entity = new HttpEntity<>(headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("id", id);
 
-        try {
-            restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, Object.class);
-            return true;
-        }
-        catch (Exception e){
-            LOG.error(e);
-            return false;
-        }
 
+        restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, entity, Object.class);
+        return true;
 
     }
 
+    public boolean deleteProfileFallback(Integer id, String token, Throwable exception) {
+        LOG.warn("deleteProfileFallback method used");
+        LOG.warn(exception);
+        return false;
+    }
+
+    @HystrixCommand(commandKey = "findByMacaddress", fallbackMethod = "findByMacaddressFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "600000")
+    })
     public ProfileRequest findByMacaddress(String macaddress, String token) {
         String uri = baseURL;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("token", token);
+        headers.set("Token", token);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("macaddress", macaddress);
 
-        ResponseEntity<ProfileRequest> responseEntity = restTemplate.exchange(builder.toUriString(),HttpMethod.GET,null,ProfileRequest.class);
+        ResponseEntity<ProfileRequest> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, ProfileRequest.class);
 
+        HttpStatus status = responseEntity.getStatusCode();
         return responseEntity.getBody();
 
+    }
+
+    public ProfileRequest findByMacaddressFallback(String macaddress, String token, Throwable exception) {
+        LOG.warn("findByMacaddressFallback method used");
+        LOG.warn(exception);
+        return null;
     }
 }

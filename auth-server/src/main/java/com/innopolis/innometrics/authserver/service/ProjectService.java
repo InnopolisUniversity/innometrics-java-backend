@@ -1,21 +1,21 @@
 package com.innopolis.innometrics.authserver.service;
 
 
-import com.innopolis.innometrics.authserver.DTO.ProjectListResponse;
+import com.innopolis.innometrics.authserver.DTO.ProjectListRequest;
 import com.innopolis.innometrics.authserver.DTO.ProjectRequest;
-import com.innopolis.innometrics.authserver.DTO.ProjectResponse;
 import com.innopolis.innometrics.authserver.entitiy.Project;
-import com.innopolis.innometrics.authserver.entitiy.User;
 import com.innopolis.innometrics.authserver.repository.ProjectRepository;
-import com.innopolis.innometrics.authserver.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Component
 public class ProjectService {
@@ -30,46 +30,70 @@ public class ProjectService {
         return Repository.existsByProjectID(projectId);
     }
 
-    public ProjectResponse save(ProjectRequest project) {
-        ProjectResponse response = new ProjectResponse();
+    public ProjectRequest create(ProjectRequest detail) {
+        Project entity = new Project();
+        detail.setProjectID(null);
+        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
+        entity = Repository.saveAndFlush(entity);
+        BeanUtils.copyProperties(entity,detail);
+        return detail;
 
-        Project myProject = new Project();
-        myProject.setProjectID(project.getProjectID());
-        myProject.setName(project.getName());
-        myProject.setIsactive("Y");
-        Repository.save(myProject);
-        response.setProjectID(myProject.getProjectID());
-        response.setName(myProject.getName());
-        response.setIsActive(myProject.getIsactive());
-        return response;
     }
 
-
-    public ProjectResponse update(ProjectRequest project) {
-        ProjectResponse response = new ProjectResponse();
-
-        Project myProject = Repository.findByProjectID(project.getProjectID());
-
-        myProject.setName(project.getName());
-        myProject.setIsactive(project.getIsActive());
-
-        Repository.save(myProject);
-        response.setProjectID(myProject.getProjectID());
-        response.setName(myProject.getName());
-        response.setIsActive(myProject.getIsactive());
-        return response;
+    public ProjectRequest getById(Integer projectId){
+        Project project = Repository.findByProjectID(projectId);
+        ProjectRequest detail = new ProjectRequest();
+        BeanUtils.copyProperties(project,detail);
+        return detail;
     }
 
-    public ProjectListResponse getProjectList() {
+    public ProjectRequest update(ProjectRequest detail) {
+
+        Project entity = Repository.findByProjectID(detail.getProjectID());
+
+        assertNotNull(entity,
+                "No project found by this id " + detail.getProjectID());
+
+        detail.setProjectID(null);
+        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
+        entity = Repository.saveAndFlush(entity);
+        BeanUtils.copyProperties(entity,detail);
+
+        return detail;
+    }
+
+    public ProjectListRequest getProjectList() {
         List<Project> result = Repository.findAllActive();
-        ProjectListResponse response = new ProjectListResponse();
+        ProjectListRequest response = new ProjectListRequest();
         for (Project p : result) {
-            ProjectResponse temp = new ProjectResponse();
-            temp.setProjectID(p.getProjectID());
-            temp.setName(p.getName());
-            temp.setIsActive(p.getIsactive());
-            response.getProjectList().add(temp);
+            ProjectRequest detail = new ProjectRequest();
+            BeanUtils.copyProperties(p,detail);
+            response.getProjectList().add(detail);
         }
         return response;
+    }
+
+    public void delete(Integer projectId){
+        Project entity = Repository.findById(projectId).orElse(null);
+        assertNotNull(entity,
+                "No profile found by id " + projectId);
+
+
+        Repository.delete(entity);
+    }
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        Set emptyNames = new HashSet();
+
+        for(java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
+
+            if (src.getPropertyValue(descriptor.getName()) == null) {
+                emptyNames.add(descriptor.getName());
+            }
+        }
+
+        String[] result = new String[emptyNames.size()];
+        return (String[]) emptyNames.toArray(result);
     }
 }

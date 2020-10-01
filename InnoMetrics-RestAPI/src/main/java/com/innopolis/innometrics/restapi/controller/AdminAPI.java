@@ -57,6 +57,9 @@ public class AdminAPI {
     @Autowired
     ProfileService profileService;
 
+    @Autowired
+    CompanyService companyService;
+
     @GetMapping("/Role/Permissions/{RoleName}")
     public ResponseEntity<List<Page>> ListRolePermissions(@PathVariable String RoleName) {
 
@@ -242,16 +245,24 @@ public class AdminAPI {
 
     //Add project
     @PostMapping("/Project")
-    public ResponseEntity<ProjectResponse> CreateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
-        ProjectResponse response = adminService.CreateProject(project, Token);
+    public ResponseEntity<ProjectRequest> UpdateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+        ProjectRequest response = adminService.updateProject(project, Token);
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/Project/{Id}")
+    public ResponseEntity<ProjectRequest> getProjectById(@PathVariable int Id) {
+        ProjectRequest response = adminService.getById(Id);
 
-    @PutMapping("/Project")
-    public ResponseEntity<ProjectResponse> updateProject(@RequestBody ProjectRequest project, @RequestHeader(required = true) String Token) {
-        ProjectResponse response = adminService.updateProject(project, Token);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/Project")
+    public ResponseEntity<ProjectRequest> deleteProject(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+
+        adminService.deleteProject(id, Token);
+
+        return ResponseEntity.ok().build();
     }
 
     //Invite user in a project
@@ -259,7 +270,7 @@ public class AdminAPI {
     public ResponseEntity<Boolean> InviteUserProject(@PathVariable String ProjectName,
                                                      @RequestParam String UserEmail,
                                                      @RequestParam Boolean Manager,
-                                                     @RequestHeader String Token) {
+                                                     @RequestHeader(required = false) String Token) {
         if (ProjectName == null || UserEmail == null) {
             throw new ValidationException("Not enough data provided");
         }
@@ -321,8 +332,8 @@ public class AdminAPI {
 
 
     @GetMapping("/Project")
-    public ResponseEntity<ProjectListResponse> getActiveProjects() {
-        ProjectListResponse response = adminService.getActiveProjects();
+    public ResponseEntity<ProjectListRequest> getActiveProjects() {
+        ProjectListRequest response = adminService.getActiveProjects();
         return ResponseEntity.ok(response);
     }
 
@@ -333,9 +344,9 @@ public class AdminAPI {
     }
 
     @GetMapping("/Users/projects/{UserName}")
-    public ResponseEntity<ProjectListResponse> getProjectsByUsername(@PathVariable String UserName,@RequestHeader String Token) {
+    public ResponseEntity<ProjectListRequest> getProjectsByUsername(@PathVariable String UserName,@RequestHeader(required = false) String Token) {
 
-        ProjectListResponse response = adminService.getProjectsByUsername(UserName);
+        ProjectListRequest response = adminService.getProjectsByUsername(UserName);
         return ResponseEntity.ok(response);
     }
 
@@ -428,42 +439,39 @@ public class AdminAPI {
     }
 
     @GetMapping("User/Profile")
-    public ProfileRequest findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String token) {
+    public ResponseEntity<ProfileRequest> findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String token) {
 
-        return profileService.findByMacaddress(macaddress,token);
+        return new ResponseEntity<>(profileService.findByMacaddress(macaddress,token),
+                HttpStatus.OK);
     }
 
+    @PostMapping("/Company")
+    public ResponseEntity<CompanyRequest> updateCompany(@RequestBody CompanyRequest companyRequest, @RequestHeader(required = false) String Token){
+        return new ResponseEntity<>(companyService.updateCompany(companyRequest,Token),
+                HttpStatus.OK);
+    }
 
+    @DeleteMapping("/Company")
+    public boolean deleteCompany(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        return companyService.deleteCompany(id, Token);
+    }
 
+    @GetMapping("/Company")
+    public ResponseEntity<CompanyRequest> findByCompanyId(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                companyService.findByCompanyId(id, Token),
+                HttpStatus.OK
+        );
+    }
 
-//    @DeleteMapping("/User/Profile")
-//    public ResponseEntity<ProfileRequest> deleteProfile(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
-//        //change later to required = true and delete this line
-//        String email = "";
-//        if (Token != null)
-//            email = jwtTokenUtil.getUsernameFromToken(Token);
-//
-//        profileService.delete(id);
-//
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @GetMapping("User/Profile")
-//    public ResponseEntity<ProfileRequest> findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String Token) {
-//        //change later to required = true and delete this line
-//        String email = "";
-//        if (Token != null)
-//            email = jwtTokenUtil.getUsernameFromToken(Token);
-//
-//
-//        return ResponseEntity.ok(
-//                profileService.findByMacAddress(macaddress)
-//        );
-//    }
+    @GetMapping("/Companies")
+    public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
 
+        return new ResponseEntity<>(
+                companyService.getActiveCompanies(Token),
+                HttpStatus.OK
+        );
+    }
 
-    //accept invitation
-
-    //Load user from request
 
 }

@@ -27,9 +27,11 @@ public class ProfileService {
         return profileRepository.findById(uid).orElse(null);
     }
 
+
     public ProfileRequest create(ProfileRequest detail){
         Profile entity = new Profile();
-        BeanUtils.copyProperties(detail,entity);
+        detail.setProfileId(null);
+        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
 
         entity = profileRepository.saveAndFlush(entity);
 
