@@ -135,6 +135,7 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     primaryKeyName: project_auth_pk
+
               - column:
                   name: name
                   type: Varchar(256)
