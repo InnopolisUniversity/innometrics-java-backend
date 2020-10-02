@@ -5,15 +5,15 @@ import java.io.Serializable;
 public class ProjectRequest implements Serializable {
     private Integer projectID;
     private String name;
-    private String isActive;
+    private String isactive;
 
     public ProjectRequest() {
     }
 
-    public ProjectRequest(Integer projectID, String name, String isActive) {
+    public ProjectRequest(Integer projectID, String name, String isactive) {
         this.projectID = projectID;
         this.name = name;
-        this.isActive = isActive;
+        this.isactive = isactive;
     }
 
     public Integer getProjectID() {
@@ -32,11 +32,11 @@ public class ProjectRequest implements Serializable {
         this.name = name;
     }
 
-    public String getIsActive() {
-        return isActive;
+    public String getIsactive() {
+        return isactive;
     }
 
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
+    public void setIsactive(String isActive) {
+        this.isactive = isActive;
     }
 }

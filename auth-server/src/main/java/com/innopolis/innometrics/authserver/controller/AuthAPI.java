@@ -1,10 +1,7 @@
 package com.innopolis.innometrics.authserver.controller;
 
-import com.innopolis.innometrics.authserver.DTO.ProjectListResponse;
-import com.innopolis.innometrics.authserver.DTO.ProjectResponse;
 import com.innopolis.innometrics.authserver.DTO.UserRequest;
 import com.innopolis.innometrics.authserver.config.JwtToken;
-import com.innopolis.innometrics.authserver.entitiy.Project;
 import com.innopolis.innometrics.authserver.entitiy.User;
 import com.innopolis.innometrics.authserver.service.RoleService;
 import com.innopolis.innometrics.authserver.service.UserService;

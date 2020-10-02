@@ -1,0 +1,108 @@
+databaseChangeLog:
+  - changeSet:
+      id: "add table profiles"
+      author: azag
+
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: profile
+            remarks: Table to store profiles of devices
+            columns:
+              - column:
+                  name: profile_id
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: profile_auth_pk
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    foreignKeyName: fk_user_auth_managers
+                    references: innometricsauth.user(email)
+                    nullable: false
+              - column:
+                  name: mac_address
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: average_cpu
+                  type: Float8
+                  constraints:
+                    nullable: false
+              - column:
+                  name: average_gpu
+                  type: Float8
+                  constraints:
+                    nullable: false
+              - column:
+                  name: average_memory
+                  type: Float8
+                  constraints:
+                    nullable: false
+              - column:
+                  name: average_storage
+                  type: Float8
+                  constraints:
+                    nullable: false
+              - column:
+                  name: main_vendor
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cpu_vendor
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cpu_model
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gpu_vendor
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gpu_model
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: memory_vendor
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: memory_counter
+                  type: Integer
+                  defaultValue: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: memory_model
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_vendor
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_model
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_counter
+                  type: Integer
+                  defaultValue: 1
+                  constraints:
+                    nullable: false

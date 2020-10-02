@@ -4,9 +4,9 @@ import com.innopolis.innometrics.authserver.DTO.*;
 import com.innopolis.innometrics.authserver.config.JwtToken;
 import com.innopolis.innometrics.authserver.entitiy.*;
 import com.innopolis.innometrics.authserver.exceptions.ValidationException;
-import com.innopolis.innometrics.authserver.service.ProjectService;
-import com.innopolis.innometrics.authserver.service.RoleService;
-import com.innopolis.innometrics.authserver.service.UserService;
+import com.innopolis.innometrics.authserver.repository.ProfileRepository;
+import com.innopolis.innometrics.authserver.service.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +32,15 @@ public class AdminAPI {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private ProfileService profileService;
+
+    @Autowired
+    private CompanyService companyService;
+
+
     @PostMapping("/Project")
-    public ResponseEntity<ProjectResponse> CreateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
-        System.out.println("Create project method started");
+    public ResponseEntity<ProjectRequest> updateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
         String UserName = "API";
 
         if (project == null)
@@ -43,39 +49,51 @@ public class AdminAPI {
         if (project.getName() == null)
             throw new ValidationException("Not enough data provided");
 
-        if (projectService.existsByName(project.getName()))
-            throw new ValidationException("Username already existed");
-
         if (Token != null && Token != "")
             UserName = jwtToken.getUsernameFromToken(Token);
 
+        ProjectRequest response ;
+        if (!projectService.existsByProjectID(project.getProjectID())){
+            response = projectService.create(project);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }  else{
+            response = projectService.update(project);
+            return ResponseEntity.ok(response);
+        }
 
-        System.out.println("New project creation...");
-        ProjectResponse response = projectService.save(project);
-        System.out.println("New project saved...");
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-
-    @PutMapping("/Project")
-    public ResponseEntity<ProjectResponse> updateProject(@RequestBody ProjectRequest project, @RequestHeader(required = true) String Token) {
-        if (project != null) {
-            if(projectService.existsByProjectID(project.getProjectID())){
-
-                ProjectResponse response = projectService.update(project);
-
-                return ResponseEntity.ok(response);
-            }
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } else
-            throw new ValidationException("Not enough data provided");
     }
 
     @GetMapping("/Project")
-    public ResponseEntity<ProjectListResponse> getActiveProjects() {
-        ProjectListResponse response = projectService.getProjectList();
+    public ResponseEntity<ProjectListRequest> getActiveProjects() {
+        ProjectListRequest response = projectService.getProjectList();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Project/{Id}")
+    public ResponseEntity<ProjectRequest> getProjectById(@PathVariable int Id) {
+        if(projectService.existsByProjectID(Id)){
+
+            ProjectRequest response = projectService.getById(Id);
+
+            return ResponseEntity.ok(response);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/Project")
+    public ResponseEntity<ProjectRequest> deleteProject(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (id == null)
+            throw new ValidationException("Not enough data provided");
+
+        projectService.delete(id);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/Users")
@@ -86,19 +104,17 @@ public class AdminAPI {
     }
 
     @GetMapping("/Users/projects/{UserName}")
-    public ResponseEntity<ProjectListResponse> getProjectsByUsername(@PathVariable String UserName) {
+    public ResponseEntity<ProjectListRequest> getProjectsByUsername(@PathVariable String UserName) {
         if (!UserName.isEmpty()) {
             User userDetails = userService.findByEmail(UserName);
 
             if(userDetails == null)
                 return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 
-            ProjectListResponse response =  new ProjectListResponse();
-            for (Project p: userDetails.getProjects()) {
-                ProjectResponse pTemp = new ProjectResponse();
-                pTemp.setName(p.getName());
-                pTemp.setProjectID(p.getProjectID());
-                pTemp.setIsActive(p.getIsactive());
+            ProjectListRequest response =  new ProjectListRequest();
+            for (Project entity: userDetails.getProjects()) {
+                ProjectRequest pTemp = new ProjectRequest();
+                BeanUtils.copyProperties(entity,pTemp);
                 response.getProjectList().add(pTemp);
             }
 
@@ -233,6 +249,129 @@ public class AdminAPI {
             return ResponseEntity.ok(userResponse);
         } else
             throw new ValidationException("Not enough data provided");
+    }
+
+    @PostMapping("/User/Profile")
+    public ResponseEntity<ProfileRequest> updateProfileOfUser(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
+        //change later to required = true and delete this line
+//        String email = "";
+//        if (Token != null && !Token.equals(""))
+//            email = jwtToken.getUsernameFromToken(Token);
+        if (profileRequest == null)
+            throw new ValidationException("Not enough data provided");
+
+        if (profileRequest.getMacAddress() == null || profileRequest.getUserEmail() == null)
+            throw new ValidationException("Not enough data provided");
+
+        ProfileRequest response;
+        if(!profileService.existsByEmail(profileRequest.getUserEmail(), profileRequest.getMacAddress())){
+            response = profileService.create(profileRequest);
+        } else {
+            response = profileService.update(profileRequest);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/User/Profile")
+    public ResponseEntity<ProfileRequest> deleteProfile(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String email = "";
+        if (Token != null && Token != "")
+            email = jwtToken.getUsernameFromToken(Token);
+
+        if (id == null)
+            throw new ValidationException("Not enough data provided");
+
+        profileService.delete(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/User/Profile")
+    public ResponseEntity<ProfileRequest> findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String email = "";
+        if (Token != null && Token != "")
+            email = jwtToken.getUsernameFromToken(Token);
+
+        if (macaddress == null)
+            throw new ValidationException("Not enough data provided");
+
+        ProfileRequest profileRequest = profileService.findByMacAddress(macaddress);
+
+        if(profileRequest == null)
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+
+
+        return ResponseEntity.ok(profileRequest);
+    }
+
+    @PostMapping("/Company")
+    public ResponseEntity<CompanyRequest> updateCompany(@RequestBody CompanyRequest companyRequest, @RequestHeader(required = false) String Token){
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (companyRequest == null)
+            throw new ValidationException("Not enough data provided");
+
+        if (companyRequest.getCompanyid() == null)
+            throw new ValidationException("Not enough data provided");
+
+        companyRequest.setUpdateby(UserName);
+        CompanyRequest response;
+        if(!companyService.existsById(companyRequest.getCompanyid())){
+            companyRequest.setCreatedby(UserName);
+            response = companyService.create(companyRequest);
+        } else {
+            response = companyService.update(companyRequest);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/Company")
+    public ResponseEntity<CompanyRequest> deleteCompany(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (id == null)
+            throw new ValidationException("Not enough data provided");
+
+        companyService.delete(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/Company")
+    public ResponseEntity<CompanyRequest> findByCompanyId(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (id == null)
+            throw new ValidationException("Not enough data provided");
+
+        return ResponseEntity.ok(
+                companyService.findByCompanyId(id)
+        );
+    }
+
+    @GetMapping("/Companies")
+    public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        return ResponseEntity.ok(
+                companyService.findAllActiveCompanies()
+        );
     }
 
 
