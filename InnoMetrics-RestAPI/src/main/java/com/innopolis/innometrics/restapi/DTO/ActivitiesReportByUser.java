@@ -3,6 +3,7 @@ package com.innopolis.innometrics.restapi.DTO;
 import java.io.Serializable;
 
 public class ActivitiesReportByUser implements Serializable {
+    private static final long serialVersionUID = 3801383401971413246L;
     private String Email;
     private String Executable_name;
     private String Time_used;

@@ -40,11 +40,12 @@ public class ReportService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
+        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectID", projectID)
                 .queryParam("email", email)
-                .queryParam("min_Date", min_Date)
-                .queryParam("max_Date", max_Date);
+                .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
+                .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
         ResponseEntity<ActivitiesReportByUserResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, ActivitiesReportByUserResponse.class);
 
         HttpStatus status = response.getStatusCode();
@@ -74,11 +75,12 @@ public class ReportService {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
+        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectId", projectID)
                 .queryParam("email", email)
-                .queryParam("min_Date", min_Date)
-                .queryParam("max_Date", max_Date);
+                .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
+                .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
         ResponseEntity<TimeReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, TimeReportResponse.class);
 
         HttpStatus status = response.getStatusCode();

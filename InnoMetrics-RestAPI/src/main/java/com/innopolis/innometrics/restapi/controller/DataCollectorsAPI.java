@@ -86,8 +86,8 @@ public class DataCollectorsAPI {
     @GetMapping("/Reports/activitiesReport")
     public ResponseEntity<ActivitiesReportByUserResponse> getReportActivities(@RequestParam(required = false) String projectID,
                                                                               @RequestParam(required = false) String email,
-                                                                              @RequestParam(required = false) Date min_Date,
-                                                                              @RequestParam(required = false) Date max_Date) {
+                                                                              @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
+                                                                              @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
 
         ActivitiesReportByUserResponse myReport = reportService.getReportActivities(projectID, email, min_Date, max_Date);
         return ResponseEntity.ok(myReport);
@@ -96,8 +96,8 @@ public class DataCollectorsAPI {
     @GetMapping("/Reports/timeReport")
     public ResponseEntity<TimeReportResponse> getTimeReport(@RequestParam(required = false) String projectID,
                                                             @RequestParam(required = false) String email,
-                                                            @RequestParam(required = false) Date min_Date,
-                                                            @RequestParam(required = false) Date max_Date) {
+                                                            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
+                                                            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
 
         TimeReportResponse myReport = reportService.getTimeReport(projectID, email, min_Date, max_Date);
         return ResponseEntity.ok(myReport);

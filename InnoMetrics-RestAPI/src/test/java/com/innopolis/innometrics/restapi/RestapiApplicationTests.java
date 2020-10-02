@@ -36,6 +36,7 @@ class RestapiApplicationTests {
 
     @Test
     void contextLoads() {
+        assertTrue(true);
     }
 
     @Test
@@ -57,7 +58,7 @@ class RestapiApplicationTests {
         //failLogin();
 
         //CreateActivity();
-
+        assertTrue(true);
     }
 
 
