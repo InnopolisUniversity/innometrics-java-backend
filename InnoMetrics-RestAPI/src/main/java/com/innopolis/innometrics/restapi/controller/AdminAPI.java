@@ -60,6 +60,12 @@ public class AdminAPI {
     @Autowired
     CompanyService companyService;
 
+    @Autowired
+    TeamService teamService;
+
+    @Autowired
+    TeammemberService teammemberService;
+
     @GetMapping("/Role/Permissions/{RoleName}")
     public ResponseEntity<List<Page>> ListRolePermissions(@PathVariable String RoleName) {
 
@@ -464,7 +470,7 @@ public class AdminAPI {
         );
     }
 
-    @GetMapping("/Companies")
+    @GetMapping("/Company/all")
     public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
 
         return new ResponseEntity<>(
@@ -473,5 +479,68 @@ public class AdminAPI {
         );
     }
 
+    @PostMapping("/Team")
+    public ResponseEntity<TeamRequest> updateTeam(@RequestBody TeamRequest teamRequest, @RequestHeader(required = false) String Token){
 
+        return new ResponseEntity<>(teamService.updateTeam(teamRequest,Token),
+                HttpStatus.OK);
+    }
+
+    @DeleteMapping("/Team")
+    public boolean deleteTeam(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        return teamService.deleteTeam(id, Token);
+    }
+
+    @GetMapping("/Team/all")
+    public ResponseEntity<TeamListRequest> findAllActiveTeams(@RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teamService.getActiveTeams(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Team")
+    public ResponseEntity<TeamListRequest> findTeamBy(@RequestParam(required = false) Integer teamId, @RequestParam(required = false) Integer companyId,
+                                                      @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teamService.getTeamsBy(teamId, companyId, projectId, Token),
+                HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/Teammember")
+    public ResponseEntity<TeammembersRequest> updateTeammember(@RequestBody TeammembersRequest teammembersRequest, @RequestHeader(required = false) String Token){
+        return new ResponseEntity<>(teammemberService.updateTeammember(teammembersRequest,Token),
+                HttpStatus.OK);
+    }
+
+    @DeleteMapping("/Teammember")
+    public boolean deleteTeammember(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        return teammemberService.deleteTeammember(id, Token);
+    }
+
+    @GetMapping("/Teammember/all")
+    public ResponseEntity<TeammembersListRequest> findAllActiveTeammembers(@RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teammemberService.getActiveTeammembers(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Teammember")
+    public ResponseEntity<TeammembersListRequest> findTeammemberBy(@RequestParam(required = false) Integer memberId, @RequestParam(required = false) Integer teamId,
+                                                                   @RequestParam(required = false) String email, @RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teammemberService.getTeammembersBy(memberId, teamId, email, Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/WorkingTree")
+    public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
+        return new ResponseEntity<>(
+                teammemberService.getWorkingTree(email, Token),
+                HttpStatus.OK
+        );
+    }
 }

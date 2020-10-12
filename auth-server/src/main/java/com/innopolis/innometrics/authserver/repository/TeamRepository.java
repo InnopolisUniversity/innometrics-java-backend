@@ -15,5 +15,12 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
 
     @Query(value = "select * from innometricsauth.teams p where p.isactive = 'Y'", nativeQuery = true)
     List<Team> findAllActive();
+
+    List<Team> findAllByCompanyid(Integer Companyid);
+
+    List<Team> findAllByProjectID(Integer ProjectID);
+
+    List<Team> findAllByProjectIDAndCompanyid(Integer ProjectID, Integer Companyid);
+
 }
 

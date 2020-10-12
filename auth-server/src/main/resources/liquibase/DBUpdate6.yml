@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: "add column projectId to Teams table"
+      author: azag
+      changes:
+        - addColumn:
+            schemaName: innometricsauth
+            tableName: teams
+            columns:
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    references: innometricsauth.project(projectid)
+                    foreignKeyName: fk_projectid
+                    nullable: false
+
+  - changeSet:
+      id: "add Unique Constraint to teammembers table"
+      author: azag
+      changes:
+        - addUniqueConstraint:
+            schemaName: innometricsauth
+            tableName: teammembers
+            columnNames: teamid, email
+            constraintName: "unique_teammember"
