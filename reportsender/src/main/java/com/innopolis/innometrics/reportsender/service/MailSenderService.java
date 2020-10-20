@@ -23,6 +23,9 @@ import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,21 +65,22 @@ public class MailSenderService{
         Timestamp dateWeekAgo = new Timestamp(System.currentTimeMillis() - (1 * DAY_IN_MS));
         List<UserModel> userModelList = userRepository.findAll();
 
-        Map<String, Integer> listOfUsersWithOverallTimeSpent = userRepository.findAll().stream().collect(Collectors.toMap(UserModel::getEmail, time -> 0));
+
 
         Query q;
         List<Object[]> records = null;
         String query;
+        List<Object[]> mac_addresses = null;
         for (UserModel userModel : userModelList) {
-            query = String.format("select executable_name, extract(epoch from sum(used_time)),catname  \n" +
-                            "from innometrics.cumlativerepactivity \n" +
-                            "join innometricsconfig.cl_apps_categories \n" +
+            query = String.format("select executable_name, extract(epoch from sum(used_time)),catname,mac_address  \n" +
+                            "from innometrics.cumlativerepactivity\n" +
+                            "join innometricsconfig.cl_apps_categories\n" +
                             "on cumlativerepactivity.executable_name = cl_apps_categories.executablefile\n" +
                             "join innometricsconfig.cl_categories\n" +
                             "on cl_apps_categories.catid = cl_categories.catid\n" +
-                            "where email = '%s' \n" +
-                            "and cumlativerepactivity.creationdate between '%s' AND '%s' \n" +
-                            "group by executable_name, catname\n",
+                            "where email = '%s'\n" +
+                            "and cumlativerepactivity.creationdate between '%s' AND '%s'\n" +
+                            "group by executable_name, catname,mac_address \n",
                     userModel.getEmail(),
                     dateWeekAgo,
                     dateNow);
@@ -84,23 +88,42 @@ public class MailSenderService{
             q = em.createNativeQuery(query);
             records = q.getResultList();
 
-            Map<String, Integer> overallTimeSpent = clCategoriesRepository.findAll().stream().collect(Collectors.toMap(ClCategoriesModel::getCatname, cat -> 0));
+            // getting mac_addresses
+            query = String.format("select mac_address \n" +
+                                    "from innometrics.cumlativerepactivity \n" +
+                                    "where email = '%s' \n" +
+                                    "and cumlativerepactivity.creationdate between '%s' AND '%s' \n" +
+                                    "group by mac_address\n",
+                    userModel.getEmail(),
+                    dateWeekAgo,
+                    dateNow);
 
-            for (Object[] record : records) {
-                String appName = (String) record[0];
-                Double timeSpent = (Double) record[1];
-                String catName = (String) record[2];
-                overallTimeSpent.put(catName, (int) (overallTimeSpent.get(catName) + timeSpent));
-                listOfUsersWithOverallTimeSpent.put(userModel.getEmail(), (int) (listOfUsersWithOverallTimeSpent.get(userModel.getEmail()) + timeSpent));
+
+            q = em.createNativeQuery(query);
+            mac_addresses = q.getResultList();
+
+            Map<String, Map<String, Integer>> overallTimeSpent = new HashMap<String, Map<String, Integer>>();
+
+            for (Object mac : mac_addresses){
+
+                Map<String, Integer> overallTimeSpentForMac = clCategoriesRepository.findAll().stream().collect(Collectors.toMap(ClCategoriesModel::getCatname, cat -> 0));
+
+                for (Object[] record : records) {
+                    if(record[3].equals(mac)){
+                        String appName = (String) record[0];
+                        Double timeSpent = (Double) record[1];
+                        String catName = (String) record[2];
+                        overallTimeSpentForMac.put(catName, (int) (overallTimeSpentForMac.get(catName) + timeSpent));
+                    }
+
+                }
+
+                overallTimeSpent.put((String) mac, overallTimeSpentForMac);
             }
 
+//                messageSender(userModel.getEmail(), overallTimeSpent);
 
-//                messageSender(userModel.getEmail(), overallTimeSpent,0);
         }
-
-//        messageSender("a.kruglov@innopolis.ru", listOfUsersWithOverallTimeSpent, 1);
-//        messageSender("g.succi@innopolis.ru", listOfUsersWithOverallTimeSpent, 1);
-
 
         System.out.println("emails sent");
         return 0;
@@ -115,32 +138,37 @@ public class MailSenderService{
         Timestamp dateWeekAgo = new Timestamp(System.currentTimeMillis() - (1 * DAY_IN_MS));
         List<UserModel> userModelList = userRepository.findAll();
 
-        Map<String, Integer> listOfUsersWithOverallTimeSpent = new HashMap<String, Integer>();
+
+        Map<String[], Integer> listOfUsersWithOverallTimeSpent = new HashMap<String[], Integer>();
+
 
         Query q;
         List<Object[]> records = null;
         String query;
 
-        query = String.format("select a.email, extract(epoch from sum(a.dailysum))\n" +
-                "           from ( select email, executable_name, max(dailysum) dailysum\n" +
-                "                         from innometrics.cumlativerepactivity \n" +
-                "                            where date_trunc('day', captureddate) = date('%s')\n" +
-                "                            group by email, executable_name ) as a\n" +
-                "           group by email",
+        query = String.format("select a.email, a.mac_address, extract(epoch from sum(a.dailysum))\n" +
+                "           from ( select email, executable_name, mac_address , max(dailysum) dailysum\n" +
+                "           from innometrics.cumlativerepactivity \n" +
+                "           where date_trunc('day', captureddate) = date('%s')\n" +
+                "           group by email, executable_name, mac_address ) as a\n" +
+                "           group by email, mac_address",
                     dateNow.toString().substring(0, 10));
-
 
 
         q = em.createNativeQuery(query);
         records = q.getResultList();
 
         for (Object[] record : records) {
-            listOfUsersWithOverallTimeSpent.put((String) record[0], ((Double) record[1]).intValue());
+            String[] emailWithMac = new String[2];
+            emailWithMac[0] = (String) record[0];
+            emailWithMac[1] = (String) record[1];
+            listOfUsersWithOverallTimeSpent.put(emailWithMac, ((Double) record[2]).intValue());
         }
 
-        messageSender("a.kruglov@innopolis.ru", listOfUsersWithOverallTimeSpent, 1);
-        messageSender("g.succi@innopolis.ru", listOfUsersWithOverallTimeSpent, 1);
-        messageSender("x.vasquez@innopolis.university", listOfUsersWithOverallTimeSpent, 1);
+        messageSenderForAdmins("a.kruglov@innopolis.ru", listOfUsersWithOverallTimeSpent, 1);
+        messageSenderForAdmins("g.succi@innopolis.ru", listOfUsersWithOverallTimeSpent, 1);
+        messageSenderForAdmins("x.vasquez@innopolis.university", listOfUsersWithOverallTimeSpent, 1);
+
 
         System.out.println("emails sent");
         return 0;
@@ -148,7 +176,7 @@ public class MailSenderService{
 
 
     //flag  0 for users, 1 for admins
-    public void messageSender(String to, Map<String, Integer> overallTimeSpent, int flag) {
+    public void messageSenderForAdmins(String to, Map<String[], Integer> overallTimeSpent, int flag) {
 
         MimeMessage message = mailSender.createMimeMessage();
 
@@ -207,9 +235,9 @@ public class MailSenderService{
                     "      </thead>\n";
 
 
-            Iterator<Map.Entry<String, Integer>> entries = overallTimeSpent.entrySet().iterator();
+            Iterator<Map.Entry<String[], Integer>> entries = overallTimeSpent.entrySet().iterator();
             while (entries.hasNext()) {
-                Map.Entry<String, Integer> entry = entries.next();
+                Map.Entry<String[], Integer> entry = entries.next();
 
                 if (entry.getValue() != 0) {
                     int hours = (int) entry.getValue() / 3600;
@@ -219,7 +247,7 @@ public class MailSenderService{
                     int secs = remainder;
 
                     htmlStr += "        <tr>\n" +
-                            "          <td colspan=3D\"3\"><h4>" + entry.getKey() + "</h4></td>\n" +
+                            "          <td colspan=3D\"3\"><h4>" + entry.getKey()[0] +" with macAddress: "+ entry.getKey()[1] +"</h4></td>\n" +
                             "          <td><h4>" + hours + ":" + mins + ":" + secs + "</h4></td>\n" +
                             "        </tr>\n";
                 }
@@ -251,12 +279,109 @@ public class MailSenderService{
             e.printStackTrace();
         }
 
-        //return 0;
     }
 
+    public void messageSender(String to, Map<String, Map<String, Integer>> overallTimeSpent) {
 
-//    @Override
-//    public void run(ApplicationArguments args) throws Exception {
-//        this.sendNotificationToAdmins();
-//    }
+        MimeMessage message = mailSender.createMimeMessage();
+
+        String subject = "InnoMetrics daily activity report";
+
+
+        MimeMessageHelper helper = null;
+        try {
+            helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(to);
+            helper.setFrom("innometrics-notification@innopolis.university");
+            helper.setSubject(subject);
+
+
+            String htmlStr = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org=\n" +
+                    "/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
+                    "<html xmlns=3D\"http://www.w3.org/1999/xhtml\" xml:lang=3D\"en\" lang=3D\"en\">\n" +
+                    "  <head>\n" +
+                    "    <title></title>\n" +
+                    "    <style type=3D\"text/css\">\n" +
+                    "      body {margin: 10px; padding: 10px; text-align: left; background-color=\n" +
+                    ": #ffffff; font: 13px Arial, Tahoma, Verdana, Helvetica, sans-serif; color:=\n" +
+                    " #24272b}\n" +
+                    "      td, th {padding: 0; margin: 0; border-bottom: 0px solid #bfd0e6;text-=\n" +
+                    "align: left}\n" +
+                    "      h4 {display: inline}\n" +
+                    "      .size1{width:450px}\n" +
+                    "      .size2{width:80px}\n" +
+                    "    </style>\n" +
+                    "  </head>\n" +
+                    "  <body>\n";
+
+
+            Iterator<Map.Entry<String, Map<String, Integer>>> entries = overallTimeSpent.entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<String, Map<String, Integer>> entry = entries.next();
+
+                htmlStr += " <h2>Your activity tracked today " + dateNow.toString().substring(0, 10);
+
+                htmlStr += " for mac " + entry.getKey() + "</h2>\n" +
+                        "    <p><br /></p>\n" +
+                        "    <table width=\"700\" border=\"0\" cellspacing=3D\"0\" cellpadding=3D\"0\">\n" +
+                        "      <thead>\n" +
+                        "        <tr>\n";
+
+                htmlStr += "          <th colspan=\"3\"><h4>Category</h4></th>\n";
+
+                htmlStr += " <th class=3D\"size2\">Time Spent</th>\n" +
+                        "        </tr>\n" +
+                        "      </thead>\n";
+
+                Iterator<Map.Entry<String, Integer>> сatTimes = entry.getValue().entrySet().iterator();
+                while (сatTimes.hasNext()) {
+                    Map.Entry<String, Integer> сatTime = сatTimes.next();
+
+                    if (сatTime.getValue() != 0) {
+                        int hours = (int) сatTime.getValue() / 3600;
+                        int remainder = (int) сatTime.getValue() - hours * 3600;
+                        int mins = remainder / 60;
+                        remainder = remainder - mins * 60;
+                        int secs = remainder;
+
+                        htmlStr += "        <tr>\n" +
+                                "          <td colspan=3D\"3\"><h4>" + сatTime.getKey()  +"</h4></td>\n" +
+                                "          <td><h4>" + hours + ":" + mins + ":" + secs + "</h4></td>\n" +
+                                "        </tr>\n";
+                    }
+
+                }
+                htmlStr += "    </table>\n";
+
+            }
+
+
+            htmlStr +="    <p>\n" +
+                    "      <br/>\n" +
+                    "    </p>\n" +
+                    "    <div>\n" +
+                    "      <br/>\n" +
+                    "      Innometrics Team\n" +
+                    "      <br/>\n" +
+                    "      If you don't want to receive daily report please click <a href=\n";
+
+            htmlStr+=
+                    env.getProperty("mail.sender.host")
+                            + "/unsubscribe/" + to +">here</a>\n" +
+                            "    </div>\n" +
+                            "\n" +
+                            "  </body>\n" +
+                            "</html>";
+
+            helper.setText(htmlStr, true);
+            message.setSender(new InternetAddress("innometrics-notification@innopolis.university"));
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 }

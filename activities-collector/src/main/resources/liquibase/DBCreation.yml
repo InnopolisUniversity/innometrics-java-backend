@@ -965,3 +965,68 @@ databaseChangeLog:
               - column:
                   name: updateby
                   type: Varchar(25)
+  - changeSet:
+      id: "add column mac_address to cumlativerepactivity table"
+      author: azag
+      changes:
+        - addColumn:
+            schemaName: innometrics
+            tableName: cumlativerepactivity
+            columns:
+              - column:
+                  name: mac_address
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+                  defaultValue: "0"
+  - changeSet:
+      id: reptimebyuserappprocess_trigger_Creation
+      author: azag
+      changes:
+        - sql:
+            endDelimiter: "/"
+            splitStatements: false
+            sql: "create or replace function reptimebyuserappprocess()
+                    returns trigger as
+                  $$
+                  declare
+                    dailySum interval;
+                    monthlySum interval;
+                    yearlySum interval;
+                  Begin
+                    select into dailySum sum(a.end_time - a.start_time)
+                      from innometrics.activity a
+                     where a.email = NEW.email
+                       and a.mac_address = NEW.mac_address
+                       and a.executable_name = NEW.executable_name
+                       and date_trunc('day', a.start_time) = date_trunc('day', NEW.start_time);
+
+
+                    select into monthlySum sum(a.end_time - a.start_time)
+                      from innometrics.activity a
+                     where a.email = NEW.email
+                       and a.mac_address = NEW.mac_address
+                       and a.executable_name = NEW.executable_name
+                       and date_trunc('month', a.start_time) = date_trunc('month', NEW.start_time);
+
+
+                    select into yearlySum sum(a.end_time - a.start_time)
+                      from innometrics.activity a
+                     where a.email = NEW.email
+                       and a.mac_address = NEW.mac_address
+                       and a.executable_name = NEW.executable_name
+                       and date_trunc('year', a.start_time) = date_trunc('year', NEW.start_time);
+
+
+
+                    insert into innometrics.cumlativeRepActivity (email, mac_address, executable_name, used_time, dailysum, monthlysum, yearlysum, capturedDate)
+                    values(NEW.email, NEW.mac_address, NEW.executable_name, (NEW.end_time - NEW.start_time), dailySum, monthlySum, yearlySum, NEW.end_time);
+
+                    return new;
+                  end;
+                  $$ LANGUAGE plpgsql;
+
+                  DROP TRIGGER IF EXISTS reptimebyuserappprocessTrg on innometrics.activity;
+
+                  create trigger reptimebyuserappprocessTrg after insert on innometrics.activity
+                  for each row execute PROCEDURE reptimebyuserappprocess();/"
