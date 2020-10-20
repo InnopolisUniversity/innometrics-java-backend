@@ -26,6 +26,13 @@ public class Team implements Serializable {
     private Integer companyid;
 
     @Column
+    private Integer projectID;
+
+
+    @Column
+    private String description;
+
+    @Column
     private String isactive;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
