@@ -106,7 +106,7 @@ public class CompanyService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public CompanyListRequest getActiveCompanies(String token) {
-        String uri ="http://INNOMETRICS-AUTH-SERVER/AdminAPI/Companies";
+        String uri =baseURL + "/all";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);

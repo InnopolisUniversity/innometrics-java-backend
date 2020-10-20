@@ -38,6 +38,12 @@ public class AdminAPI {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private TeamService teamService;
+
+    @Autowired
+    private TeammembersService teammembersService;
+
 
     @PostMapping("/Project")
     public ResponseEntity<ProjectRequest> updateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
@@ -362,7 +368,7 @@ public class AdminAPI {
         );
     }
 
-    @GetMapping("/Companies")
+    @GetMapping("/Company/all")
     public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
         //change later to required = true and delete this line
         String UserName = "API";
@@ -375,4 +381,177 @@ public class AdminAPI {
     }
 
 
+    @PostMapping("/Team")
+    public ResponseEntity<TeamRequest> updateTeam(@RequestBody TeamRequest teamRequest, @RequestHeader(required = false) String Token){
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (teamRequest == null)
+            throw new ValidationException("Not enough data provided");
+
+        if (teamRequest.getTeamid() == null)
+            throw new ValidationException("Not enough data provided");
+
+        teamRequest.setUpdateby(UserName);
+        TeamRequest response;
+        if(!teamService.existsById(teamRequest.getTeamid())){
+            teamRequest.setCreatedby(UserName);
+            response = teamService.create(teamRequest);
+        } else {
+            response = teamService.update(teamRequest);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @DeleteMapping("/Team")
+    public ResponseEntity<TeamRequest> deleteTeam(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (id == null)
+            throw new ValidationException("Not enough data provided");
+
+        teamService.delete(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/Team/all")
+    public ResponseEntity<TeamListRequest> findAllActiveTeams(@RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        return ResponseEntity.ok(
+                teamService.findAllActiveTeams()
+        );
+    }
+
+    @GetMapping("/Team")
+    public ResponseEntity<TeamListRequest> findTeamBy(@RequestParam(required = false) Integer teamId, @RequestParam(required = false) Integer companyId,
+                                                  @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (teamId == null && companyId == null && projectId == null)
+            throw new ValidationException("Not enough data provided");
+
+        return ResponseEntity.ok(
+                teamService.findByTeamProperties(teamId, companyId, projectId)
+        );
+    }
+
+    @PostMapping("/Teammember")
+    public ResponseEntity<TeammembersRequest> updateTeammember(@RequestBody TeammembersRequest teammembersRequest, @RequestHeader(required = false) String Token){
+        //change later to required = true and delete this line
+        String UserName = "API";//teammembersRequest.getEmail();
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (teammembersRequest == null)
+            throw new ValidationException("Not enough data provided");
+
+        if (teammembersRequest.getMemberid() == null)
+            throw new ValidationException("Not enough data provided");
+
+        if (!userService.existsByEmail(teammembersRequest.getEmail()))
+            throw new ValidationException("No such user");
+
+        teammembersRequest.setUpdateby(UserName);
+        TeammembersRequest response;
+        if(!(teammembersService.existsById(teammembersRequest.getMemberid())
+                || teammembersService.existInTheTeam(teammembersRequest.getTeamid(),teammembersRequest.getEmail()))){
+            teammembersRequest.setCreatedby(UserName);
+            response = teammembersService.create(teammembersRequest);
+        } else {
+            response = teammembersService.update(teammembersRequest);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/Teammember")
+    public ResponseEntity<TeammembersRequest> deleteTeammember(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (id == null)
+            throw new ValidationException("Not enough data provided");
+
+
+
+        teammembersService.delete(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/Teammember/all")
+    public ResponseEntity<TeammembersListRequest> findAllActiveTeammembers(@RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        return ResponseEntity.ok(
+                teammembersService.findAllActiveTeammembers()
+        );
+    }
+
+    @GetMapping("/Teammember")
+    public ResponseEntity<TeammembersListRequest> findTeammemberBy(@RequestParam(required = false) Integer memberId, @RequestParam(required = false) Integer teamId,
+                                                      @RequestParam(required = false) String email, @RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        if (teamId == null && memberId == null && email == null)
+            throw new ValidationException("Not enough data provided");
+
+        return ResponseEntity.ok(
+                teammembersService.findByTeammemberProperties(memberId,teamId, email)
+        );
+    }
+
+    @GetMapping("/WorkingTree")
+    public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
+        if (Token != null && Token != "")
+            email = jwtToken.getUsernameFromToken(Token);
+
+        if(email == null || email.equals(""))
+            throw new ValidationException("Not enough data provided");
+
+        WorkingTreeListRequest response = new WorkingTreeListRequest();
+        TeammembersListRequest teammembersListRequest = teammembersService.findByTeammemberProperties(null,null, email);
+        for (TeammembersRequest teammember : teammembersListRequest.getTeammembersRequestList()) {
+            WorkingTreeRequest workingTreeRequest = new WorkingTreeRequest();
+            workingTreeRequest.setEmail(email);
+            workingTreeRequest.setMemberid(teammember.getMemberid());
+            workingTreeRequest.setTeamid(teammember.getTeamid());
+            TeamRequest team = teamService.findByTeamId(teammember.getTeamid());
+            workingTreeRequest.setTeamname(team.getTeamname());
+            workingTreeRequest.setTeamdescription(team.getDescription());
+            workingTreeRequest.setCompanyid(team.getCompanyid());
+            CompanyRequest company = companyService.findByCompanyId(team.getCompanyid());
+            workingTreeRequest.setCompanyname(company.getCompanyname());
+            workingTreeRequest.setProjectID(team.getProjectID());
+            ProjectRequest project = projectService.getById(team.getProjectID());
+            workingTreeRequest.setProjectname(project.getName());
+
+            response.addWorkingTreeRequest(workingTreeRequest);
+        }
+
+        return ResponseEntity.ok(response);
+    }
 }
