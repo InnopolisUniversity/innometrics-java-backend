@@ -114,8 +114,8 @@ public class DataCollectorsAPI {
     @GetMapping("/Reports/categorytimeReport")
     public ResponseEntity<CategoriesTimeReportResponse> getCatTimeReport(@RequestParam(required = false) String projectID,
                                                             @RequestParam(required = false) String email,
-                                                            @RequestParam(required = false) Date min_Date,
-                                                            @RequestParam(required = false) Date max_Date) {
+                                                            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
+                                                            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
 
         CategoriesTimeReportResponse myReport = categoryService.getTimeReport(projectID, email, min_Date, max_Date);
         return ResponseEntity.ok(myReport);

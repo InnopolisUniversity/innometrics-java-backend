@@ -10,6 +10,18 @@ public class UserResponse implements Serializable {
 
     private String surname;
 
+    private String birthday;
+
+    private String gender;
+
+    private String facebook_alias;
+
+    private String telegram_alias;
+
+    private String twitter_alias;
+
+    private String linkedin_alias;
+
     private String isactive;
 
     private String role;
@@ -48,13 +60,19 @@ public class UserResponse implements Serializable {
         this.isactive = isactive;
     }
 
-    public UserResponse(String email, String name, String surname, String isactive, String role, List<PageResponse> pages) {
+    public UserResponse(String email, String name, String surname, String birthday, String gender, String facebook_alias, String telegram_alias, String twitter_alias, String linkedin_alias, String isactive, String role, List<PageResponse> pages) {
         this.email = email;
         this.name = name;
         this.surname = surname;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.facebook_alias = facebook_alias;
+        this.telegram_alias = telegram_alias;
+        this.twitter_alias = twitter_alias;
+        this.linkedin_alias = linkedin_alias;
         this.isactive = isactive;
-        this.role=role;
-        this.pages=pages;
+        this.role = role;
+        this.pages = pages;
     }
 
     public UserResponse() {
@@ -74,5 +92,53 @@ public class UserResponse implements Serializable {
 
     public void setPages(List<PageResponse> pages) {
         this.pages = pages;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFacebook_alias() {
+        return facebook_alias;
+    }
+
+    public void setFacebook_alias(String facebook_alias) {
+        this.facebook_alias = facebook_alias;
+    }
+
+    public String getTelegram_alias() {
+        return telegram_alias;
+    }
+
+    public void setTelegram_alias(String telegram_alias) {
+        this.telegram_alias = telegram_alias;
+    }
+
+    public String getTwitter_alias() {
+        return twitter_alias;
+    }
+
+    public void setTwitter_alias(String twitter_alias) {
+        this.twitter_alias = twitter_alias;
+    }
+
+    public String getLinkedin_alias() {
+        return linkedin_alias;
+    }
+
+    public void setLinkedin_alias(String linkedin_alias) {
+        this.linkedin_alias = linkedin_alias;
     }
 }

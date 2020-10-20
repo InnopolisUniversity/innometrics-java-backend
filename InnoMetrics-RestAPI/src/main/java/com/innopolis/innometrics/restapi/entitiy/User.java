@@ -26,6 +26,24 @@ public class User implements Serializable {
     private Date confirmed_at;
 
     @Column
+    private String birthday;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String facebook_alias;
+
+    @Column
+    private String telegram_alias;
+
+    @Column
+    private String twitter_alias;
+
+    @Column
+    private String linkedin_alias;
+
+    @Column
     private String isactive;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
@@ -47,32 +65,34 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Role role) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.confirmed_at = confirmed_at;
-        this.isactive = isactive;
-        this.creationdate = creationdate;
-        this.createdby = createdby;
-        this.lastupdate = lastupdate;
-        this.updateby = updateby;
-        this.role = role;
-    }
+//    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby, Role role) {
+//        this.email = email;
+//        this.password = password;
+//        this.name = name;
+//        this.surname = surname;
+//        this.confirmed_at = confirmed_at;
+//        this.isactive = isactive;
+//        this.creationdate = creationdate;
+//        this.createdby = createdby;
+//        this.lastupdate = lastupdate;
+//        this.updateby = updateby;
+//        this.role = role;
+//    }
+//
+//    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
+//        this.email = email;
+//        this.password = password;
+//        this.name = name;
+//        this.surname = surname;
+//        this.confirmed_at = confirmed_at;
+//        this.isactive = isactive;
+//        this.creationdate = creationdate;
+//        this.createdby = createdby;
+//        this.lastupdate = lastupdate;
+//        this.updateby = updateby;
+//    }
 
-    public User(String email, String password, String name, String surname, Date confirmed_at, String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.confirmed_at = confirmed_at;
-        this.isactive = isactive;
-        this.creationdate = creationdate;
-        this.createdby = createdby;
-        this.lastupdate = lastupdate;
-        this.updateby = updateby;
-    }
+
 
     public String getEmail() {
         return email;
@@ -163,7 +183,53 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    public String getBirthday() {
+        return birthday;
+    }
 
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFacebook_alias() {
+        return facebook_alias;
+    }
+
+    public void setFacebook_alias(String facebook_alias) {
+        this.facebook_alias = facebook_alias;
+    }
+
+    public String getTelegram_alias() {
+        return telegram_alias;
+    }
+
+    public void setTelegram_alias(String telegram_alias) {
+        this.telegram_alias = telegram_alias;
+    }
+
+    public String getTwitter_alias() {
+        return twitter_alias;
+    }
+
+    public void setTwitter_alias(String twitter_alias) {
+        this.twitter_alias = twitter_alias;
+    }
+
+    public String getLinkedin_alias() {
+        return linkedin_alias;
+    }
+
+    public void setLinkedin_alias(String linkedin_alias) {
+        this.linkedin_alias = linkedin_alias;
+    }
 
     @PreUpdate
     public void preUpdate(){

@@ -83,9 +83,16 @@ public class AuthAPI {
                 String UserName = Token != null ? jwtToken.getUsernameFromToken(Token) : "API";
 
                 myUser.setEmail(user.getEmail());
-                myUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
                 myUser.setName(user.getName());
                 myUser.setSurname(user.getSurname());
+
+                myUser.setBirthday(user.getBirthday());
+                myUser.setGender(user.getGender());
+                myUser.setFacebook_alias(user.getFacebook_alias());
+                myUser.setTelegram_alias(user.getTelegram_alias());
+                myUser.setTwitter_alias(user.getTwitter_alias());
+                myUser.setLinkedin_alias(user.getLinkedin_alias());
+
                 myUser.setUpdateby(UserName);
                 myUser.setLastupdate(new Date());
                 myUser.setIsactive(user.getIsactive());
@@ -97,6 +104,25 @@ public class AuthAPI {
                 return ResponseEntity.ok(userService.fromUserToUserRequest(myUser));
             }
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+
+    @PostMapping("/User/{UserName}")
+    public ResponseEntity<Boolean> updateUserPassword(@PathVariable String UserName, @RequestBody  String Password, @RequestHeader(required = true) String Token) {
+        if (UserName != null) {
+            User myUser  = userService.findByEmail(UserName);
+
+            if(myUser != null){
+
+                myUser.setPassword(new BCryptPasswordEncoder().encode(Password));
+
+                myUser = userService.save(myUser);
+
+                return ResponseEntity.ok(true);
+            }
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         } else
             throw new ValidationException("Not enough data provided");
     }

@@ -2,6 +2,7 @@ package com.innopolis.innometrics.restapi.DTO;
 
 import com.innopolis.innometrics.restapi.entitiy.Role;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +15,18 @@ public class UserRequest implements Serializable {
     private String name;
 
     private String surname;
+
+    private String birthday;
+
+    private String gender;
+
+    private String facebook_alias;
+
+    private String telegram_alias;
+
+    private String twitter_alias;
+
+    private String linkedin_alias;
 
     private Date confirmed_at;
 
@@ -81,6 +94,54 @@ public class UserRequest implements Serializable {
 
     public void setIsactive(String isactive) {
         this.isactive = isactive;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFacebook_alias() {
+        return facebook_alias;
+    }
+
+    public void setFacebook_alias(String facebook_alias) {
+        this.facebook_alias = facebook_alias;
+    }
+
+    public String getTelegram_alias() {
+        return telegram_alias;
+    }
+
+    public void setTelegram_alias(String telegram_alias) {
+        this.telegram_alias = telegram_alias;
+    }
+
+    public String getTwitter_alias() {
+        return twitter_alias;
+    }
+
+    public void setTwitter_alias(String twitter_alias) {
+        this.twitter_alias = twitter_alias;
+    }
+
+    public String getLinkedin_alias() {
+        return linkedin_alias;
+    }
+
+    public void setLinkedin_alias(String linkedin_alias) {
+        this.linkedin_alias = linkedin_alias;
     }
 
     public String getRole() {

@@ -1,6 +1,7 @@
 com\innopolis\innometrics\restapi\DTO\PageListResponse.class
 com\innopolis\innometrics\restapi\DTO\TimeReportResponse.class
 com\innopolis\innometrics\restapi\entitiy\Activity.class
+com\innopolis\innometrics\restapi\DTO\ProfileRequest.class
 com\innopolis\innometrics\restapi\repository\MeasurementTypeRepository.class
 com\innopolis\innometrics\restapi\config\JwtAuthenticationEntryPoint.class
 com\innopolis\innometrics\restapi\DTO\ActivitiesReportByUserRequest.class
@@ -16,7 +17,6 @@ com\innopolis\innometrics\restapi\repository\MeasurementRepository.class
 com\innopolis\innometrics\restapi\DTO\RoleResponse.class
 com\innopolis\innometrics\restapi\DTO\TimeReportByUser.class
 com\innopolis\innometrics\restapi\DTO\RoleListResponse.class
-com\innopolis\innometrics\restapi\DTO\ProjectResponse.class
 com\innopolis\innometrics\restapi\DTO\AppCategoryRequest.class
 com\innopolis\innometrics\restapi\repository\ActivityRepository.class
 com\innopolis\innometrics\restapi\DTO\AddProcessReportRequest.class
@@ -40,6 +40,8 @@ com\innopolis\innometrics\restapi\entitiy\Role.class
 com\innopolis\innometrics\restapi\service\PermissionService.class
 com\innopolis\innometrics\activitiescollector\DTO\CategoriesReport.class
 com\innopolis\innometrics\restapi\controller\AdminAPI.class
+com\innopolis\innometrics\restapi\DTO\CompanyRequest.class
+com\innopolis\innometrics\restapi\service\CollectorVersionService.class
 com\innopolis\innometrics\restapi\DTO\Report.class
 com\innopolis\innometrics\restapi\controller\DataCollectorsAPI.class
 com\innopolis\innometrics\restapi\DTO\AppCategoryResponse.class
@@ -49,14 +51,18 @@ com\innopolis\innometrics\restapi\DTO\AuthResponse.class
 com\innopolis\innometrics\restapi\repository\RoleRepository.class
 com\innopolis\innometrics\restapi\DTO\ProjectListRequest.class
 com\innopolis\innometrics\restapi\config\WebSecurityConfig.class
+com\innopolis\innometrics\restapi\entitiy\CollectorVersion.class
 com\innopolis\innometrics\restapi\DTO\CategoriesTimeReportResponse.class
 com\innopolis\innometrics\restapi\DTO\PageRequest.class
 com\innopolis\innometrics\restapi\DTO\PageListRequest.class
 com\innopolis\innometrics\restapi\DTO\ProcessReport.class
 com\innopolis\innometrics\restapi\config\RestTemplateResponseErrorHandler.class
+com\innopolis\innometrics\restapi\service\ProfileService.class
 com\innopolis\innometrics\restapi\service\ActivityService.class
-com\innopolis\innometrics\restapi\DTO\ProjectListResponse.class
+com\innopolis\innometrics\restapi\repository\CollectorVersionRepository.class
 com\innopolis\innometrics\restapi\service\CategoryService.class
+com\innopolis\innometrics\restapi\DTO\CompanyListRequest.class
+com\innopolis\innometrics\restapi\service\CompanyService.class
 com\innopolis\innometrics\restapi\DTO\ActivitiesReportByUser.class
 com\innopolis\innometrics\restapi\DTO\MeasurementTypeResponse.class
 com\innopolis\innometrics\restapi\entitiy\Permission_id.class

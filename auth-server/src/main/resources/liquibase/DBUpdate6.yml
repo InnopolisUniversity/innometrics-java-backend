@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: "adding user profile fields "
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsauth
+            tableName: user
+            columns:
+              - column:
+                  name: birthday
+                  type: Varchar(256)
+              - column:
+                  name: gender
+                  type: Varchar(256)
+              - column:
+                  name: facebook_alias
+                  type: Varchar(256)
+              - column:
+                  name: telegram_alias
+                  type: Varchar(256)
+              - column:
+                  name: twitter_alias
+                  type: Varchar(256)
+              - column:
+                  name: linkedin_alias
+                  type: Varchar(256)

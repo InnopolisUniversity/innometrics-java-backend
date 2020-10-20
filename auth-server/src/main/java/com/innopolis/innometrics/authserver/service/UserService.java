@@ -71,6 +71,14 @@ public class UserService implements UserDetailsService {
         myUserRq.setSurname(myUser.getSurname());
         myUserRq.setEmail(myUser.getEmail());
         myUserRq.setPassword(myUser.getPassword());
+
+        myUserRq.setBirthday(myUser.getBirthday());
+        myUserRq.setGender(myUser.getGender());
+        myUserRq.setFacebook_alias(myUser.getFacebook_alias());
+        myUserRq.setTelegram_alias(myUser.getTelegram_alias());
+        myUserRq.setTwitter_alias(myUser.getTwitter_alias());
+        myUserRq.setLinkedin_alias(myUser.getLinkedin_alias());
+
         myUserRq.setIsactive(myUser.getIsactive());
         myUserRq.setConfirmed_at(myUser.getConfirmed_at());
         myUserRq.setRole(myUser.getRole().getName());
@@ -82,6 +90,14 @@ public class UserService implements UserDetailsService {
         UserResponse myUserRq = new UserResponse();
         myUserRq.setName(myUser.getName());
         myUserRq.setSurname(myUser.getSurname());
+
+        myUserRq.setBirthday(myUser.getBirthday());
+        myUserRq.setGender(myUser.getGender());
+        myUserRq.setFacebook_alias(myUser.getFacebook_alias());
+        myUserRq.setTelegram_alias(myUser.getTelegram_alias());
+        myUserRq.setTwitter_alias(myUser.getTwitter_alias());
+        myUserRq.setLinkedin_alias(myUser.getLinkedin_alias());
+
         myUserRq.setEmail(myUser.getEmail());
         myUserRq.setIsactive(myUser.getIsactive());
         myUserRq.setRole(myUser.getRole().getName());

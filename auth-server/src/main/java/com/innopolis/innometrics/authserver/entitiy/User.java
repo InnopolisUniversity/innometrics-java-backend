@@ -43,6 +43,23 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "projectid"))
     Set<Project> projects ;
 
+    @Column
+    private String birthday;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String facebook_alias;
+
+    @Column
+    private String telegram_alias;
+
+    @Column
+    private String twitter_alias;
+
+    @Column
+    private String linkedin_alias;
 
     @Column
     private String isactive;

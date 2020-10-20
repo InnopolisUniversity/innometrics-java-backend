@@ -10,10 +10,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -147,7 +144,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean createFallback(User myUser) {
+    public boolean createFallback(UserRequest myUser) {
         return false;
     }
 
@@ -181,6 +178,14 @@ public class UserService implements UserDetailsService {
         myUserRq.setSurname(myUser.getSurname());
         myUserRq.setEmail(myUser.getEmail());
         myUserRq.setPassword(myUser.getPassword());
+
+        myUserRq.setBirthday(myUser.getBirthday());
+        myUserRq.setGender(myUser.getGender());
+        myUserRq.setFacebook_alias(myUser.getFacebook_alias());
+        myUserRq.setTelegram_alias(myUser.getTelegram_alias());
+        myUserRq.setTwitter_alias(myUser.getTwitter_alias());
+        myUserRq.setLinkedin_alias(myUser.getLinkedin_alias());
+
         myUserRq.setIsactive(myUser.getIsactive());
         myUserRq.setConfirmed_at(myUser.getConfirmed_at());
         myUserRq.setRole(myUser.getRole().getName());
@@ -194,6 +199,14 @@ public class UserService implements UserDetailsService {
         myUser.setSurname(userRequest.getSurname());
         myUser.setEmail(userRequest.getEmail());
         myUser.setPassword(userRequest.getPassword());
+
+        myUser.setBirthday(userRequest.getBirthday());
+        myUser.setGender(userRequest.getGender());
+        myUser.setFacebook_alias(userRequest.getFacebook_alias());
+        myUser.setTelegram_alias(userRequest.getTelegram_alias());
+        myUser.setTwitter_alias(userRequest.getTwitter_alias());
+        myUser.setLinkedin_alias(userRequest.getLinkedin_alias());
+
         myUser.setIsactive(userRequest.getIsactive());
         myUser.setConfirmed_at(userRequest.getConfirmed_at());
 
@@ -203,4 +216,40 @@ public class UserService implements UserDetailsService {
         return myUser;
     }
 
+    public Boolean updatePassword(User myUser, String token) {
+        try {
+            String uri = baseURL + "/" + myUser.getEmail();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Token", token);
+
+            HttpEntity<String> entity = new HttpEntity<>(myUser.getPassword(), headers);
+            try {
+                ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
+
+                HttpStatus status = response.getStatusCode();
+
+                return status == HttpStatus.OK;
+            } catch (Exception e) {
+                LOG.warn(e);
+                return false;
+            }
+
+
+//            HttpEntity<String> entity = new HttpEntity<>(myUser);
+//            ResponseEntity<Boolean> response = restTemplate.exchange(uri, HttpMethod.POST, entity, UserRequest.class);
+//
+//            HttpStatus status = response.getStatusCode();
+//            UserRequest restCall = response.getBody();
+//
+//            if (status == HttpStatus.CREATED) {
+//                return true;
+//            }
+        }
+        catch (Exception ex){
+            LOG.warn(ex.getMessage());
+        }
+
+        return false;
+    }
 }

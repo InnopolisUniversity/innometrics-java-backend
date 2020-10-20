@@ -457,3 +457,47 @@ databaseChangeLog:
             baseTableName: activity
             baseTableSchemaName: innometrics
             constraintName: fk_user_activity
+
+  - changeSet:
+      id: creation_table_to_manage_collector_version
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometrics
+            tableName: collector_version
+            columns:
+              - column:
+                  name: id
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: collectorversion_pk
+              - column:
+                  name: osversion
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)

@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -240,11 +242,12 @@ public class CategoryService {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
+        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("projectID", projectID)
                 .queryParam("email", email)
-                .queryParam("min_Date", min_Date)
-                .queryParam("max_Date", max_Date);
+                .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
+                .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
         ResponseEntity<CategoriesTimeReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CategoriesTimeReportResponse.class);
 
         HttpStatus status = response.getStatusCode();

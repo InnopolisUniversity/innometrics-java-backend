@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -59,6 +60,9 @@ public class AdminAPI {
 
     @Autowired
     CompanyService companyService;
+
+    @Autowired
+    CollectorVersionService collectorVersionService;
 
     @GetMapping("/Role/Permissions/{RoleName}")
     public ResponseEntity<List<Page>> ListRolePermissions(@PathVariable String RoleName) {
@@ -243,6 +247,59 @@ public class AdminAPI {
     }
 
 
+    @PutMapping("/User")
+    public ResponseEntity<Boolean> updateUser(@RequestBody  UserRequest user, @RequestHeader(required = true) String Token) {
+        if (user != null) {
+            User myUser  = userService.findByEmail(user.getEmail());
+
+            if(myUser != null){
+                String UserName = Token != null ? jwtTokenUtil.getUsernameFromToken(Token) : "API";
+
+                myUser.setEmail(user.getEmail());
+                myUser.setName(user.getName());
+                myUser.setSurname(user.getSurname());
+
+                myUser.setBirthday(user.getBirthday());
+                myUser.setGender(user.getGender());
+                myUser.setFacebook_alias(user.getFacebook_alias());
+                myUser.setTelegram_alias(user.getTelegram_alias());
+                myUser.setTwitter_alias(user.getTwitter_alias());
+                myUser.setLinkedin_alias(user.getLinkedin_alias());
+
+                myUser.setUpdateby(UserName);
+                myUser.setLastupdate(new Date());
+                myUser.setIsactive(user.getIsactive());
+                myUser.setConfirmed_at(user.getConfirmed_at());
+
+                Boolean response = userService.update(myUser) != null;
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+
+    @PostMapping("/User/{UserName}")
+    public ResponseEntity<Boolean> updateUserPassword(@PathVariable String UserName, @RequestBody  String Password, @RequestHeader(required = true) String Token) {
+        if (UserName != null) {
+            User myUser  = userService.findByEmail(UserName);
+
+            if(myUser != null){
+
+                myUser.setPassword(Password);
+
+                Boolean response = userService.updatePassword(myUser, Token);
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+
     //Add project
     @PostMapping("/Project")
     public ResponseEntity<ProjectRequest> UpdateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
@@ -342,6 +399,8 @@ public class AdminAPI {
         UserListResponse response = adminService.getActiveUsers(ProjectId);
         return ResponseEntity.ok(response);
     }
+
+
 
     @GetMapping("/Users/projects/{UserName}")
     public ResponseEntity<ProjectListRequest> getProjectsByUsername(@PathVariable String UserName,@RequestHeader(required = false) String Token) {
@@ -473,5 +532,14 @@ public class AdminAPI {
         );
     }
 
+    @GetMapping("/collector-version")
+    public String getCollectorVersion(@RequestParam(required = true) String osversion) {
+        return collectorVersionService.getCurrentVersion(osversion);
+    }
+
+    @PutMapping("/collector-version")
+    public Boolean UpdateCollectorVersion(@RequestParam(required = true) String osversion, @RequestParam(required = true) String newVersion) {
+        return collectorVersionService.updateCurrentVersion(osversion, newVersion);
+    }
 
 }
