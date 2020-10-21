@@ -132,7 +132,7 @@ public class UserService implements UserDetailsService {
         return myUserRq;
     }
 
-    public void sendRessetPassordEmail(String email){
+    public void sendRessetPassordEmail(String email, String BackUrl){
         TemporalToken temporalToken = generateNewTokenEnrty(email);
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -166,12 +166,11 @@ public class UserService implements UserDetailsService {
                     "  </head>\n" +
                     "  <body>\n";
 
-            htmlStr += "<h2> Please press the following link to reset your password. Be noticed that it will expire in 5 minutes:</h2>\n";
+            htmlStr += "<h2> Please put the following token in the  on reset password page. Be noticed that it will expire in 5 minutes:</h2>\n";
 
 
             htmlStr+= "<p><br /></p>\n"+
-                    "<div> <a href=" + env.getProperty("mail.sender.host")
-                            + "/AuthAPI/User/" + email + "/validate?TemporalToken=" + temporalToken.getTemporalToken() + "> Reset password </a>\n" +
+                    "<div> <a href=" + BackUrl +"=" + temporalToken.getTemporalToken() + "> Reset password </a>\n" +
                     "   </div>\n" +
                     "   <div>" +
                     "    <br/>\n" +

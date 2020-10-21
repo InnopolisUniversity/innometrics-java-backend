@@ -154,13 +154,13 @@ public class AuthAPI {
 
 
     @PostMapping("/User/{UserName}/reset")
-    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName, @RequestHeader(required = true) String Token){
+    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName,@RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token){
         if (UserName != null) {
             User myUser  = userService.findByEmail(UserName);
 
             if(myUser != null){
 
-                userService.sendRessetPassordEmail(UserName);
+                userService.sendRessetPassordEmail(UserName, BackUrl);
 
                 return ResponseEntity.ok(true);
             }
