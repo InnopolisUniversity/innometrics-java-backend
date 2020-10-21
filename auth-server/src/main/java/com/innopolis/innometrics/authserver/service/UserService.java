@@ -3,26 +3,45 @@ package com.innopolis.innometrics.authserver.service;
 
 import com.innopolis.innometrics.authserver.DTO.*;
 import com.innopolis.innometrics.authserver.entitiy.Permission;
+import com.innopolis.innometrics.authserver.entitiy.TemporalToken;
 import com.innopolis.innometrics.authserver.repository.RoleRepository;
+import com.innopolis.innometrics.authserver.repository.TemporalTokenRepository;
 import com.innopolis.innometrics.authserver.repository.UserRepository;
 import com.innopolis.innometrics.authserver.entitiy.User;
-import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Component
 public class UserService implements UserDetailsService {
+
+    @Autowired
+    public JavaMailSender mailSender;
+
+    @Autowired
+    private Environment env;
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private TemporalTokenRepository temporalTokenRepository;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -111,5 +130,106 @@ public class UserService implements UserDetailsService {
         myUserRq.setPages(pages);
 
         return myUserRq;
+    }
+
+    public void sendRessetPassordEmail(String email){
+        TemporalToken temporalToken = generateNewTokenEnrty(email);
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        String subject = "InnoMetrics reset password link";
+
+
+        MimeMessageHelper helper = null;
+        try {
+            helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(email);
+            helper.setFrom("innometrics-notification@innopolis.university");
+            helper.setSubject(subject);
+
+            String htmlStr = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org=\n" +
+                    "/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
+                    "<html xmlns=3D\"http://www.w3.org/1999/xhtml\" xml:lang=3D\"en\" lang=3D\"en\">\n" +
+                    "  <head>\n" +
+                    "    <title></title>\n" +
+                    "    <style type=3D\"text/css\">\n" +
+                    "      body {margin: 10px; padding: 10px; text-align: left; background-color=\n" +
+                    ": #ffffff; font: 13px Arial, Tahoma, Verdana, Helvetica, sans-serif; color:=\n" +
+                    " #24272b}\n" +
+                    "      td, th {padding: 0; margin: 0; border-bottom: 0px solid #bfd0e6;text-=\n" +
+                    "align: left}\n" +
+                    "      h4 {display: inline}\n" +
+                    "      .size1{width:450px}\n" +
+                    "      .size2{width:80px}\n" +
+                    "    </style>\n" +
+                    "  </head>\n" +
+                    "  <body>\n";
+
+            htmlStr += "<h2> Please press the following link to reset your password. Be noticed that it will expire in 5 minutes:</h2>\n";
+
+
+            htmlStr+= "<p><br /></p>\n"+
+                    "<div> <a href=" + env.getProperty("mail.sender.host")
+                            + "/AuthAPI/User/" + email + "/validate?TemporalToken=" + temporalToken.getTemporalToken() + "> Reset password </a>\n" +
+                    "   </div>\n" +
+                    "   <div>" +
+                    "    <br/>\n" +
+                    "    Innometrics Team\n"  +
+                    "    <br/>\n" +
+                    "   </div>\n" +
+                    "  </body>\n" +
+                    "</html>";
+
+            helper.setText(htmlStr, true);
+            message.setSender(new InternetAddress("innometrics-notification@innopolis.university"));
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean checkTemporalToken(String email, String tempToken){
+        TemporalToken temporalToken = temporalTokenRepository.findByEmailAndTemporalToken(email,tempToken);
+        //Date currentTime =new Date(Calendar.getInstance().getTimeInMillis());
+        Timestamp dateNow = new Timestamp(System.currentTimeMillis());
+        if(temporalToken!=null && temporalToken.getExpirationDate().after(dateNow)){
+            temporalTokenRepository.delete(temporalToken);
+            return true;
+        } else {
+            if(temporalToken!=null)
+                temporalTokenRepository.delete(temporalToken);
+            return false;
+        }
+    }
+
+
+    private TemporalToken generateNewTokenEnrty(String email){
+        TemporalToken temporalToken = temporalTokenRepository.findByEmail(email);
+        if(temporalToken!=null){
+            temporalTokenRepository.delete(temporalToken);
+        }
+
+        //Timestamp dateNow = new Timestamp(System.currentTimeMillis());
+        Timestamp dateAfterFiveMinsFromNow = new Timestamp(System.currentTimeMillis() + (5 * ONE_MINUTE_IN_MILLIS));
+
+
+//        Calendar date = Calendar.getInstance();
+//        long t= date.getTimeInMillis();
+//        Date afterFiveMinsFromNow=new Date(t + (5 * ONE_MINUTE_IN_MILLIS));
+        temporalToken = new TemporalToken(email, generateNewToken(), dateAfterFiveMinsFromNow);
+
+        return temporalTokenRepository.save(temporalToken);
+    }
+
+    private static final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
+    private static final SecureRandom secureRandom = new SecureRandom(); //threadsafe
+    private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe
+
+    private static String generateNewToken() {
+        byte[] randomBytes = new byte[24];
+        secureRandom.nextBytes(randomBytes);
+        return base64Encoder.encodeToString(randomBytes);
     }
 }

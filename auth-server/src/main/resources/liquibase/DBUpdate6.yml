@@ -25,7 +25,7 @@ databaseChangeLog:
               - column:
                   name: linkedin_alias
                   type: Varchar(256)
- - changeSet:
+  - changeSet:
       id: "add column projectId to Teams table"
       author: azag
       changes:
@@ -50,3 +50,30 @@ databaseChangeLog:
             tableName: teammembers
             columnNames: teamid, email
             constraintName: "unique_teammember"
+
+  - changeSet:
+      id: "Creating table to manage reset passwords"
+      author: azag
+      changes:
+        - createTable:
+            schemaName: innometricsauth
+            tableName: temporal_token
+            remarks: Table to store temporal_tokens
+            columns:
+              - column:
+                  name: email
+                  type: Varchar(256)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: email_pk
+              - column:
+                  name: temporal_token
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiration_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
