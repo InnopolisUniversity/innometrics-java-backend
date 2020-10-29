@@ -22,6 +22,8 @@ public class OAuthImp implements OAuthService {
     private String DEFAULT_CALLBACK1a;
     @Value("${innometrics.oauth20.default-callback}")
     private String DEFAULT_CALLBACK20;
+    @Value("${innometrics.oauthSimple.default-callback}")
+    private String DEFAULT_CALLBACKSimple;
 
     @Autowired
     AgentconfigRepository agentconfigRepository;
@@ -40,6 +42,8 @@ public class OAuthImp implements OAuthService {
             case "OAuth20J":
                 return getAuthorizationURL20(config, projectid, cb);
             //break;
+            case "Simple":
+                return getAuthorizationURLSimple(config, projectid, cb);
             default:
         }
         return null;
@@ -58,6 +62,9 @@ public class OAuthImp implements OAuthService {
                 break;
             case  "OAuth20J":
                 token = getToken20j(config, projectId, oauth_verifier, cb);
+                break;
+            case  "Simple":
+                token = oauth_verifier;
                 break;
             default:
         }
@@ -116,6 +123,16 @@ public class OAuthImp implements OAuthService {
         }
     }
 
+
+    private String getAuthorizationURLSimple(Agentconfig config, Integer projectid, String cb) {
+        try {
+            String Callback = DEFAULT_CALLBACKSimple + "?agentid=" + config.getAgentid() + "&projectid=" + projectid + "&cb=" + cb;
+            return config.getAuthorizationbaseurl() + "?callback=" + Callback;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private String getToken1a(Agentconfig config, Integer projectid, String oauth_verifier) {
         CustomOAuth1 client = new CustomOAuth1();
         client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());

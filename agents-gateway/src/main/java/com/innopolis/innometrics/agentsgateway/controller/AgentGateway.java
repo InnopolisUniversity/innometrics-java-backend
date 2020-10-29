@@ -128,4 +128,19 @@ public class AgentGateway {
         response.setHeader("Accept", "application/json");
         response.setStatus(302);
     }
+
+
+    @GetMapping("/Simple/")
+    public void OAuthSimple(HttpServletResponse response,
+                        @RequestParam Integer agentid,
+                        @RequestParam Integer projectid,
+                        @RequestParam String code,
+                        @RequestParam String cb) {
+        oAuthService.storeToken(agentid, projectid, code, cb);
+        //return code;
+
+        response.setHeader("Location", cb);
+        response.setHeader("Accept", "application/json");
+        response.setStatus(302);
+    }
 }
