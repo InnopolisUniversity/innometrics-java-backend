@@ -151,4 +151,36 @@ public class AuthAPI {
         } else
             throw new ValidationException("Not enough data provided");
     }
+
+
+    @PostMapping("/User/{UserName}/reset")
+    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName,@RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token){
+        if (UserName != null) {
+            User myUser  = userService.findByEmail(UserName);
+
+            if(myUser != null){
+
+                userService.sendRessetPassordEmail(UserName, BackUrl);
+
+                return ResponseEntity.ok(true);
+            }
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+    // here token is temporal for validation of password reset
+    @GetMapping("/User/{UserName}/validate")
+    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String TemporalToken){
+        if (UserName != null) {
+            User myUser  = userService.findByEmail(UserName);
+
+            if(myUser != null && TemporalToken != null && TemporalToken != ""){
+
+                return ResponseEntity.ok(userService.checkTemporalToken(UserName,TemporalToken));
+            }
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
 }
