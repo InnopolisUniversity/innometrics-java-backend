@@ -1,4 +1,4 @@
-package com.innopolis.innometrics.activitiescollector.DTO;
+package com.innopolis.innometrics.restapi.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

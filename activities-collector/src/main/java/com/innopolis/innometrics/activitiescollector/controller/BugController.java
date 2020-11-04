@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.crypto.Data;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -72,14 +74,16 @@ public class BugController {
     public ResponseEntity<BugTrackingListRequest> getBugsByParameters(@RequestParam(required = false) Integer status,
                                                           @RequestParam(required = false) String creationdateFrom,
                                                           @RequestParam(required = false) String creationdateTo,
-                                                          @RequestHeader(required = false) String Token) {
+                                                          @RequestHeader(required = false) String Token) throws UnsupportedEncodingException {
 
+        String creationdateFrom2 = URLDecoder.decode(creationdateFrom, "UTF-8");
+        String creationdateTo2 = URLDecoder.decode(creationdateTo, "UTF-8");
         Timestamp dFrom = new Timestamp(1);
         Timestamp dTo = new Timestamp(System.currentTimeMillis());
-        if (creationdateFrom != null && !creationdateFrom.equals(""))
-            dFrom = java.sql.Timestamp.valueOf(creationdateFrom);
-        if (creationdateTo != null && !creationdateTo.equals(""))
-            dTo = java.sql.Timestamp.valueOf(creationdateTo);
+        if (creationdateFrom2 != null && !creationdateFrom2.equals(""))
+            dFrom = java.sql.Timestamp.valueOf(creationdateFrom2);
+        if (creationdateTo2 != null && !creationdateTo2.equals(""))
+            dTo = java.sql.Timestamp.valueOf(creationdateTo2);
 
         BugTrackingListRequest bugs ;
         if (status == null || status > 1 || status < 0) {

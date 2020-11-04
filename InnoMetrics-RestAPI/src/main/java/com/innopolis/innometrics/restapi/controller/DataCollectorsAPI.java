@@ -2,10 +2,8 @@ package com.innopolis.innometrics.restapi.controller;
 
 import com.innopolis.innometrics.restapi.DTO.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
-import com.innopolis.innometrics.restapi.service.ActivityService;
-import com.innopolis.innometrics.restapi.service.CategoryService;
-import com.innopolis.innometrics.restapi.service.ProcessService;
-import com.innopolis.innometrics.restapi.service.ReportService;
+import com.innopolis.innometrics.restapi.exceptions.ValidationException;
+import com.innopolis.innometrics.restapi.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
@@ -41,6 +40,9 @@ public class DataCollectorsAPI {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    BugTrackingService bugTrackingService;
 
     //add activity
     @PostMapping("/activity")
@@ -119,5 +121,62 @@ public class DataCollectorsAPI {
 
         CategoriesTimeReportResponse myReport = categoryService.getTimeReport(projectID, email, min_Date, max_Date);
         return ResponseEntity.ok(myReport);
+    }
+
+
+    @PutMapping("/Bug")
+    public ResponseEntity<BugTrackingRequest> UpdateBug(@RequestBody BugTrackingRequest bug, @RequestHeader(required = false) String Token) {
+
+        if (bug == null || bug.getTitle() == null || bug.getTrace() == null)
+            throw new ValidationException("Not enough data provided");
+
+        if(!bugTrackingService.updateBug(bug, Token)){
+            throw new ValidationException("Bug was not updated");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/Bug")
+    public ResponseEntity<BugTrackingRequest> CreateBug(@RequestBody BugTrackingRequest bug, @RequestHeader(required = false) String Token) {
+
+        if (bug == null || bug.getTitle() == null || bug.getTrace() == null)
+            throw new ValidationException("Not enough data provided");
+
+
+        if(!bugTrackingService.createBug(bug,Token)){
+            throw new ValidationException("Bug was not created");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/Bug")
+    public ResponseEntity<BugTrackingRequest> getBugById(@RequestParam Integer bugId, @RequestHeader(required = false) String Token) {
+        if (bugId !=null) {
+            BugTrackingRequest bug = bugTrackingService.findBugById(bugId, Token);
+            return ResponseEntity.ok(bug);
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+    @GetMapping("/Bug/all")
+    public ResponseEntity<BugTrackingListRequest> getBugsByParameters(@RequestParam(required = false) Integer status,
+                                                                      @RequestParam(required = false) String creationdateFrom,
+                                                                      @RequestParam(required = false) String creationdateTo,
+                                                                      @RequestHeader(required = false) String Token) {
+
+        BugTrackingListRequest bugs = bugTrackingService.findBugsByParameters(status, creationdateFrom, creationdateTo, Token);
+        return ResponseEntity.ok(bugs);
+    }
+
+    @DeleteMapping("/Bug")
+    public ResponseEntity<BugTrackingRequest> deleteBug(@RequestParam Integer bugId, @RequestHeader(required = false) String Token) {
+
+        if (bugId == null)
+            throw new ValidationException("Not enough data provided");
+
+        bugTrackingService.deleteBug(bugId,Token);
+
+        return ResponseEntity.ok().build();
     }
 }

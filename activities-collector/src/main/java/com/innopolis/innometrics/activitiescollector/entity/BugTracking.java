@@ -43,7 +43,7 @@ public class BugTracking implements Serializable {
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Timestamp creationdate;
 
-    @Column(name = "lastupdate", insertable = false)
+    @Column(name = "lastupdate")
     private Timestamp lastupdate;
 
     // 0 - not solved, 1 - solved

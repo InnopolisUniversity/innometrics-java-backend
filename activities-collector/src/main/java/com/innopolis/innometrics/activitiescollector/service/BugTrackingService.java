@@ -72,16 +72,7 @@ public class BugTrackingService {
 
     public BugTrackingListRequest findBugsByCreationDate(Timestamp creationdate1, Timestamp creationdate2){
 
-        List<BugTracking> listOfBugs;
-//        if(creationdate1 != null && creationdate2 != null){
-            listOfBugs = bugTrackingRepository.findAllBetweenDates(creationdate1, creationdate2);
-//        }else if(creationdate1 != null && creationdate2 == null){
-//            listOfBugs = bugTrackingRepository.findAllBetweenDates(creationdate1, new Date(System.currentTimeMillis()));
-//        }else if(creationdate1 == null && creationdate2 != null){
-//            listOfBugs = bugTrackingRepository.findAllBetweenDates(new Date(1), creationdate2);
-//        } else {
-//            listOfBugs=bugTrackingRepository.findAll();
-//        }
+        List<BugTracking> listOfBugs = bugTrackingRepository.findAllBetweenDates(creationdate1, creationdate2);
 
         BugTrackingListRequest bugTrackingListRequest = new BugTrackingListRequest();
         for (BugTracking bug : listOfBugs) {
@@ -96,17 +87,8 @@ public class BugTrackingService {
 
     public BugTrackingListRequest findBugsByCreationDateWithStatus(Timestamp creationdate1, Timestamp creationdate2, Boolean status){
 
-        List<BugTracking> listOfBugs;
-        //if(creationdate1 != null && creationdate2 != null){
+        List<BugTracking>  listOfBugs = bugTrackingRepository.findAllByStatusBetweenDates(status, creationdate1, creationdate2);
 
-            listOfBugs = bugTrackingRepository.findAllByStatusBetweenDates(status, creationdate1, creationdate2);
-//        }else if(creationdate1 != null && creationdate2 == null){
-//            listOfBugs = bugTrackingRepository.findAllByStatusBetweenDates(status, creationdate1, new Date(System.currentTimeMillis()));
-//        }else if(creationdate1 == null && creationdate2 != null){
-//            listOfBugs = bugTrackingRepository.findAllByStatusBetweenDates(status, new Date(1), creationdate2);
-//        } else {
-//            listOfBugs=bugTrackingRepository.findAllByStatus(status);
-//        }
 
         BugTrackingListRequest bugTrackingListRequest = new BugTrackingListRequest();
         for (BugTracking bug : listOfBugs) {
