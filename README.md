@@ -13,7 +13,7 @@
  * Collector components are compatible with the popular OS (Windows, MacOS, Linux) and mobile systems (Android, iOS)
 
 <p align="center">
-<img width="800" height="500" src="https://github.com/InnopolisUniversity/innometrics-java-backend/blob/master/innometrics.png" alt="Innometrics architecture"></a>
+<img width="400" height="250" src="https://github.com/InnopolisUniversity/innometrics-java-backend/blob/master/innometrics.png" alt="Innometrics architecture"></a>
 <p>
 The architecture of the backend facilitates the scale, fault-tolerance and adaptability to changes. It constitutes of a solution based on micro-services with two main access points and a series of specialized services such as Analytic services, Administration services, Authorization service, Agents (Trello, Jira, SonarQube, Jenkins, Github) etc
 
