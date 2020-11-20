@@ -64,7 +64,7 @@ public class AdminAPI {
     @Autowired
     CollectorVersionService collectorVersionService;
 
-	@Autowired
+    @Autowired
     TeamService teamService;
 
     @Autowired
@@ -561,6 +561,7 @@ public class AdminAPI {
     @PutMapping("/collector-version")
     public Boolean UpdateCollectorVersion(@RequestParam(required = true) String osversion, @RequestParam(required = true) String newVersion) {
         return collectorVersionService.updateCurrentVersion(osversion, newVersion);
+    }
 
     }
 
@@ -586,7 +587,7 @@ public class AdminAPI {
 
     @GetMapping("/Team")
     public ResponseEntity<TeamListRequest> findTeamBy(@RequestParam(required = false) Integer teamId, @RequestParam(required = false) Integer companyId,
-                                                      @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
+            @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teamService.getTeamsBy(teamId, companyId, projectId, Token),
                 HttpStatus.OK
@@ -621,11 +622,11 @@ public class AdminAPI {
         );
     }
 
-    @GetMapping("/WorkingTree")
-    public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
-        return new ResponseEntity<>(
-                teammemberService.getWorkingTree(email, Token),
-                HttpStatus.OK
-        );
+        @GetMapping("/WorkingTree")
+        public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
+            return new ResponseEntity<>(
+                    teammemberService.getWorkingTree(email, Token),
+                    HttpStatus.OK
+            );
+        }
     }
-}
