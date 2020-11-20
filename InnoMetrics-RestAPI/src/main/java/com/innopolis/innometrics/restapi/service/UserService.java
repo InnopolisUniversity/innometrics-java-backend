@@ -252,4 +252,52 @@ public class UserService implements UserDetailsService {
 
         return false;
     }
+
+
+    @HystrixCommand( commandKey = "sendRessetPassordEmail", fallbackMethod = "sendRessetPassordEmailFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "600000")
+    })
+    public Boolean sendRessetPassordEmail(String UserName, String BackUrl, String Token){
+        String uri = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User/" + UserName + "/reset" ;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", Token);
+
+        HttpEntity<TeamListRequest> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+                .queryParam("BackUrl", BackUrl);
+
+        ResponseEntity<Boolean> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Boolean.class);
+
+        return response.getBody();
+
+    }
+
+    public Boolean sendRessetPassordEmailFallback(String UserName, String BackUrl, String Token , Throwable exception) {
+        LOG.warn("sendRessetPassordEmailFallback method used");
+        LOG.warn(exception);
+        return Boolean.FALSE;
+    }
+
+    @HystrixCommand( commandKey = "checkTemporalToken", fallbackMethod = "checkTemporalTokenFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "600000")
+    })
+    public Boolean checkTemporalToken(String UserName, String TemporalToken){
+        String uri = "http://INNOMETRICS-AUTH-SERVER/AuthAPI/User/" + UserName + "/validate" ;
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+                .queryParam("TemporalToken", TemporalToken);
+
+        ResponseEntity<Boolean> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, Boolean.class);
+
+        return response.getBody();
+
+    }
+
+    public Boolean checkTemporalTokenFallback(String UserName, String TemporalToken, Throwable exception) {
+        LOG.warn("checkTemporalTokenFallback method used");
+        LOG.warn(exception);
+        return Boolean.FALSE;
+    }
 }

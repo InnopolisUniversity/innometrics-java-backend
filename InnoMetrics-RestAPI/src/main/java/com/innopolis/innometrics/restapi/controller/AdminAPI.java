@@ -305,6 +305,22 @@ public class AdminAPI {
             throw new ValidationException("Not enough data provided");
     }
 
+    @PostMapping("/User/{UserName}/reset")
+    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token){
+        if (UserName != null) {
+            return ResponseEntity.ok(userService.sendRessetPassordEmail(UserName, BackUrl, Token));
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+    // here token is temporal for validation of password reset
+    @GetMapping("/User/{UserName}/validate")
+    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String TemporalToken){
+        if (UserName != null && TemporalToken != null && !TemporalToken.equals("")) {
+            return ResponseEntity.ok(userService.checkTemporalToken(UserName,TemporalToken));
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
 
     //Add project
     @PostMapping("/Project")
@@ -545,6 +561,8 @@ public class AdminAPI {
     @PutMapping("/collector-version")
     public Boolean UpdateCollectorVersion(@RequestParam(required = true) String osversion, @RequestParam(required = true) String newVersion) {
         return collectorVersionService.updateCurrentVersion(osversion, newVersion);
+
+    }
 
     @PostMapping("/Team")
     public ResponseEntity<TeamRequest> updateTeam(@RequestBody TeamRequest teamRequest, @RequestHeader(required = false) String Token){
