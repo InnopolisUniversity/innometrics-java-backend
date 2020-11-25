@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class ProcessService {
         return true;
     }
 
-    public boolean DeleteActivity(Integer ProcessID, String UserName) {
+    public boolean DeleteProcess(Integer ProcessID, String UserName) {
         if (ProcessID == null || UserName == null) {
             //throw new ValidationException("Not enough data provided");
         }
@@ -80,7 +81,7 @@ public class ProcessService {
         return true;
     }
 
-    public ProcessReportResponse getActivitiesByEmail(String UserName) {
+    public ProcessReportResponse getProcessByEmail(String UserName) {
         List<Process> myProcesses = processRepository.findByEmail(UserName);
 
         ProcessReportResponse response = new ProcessReportResponse();
@@ -105,7 +106,31 @@ public class ProcessService {
         return response;
     }
 
+    public ProcessDayReportResponse getProcessesByEmailAndDay(String UserName, Date reportDay) {
 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        List<IProcessReportByUserAndDay> myProcesses = processRepository.getProcessesPerDay(UserName, formatter.format(reportDay));
+
+        ProcessDayReportResponse response = new ProcessDayReportResponse();
+
+        for (IProcessReportByUserAndDay processReport : myProcesses) {
+            Process myProcess = new Process();
+            myProcess.setProcessID(processReport.getProcessID());
+            myProcess.setEmail(processReport.getEmail());
+            myProcess.setExecutable_name(processReport.getExecutable_name());
+            myProcess.setIp_address(processReport.getIp_address());
+            myProcess.setMac_address(processReport.getMac_address());
+            myProcess.setPid(processReport.getPid());
+            myProcess.setCollectedtime(processReport.getCollectedtime());
+            myProcess.setOsversion(processReport.getOsversion());
+            myProcess.setCreationdate(processReport.getCreationdate());
+            myProcess.setCreatedby(processReport.getCreatedby());
+            response.getProcessReports().add(myProcess);
+        }
+
+        return response;
+    }
 
 
 

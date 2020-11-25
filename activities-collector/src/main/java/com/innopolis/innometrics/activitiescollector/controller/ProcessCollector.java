@@ -7,12 +7,14 @@ import com.innopolis.innometrics.activitiescollector.service.ProcessService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @RestController
@@ -42,9 +44,25 @@ public class ProcessCollector {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/process/{email}")
-    public ResponseEntity<ProcessReportResponse> getProcessReportByEmail(@PathVariable String email, @RequestHeader String Token) {
-        ProcessReportResponse myReport = processService.getActivitiesByEmail(email);
+    @GetMapping("/process")
+    public ResponseEntity<ProcessDayReportResponse> getProcessReport(@RequestHeader String Token,
+                                                                     @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date reportDate,
+                                                                     UriComponentsBuilder uriBuilder,
+                                                                     HttpServletResponse response) {
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        ProcessDayReportResponse myReport = processService.getProcessesByEmailAndDay(UserName, reportDate);
         return ResponseEntity.ok(myReport);
+    }
+
+
+    @DeleteMapping("/process/{process_id}")
+    public ResponseEntity<?> deleteProcess(@PathVariable Integer process_id,
+                                            @RequestHeader String Token) {
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        if (processService.DeleteProcess(process_id, UserName)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
     }
 }

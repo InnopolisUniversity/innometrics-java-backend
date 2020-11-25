@@ -133,6 +133,7 @@ public class OAuthImp implements OAuthService {
             return null;
         }
     }
+
     private String getToken1a(Agentconfig config, Integer projectid, String oauth_verifier) {
         CustomOAuth1 client = new CustomOAuth1();
         client.set_AccessTokenEndpoint(config.getAccesstokenendpoint());

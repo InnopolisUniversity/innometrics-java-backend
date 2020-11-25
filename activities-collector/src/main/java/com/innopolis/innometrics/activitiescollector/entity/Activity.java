@@ -25,8 +25,8 @@ public class Activity implements Serializable {
     @Column
     private String email;
 
-    @Column
-    private Date start_time;
+    @Column(name = "start_time")
+    private Date starttime;
 
     @Column
     private Date end_time;
@@ -52,7 +52,7 @@ public class Activity implements Serializable {
     @Column
     private String mac_address;
 
-    @Column
+    @Column(nullable = true)
     private String value;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
@@ -106,12 +106,12 @@ public class Activity implements Serializable {
         this.email = email;
     }
 
-    public Date getStart_time() {
-        return start_time;
+    public void setStarttime(Date starttime) {
+        this.starttime = starttime;
     }
 
-    public void setStart_time(Date start_time) {
-        this.start_time = start_time;
+    public Date getStarttime() {
+        return starttime;
     }
 
     public Date getEnd_time() {

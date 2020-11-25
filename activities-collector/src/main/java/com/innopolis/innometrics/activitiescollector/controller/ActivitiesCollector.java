@@ -1,21 +1,26 @@
 package com.innopolis.innometrics.activitiescollector.controller;
 
 
+import com.innopolis.innometrics.activitiescollector.DTO.ActivitiesReportResponse;
 import com.innopolis.innometrics.activitiescollector.DTO.ActivityReport;
 import com.innopolis.innometrics.activitiescollector.DTO.Report;
 import com.innopolis.innometrics.activitiescollector.config.JwtToken;
+import com.innopolis.innometrics.activitiescollector.entity.Activity;
 import com.innopolis.innometrics.activitiescollector.service.ActivityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 //@CrossOrigin
@@ -29,6 +34,9 @@ public class ActivitiesCollector {
 
     @Autowired
     private JwtToken jwtTokenUtil;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     //add activity
     @PostMapping("/activity")
@@ -55,10 +63,22 @@ public class ActivitiesCollector {
 
     }
 
-    @GetMapping("/activity/{email}")
-    public ResponseEntity<Report> getActivities(@PathVariable String email, @RequestHeader String Token) {
-        Report myReport = activityService.getActivitiesByEmail(email);
-        return ResponseEntity.ok(myReport);
+    @GetMapping(value = "/activity/")
+    @ResponseBody
+    public ActivitiesReportResponse getActivities(@RequestHeader String Token,
+                                                  @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date reportDate,
+                                                  UriComponentsBuilder uriBuilder,
+                                                  HttpServletResponse response) {
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        ActivitiesReportResponse myReport = activityService.getActivitiesByEmailandDay(UserName, reportDate);
+
+        return myReport;
+    }
+
+    private ActivityReport convertToDto(Activity post) {
+        ActivityReport activityReport = modelMapper.map(post, ActivityReport.class);
+
+        return activityReport;
     }
 
     //Project activities

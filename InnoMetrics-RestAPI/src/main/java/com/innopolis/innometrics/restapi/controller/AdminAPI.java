@@ -545,6 +545,7 @@ public class AdminAPI {
     @PutMapping("/collector-version")
     public Boolean UpdateCollectorVersion(@RequestParam(required = true) String osversion, @RequestParam(required = true) String newVersion) {
         return collectorVersionService.updateCurrentVersion(osversion, newVersion);
+    }
 
     @PostMapping("/Team")
     public ResponseEntity<TeamRequest> updateTeam(@RequestBody TeamRequest teamRequest, @RequestHeader(required = false) String Token){

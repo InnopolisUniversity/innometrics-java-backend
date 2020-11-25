@@ -21,7 +21,7 @@ public class Measurement implements Serializable {
     @JoinColumn(name = "measurementtypeid")
     private MeasurementType measurementType;
 
-    @Column
+    @Column(nullable = true)
     private String value;
 
     @Column

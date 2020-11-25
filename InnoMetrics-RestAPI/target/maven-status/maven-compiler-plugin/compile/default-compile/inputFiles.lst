@@ -13,6 +13,7 @@ C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\PageRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\UserResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\PermissionResponse.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\TeamListRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ProcessReportResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ActivityReport.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\CompanyRequest.java
@@ -38,6 +39,7 @@ C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\service\RoleService.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\CategoryRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ActivitiesReportByUserRequest.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\TeammembersRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\entitiy\Activity.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\controller\DataCollectorsAPI.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\exceptions\BaseErrorHandler.java
@@ -48,13 +50,16 @@ C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\AuthResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\RoleListResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\TimeReportRequest.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\service\TeamService.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\exceptions\ValidationException.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\repository\ProjectRepository.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\service\TeammemberService.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ActivitiesReportByUserResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\controller\AdminAPI.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\repository\ActivityRepository.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\CategoriesTimeReportResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\AppCategoryRequest.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\WorkingTreeRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\config\WebSecurityConfig.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ActivitiesReportByUser.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\Report.java
@@ -79,7 +84,10 @@ C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\MeasurementTypeRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\CumulativeReportResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ProjectListRequest.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\TeammembersListRequest.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\WorkingTreeListRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\entitiy\Role.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\service\CollectorVersionService.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\TeamRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ICategoriesReport.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\RestapiApplication.java

@@ -1,11 +1,5 @@
 package com.innopolis.innometrics.agentsgateway.controller;
 
-//import com.github.scribejava.apis.;
-
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.model.*;
-import com.github.scribejava.core.oauth.OAuth10aService;
-import com.github.scribejava.core.oauth.OAuth20Service;
 import com.innopolis.innometrics.agentsgateway.DTO.*;
 import com.innopolis.innometrics.agentsgateway.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping(value = "/AgentGateway", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT})
 public class AgentGateway {
+
     @Autowired
     AgentconfigService agentconfigService;
 

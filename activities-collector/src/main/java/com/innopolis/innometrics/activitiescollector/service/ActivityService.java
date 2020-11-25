@@ -2,16 +2,18 @@ package com.innopolis.innometrics.activitiescollector.service;
 
 import com.innopolis.innometrics.activitiescollector.DTO.*;
 import com.innopolis.innometrics.activitiescollector.entity.*;
-//import com.innopolis.innometrics.activitiescollector.exceptions.ValidationException;
-import com.innopolis.innometrics.activitiescollector.entity.Process;
 import com.innopolis.innometrics.activitiescollector.repository.ActivityRepository;
 import com.innopolis.innometrics.activitiescollector.repository.CumulativeReportRepository;
 import com.innopolis.innometrics.activitiescollector.repository.MeasurementRepository;
 import com.innopolis.innometrics.activitiescollector.repository.MeasurementTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -31,13 +33,14 @@ public class ActivityService {
     @Autowired
     CumulativeReportRepository cumulativeReportRepository;
 
+
     public boolean CreateActivty(ActivityReport activityReport, String UserName, Date CreationDate) {
         Activity myActivity = new Activity();
         myActivity.setActivityID(activityReport.getActivityID());
         myActivity.setActivitytype(activityReport.getActivityType());
         myActivity.setIdle_activity(activityReport.getIdle_activity());
         myActivity.setEmail(activityReport.getUserID());
-        myActivity.setStart_time(activityReport.getStart_time());
+        myActivity.setStarttime(activityReport.getStart_time());
         myActivity.setEnd_time(activityReport.getEnd_time());
         myActivity.setExecutable_name(activityReport.getExecutable_name());
         myActivity.setBrowser_url(activityReport.getBrowser_url());
@@ -95,39 +98,36 @@ public class ActivityService {
         return true;
     }
 
-    public Report getActivitiesByEmail(String UserName) {
-        List<Activity> myActivities = activityRepository.findByEmail(UserName);
+    public ActivitiesReportResponse getActivitiesByEmailandDay(String UserName, Date reportDate) {
+        List<IActivitiesReportByUserAndDay> myActivities;
 
-        Report response = new Report();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        for (Activity a : myActivities) {
-            ActivityReport myApp = new ActivityReport();
-            myApp.setActivityID(a.getActivityID());
-            myApp.setActivityType(a.getActivitytype());
-            myApp.setIdle_activity(a.getIdle_activity());
-            myApp.setUserID(a.getEmail());
-            myApp.setStart_time(a.getStart_time());
-            myApp.setEnd_time(a.getEnd_time());
-            myApp.setExecutable_name(a.getExecutable_name());
-            myApp.setBrowser_url(a.getBrowser_url());
-            myApp.setBrowser_title(a.getBrowser_title());
-            myApp.setIp_address(a.getIp_address());
-            myApp.setMac_address(a.getMac_address());
-            myApp.setPid(a.getPid());
+        myActivities = activityRepository.getActivitiesPerDay(UserName, formatter.format(reportDate));
 
-            for (Measurement m : a.getMeasurements()) {
-                MeasurementReport myMeasure = new MeasurementReport();
-                myMeasure.setMeasurementTypeId(m.getMeasurementType().getMeasurementtypeid().toString());
-                myMeasure.setValue(m.getValue());
-                myMeasure.setAlternativeLabel(m.getMeasurementType().getLabel());
-                myApp.getMeasurements().add(myMeasure);
-            }
+        ActivitiesReportResponse respose = new ActivitiesReportResponse();
+        for (IActivitiesReportByUserAndDay activityReport : myActivities) {
+            Activity myActivity = new Activity();
+            myActivity.setActivityID(activityReport.getActivityID());
+            myActivity.setActivitytype(activityReport.getActivitytype());
+            myActivity.setIdle_activity(activityReport.getIdle_activity());
+            myActivity.setEmail(activityReport.getEmail());
+            myActivity.setStarttime(activityReport.getStarttime());
+            myActivity.setEnd_time(activityReport.getEnd_time());
+            myActivity.setExecutable_name(activityReport.getExecutable_name());
+            myActivity.setBrowser_url(activityReport.getBrowser_url());
+            myActivity.setBrowser_title(activityReport.getBrowser_title());
+            myActivity.setIp_address(activityReport.getIp_address());
+            myActivity.setMac_address(activityReport.getMac_address());
+            myActivity.setPid(activityReport.getPid());
+            myActivity.setOsversion(activityReport.getOsversion());
+            myActivity.setCreationdate(activityReport.getCreationdate());
+            myActivity.setCreatedby(activityReport.getCreatedby());
 
-            response.getActivities().add(myApp);
-
+            respose.getReport().add(myActivity);
         }
 
-        return response;
+        return respose;
     }
 
     public ActivitiesReportByUserResponse getActivitiesReportByUser(ActivitiesReportByUserRequest request) {

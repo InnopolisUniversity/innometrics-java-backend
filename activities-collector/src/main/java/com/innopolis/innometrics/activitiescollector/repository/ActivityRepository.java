@@ -2,11 +2,15 @@ package com.innopolis.innometrics.activitiescollector.repository;
 
 import com.innopolis.innometrics.activitiescollector.DTO.ActivitiesReportByUser;
 import com.innopolis.innometrics.activitiescollector.DTO.IActivitiesReportByUser;
+import com.innopolis.innometrics.activitiescollector.DTO.IActivitiesReportByUserAndDay;
 import com.innopolis.innometrics.activitiescollector.DTO.ITimeReportByUser;
 import com.innopolis.innometrics.activitiescollector.entity.Activity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -15,9 +19,15 @@ import java.util.List;
 
 
 @Repository
-public interface ActivityRepository extends JpaRepository<Activity, Integer > {
+public interface ActivityRepository extends JpaRepository<Activity, Integer>, PagingAndSortingRepository<Activity, Integer> {
 
-    List<Activity> findByEmail(String email);
+    @Modifying
+    @Query( value =
+            "select activityid, activitytype, idle_activity, email, start_time, end_time, executable_name, browser_url, browser_title, ip_address, mac_address, value, creationdate, createdby, lastupdate, updateby, projectid, categoryname, pid, osversion\n" +
+            "from innometrics.activity\n" +
+            "where email = :email\n" +
+            "and start_time between date_trunc('day', TO_TIMESTAMP(:ReportDate, 'DD/MM/YYYY')) and date_trunc('day', TO_TIMESTAMP(:ReportDate, 'DD/MM/YYYY')) + interval '1 day' - interval '1 second';", nativeQuery = true)
+    List<IActivitiesReportByUserAndDay> getActivitiesPerDay(@Param("email") String email, @Param("ReportDate") String ReportDate);
 
     @Modifying
     @Query( value =
