@@ -1,0 +1,6 @@
+projectKey=InnoMetrics-Backend
+serverUrl=http://188.130.155.202:7000
+serverVersion=8.2.0.32929
+dashboardUrl=http://188.130.155.202:7000/dashboard?id=InnoMetrics-Backend
+ceTaskId=AXWYKZJ_S7104Lbc3O48
+ceTaskUrl=http://188.130.155.202:7000/api/ce/task?id=AXWYKZJ_S7104Lbc3O48
