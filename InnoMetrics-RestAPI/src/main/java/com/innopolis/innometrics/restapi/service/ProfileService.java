@@ -57,7 +57,7 @@ public class ProfileService {
     @HystrixCommand(commandKey = "deleteProfile", fallbackMethod = "deleteProfileFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public boolean deleteProfile(Integer id,String token) {
+    public boolean deleteProfile(Integer id, String token) {
         String uri = baseURL;
 
         HttpHeaders headers = new HttpHeaders();

@@ -93,6 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/V1/Admin/Role/**",
                         "/V1/Admin/Roles/**",
                         "/V1/Reports/**",
+                        "/V1/Bug/**",
                         "/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",

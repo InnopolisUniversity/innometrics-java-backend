@@ -305,6 +305,22 @@ public class AdminAPI {
             throw new ValidationException("Not enough data provided");
     }
 
+    @PostMapping("/User/{UserName}/reset")
+    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token){
+        if (UserName != null) {
+            return ResponseEntity.ok(userService.sendRessetPassordEmail(UserName, BackUrl, Token));
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
+
+    // here token is temporal for validation of password reset
+    @GetMapping("/User/{UserName}/validate")
+    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String TemporalToken){
+        if (UserName != null && TemporalToken != null && !TemporalToken.equals("")) {
+            return ResponseEntity.ok(userService.checkTemporalToken(UserName,TemporalToken));
+        } else
+            throw new ValidationException("Not enough data provided");
+    }
 
     //Add project
     @PostMapping("/Project")
@@ -569,7 +585,7 @@ public class AdminAPI {
 
     @GetMapping("/Team")
     public ResponseEntity<TeamListRequest> findTeamBy(@RequestParam(required = false) Integer teamId, @RequestParam(required = false) Integer companyId,
-                                                      @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
+            @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teamService.getTeamsBy(teamId, companyId, projectId, Token),
                 HttpStatus.OK
@@ -604,11 +620,11 @@ public class AdminAPI {
         );
     }
 
-    @GetMapping("/WorkingTree")
-    public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
-        return new ResponseEntity<>(
-                teammemberService.getWorkingTree(email, Token),
-                HttpStatus.OK
-        );
+        @GetMapping("/WorkingTree")
+        public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
+            return new ResponseEntity<>(
+                    teammemberService.getWorkingTree(email, Token),
+                    HttpStatus.OK
+            );
+        }
     }
-}

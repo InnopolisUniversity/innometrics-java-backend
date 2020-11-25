@@ -166,7 +166,7 @@ public class UserService implements UserDetailsService {
                     "  </head>\n" +
                     "  <body>\n";
 
-            htmlStr += "<h2> Please put the following token in the  on reset password page. Be noticed that it will expire in 5 minutes:</h2>\n";
+            htmlStr += "<h2> Please follow the link to reset password. Be noticed that it will expire in 5 minutes:</h2>\n";
 
 
             htmlStr+= "<p><br /></p>\n"+
@@ -210,13 +210,9 @@ public class UserService implements UserDetailsService {
             temporalTokenRepository.delete(temporalToken);
         }
 
-        //Timestamp dateNow = new Timestamp(System.currentTimeMillis());
         Timestamp dateAfterFiveMinsFromNow = new Timestamp(System.currentTimeMillis() + (5 * ONE_MINUTE_IN_MILLIS));
 
 
-//        Calendar date = Calendar.getInstance();
-//        long t= date.getTimeInMillis();
-//        Date afterFiveMinsFromNow=new Date(t + (5 * ONE_MINUTE_IN_MILLIS));
         temporalToken = new TemporalToken(email, generateNewToken(), dateAfterFiveMinsFromNow);
 
         return temporalTokenRepository.save(temporalToken);

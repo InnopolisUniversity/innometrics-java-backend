@@ -1030,3 +1030,59 @@ databaseChangeLog:
 
                   create trigger reptimebyuserappprocessTrg after insert on innometrics.activity
                   for each row execute PROCEDURE reptimebyuserappprocess();/"
+
+  - changeSet:
+      id: "create data repository for bug tracking"
+      author: azag
+      changes:
+        - createTable:
+            schemaName: innometrics
+            tableName: bug_tracking
+            remarks: Table to store the information about raised exceptions
+            columns:
+              - column:
+                  name: bug_id
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: bug_pk
+              - column:
+                  name: username
+                  type: Varchar(256)
+              - column:
+                  name: title
+                  type: Varchar(512)
+              - column:
+                  name: class
+                  type: Varchar(128)
+              - column:
+                  name: line
+                  type: Integer
+              - column:
+                  name: comment
+                  type: text
+              - column:
+                  name: trace
+                  type: text
+              - column:
+                  name: os
+                  type: Varchar(256)
+              - column:
+                  name: data_collector_version
+                  type: Varchar(256)
+              - column:
+                  name: creationdate
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: lastupdate
+                  type: timestamp
+              - column:
+                  name: status
+                  type: boolean
+                  defaultValue: 0
+
+
