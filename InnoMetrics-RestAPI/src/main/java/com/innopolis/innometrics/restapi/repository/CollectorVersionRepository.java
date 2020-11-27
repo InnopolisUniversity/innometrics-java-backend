@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.repository;
 
-import com.innopolis.innometrics.restapi.entitiy.CollectorVersion;
+import com.innopolis.innometrics.restapi.entity.CollectorVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

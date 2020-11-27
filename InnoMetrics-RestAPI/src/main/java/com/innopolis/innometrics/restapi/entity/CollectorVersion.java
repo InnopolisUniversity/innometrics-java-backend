@@ -1,10 +1,8 @@
-package com.innopolis.innometrics.restapi.entitiy;
+package com.innopolis.innometrics.restapi.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "collector_version")

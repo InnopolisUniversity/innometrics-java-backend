@@ -1,4 +1,4 @@
-package com.innopolis.innometrics.restapi.entitiy;
+package com.innopolis.innometrics.restapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

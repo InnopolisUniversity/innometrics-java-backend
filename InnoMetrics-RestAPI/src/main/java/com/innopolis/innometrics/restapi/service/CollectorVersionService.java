@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.entitiy.CollectorVersion;
+import com.innopolis.innometrics.restapi.entity.CollectorVersion;
 import com.innopolis.innometrics.restapi.repository.CollectorVersionRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

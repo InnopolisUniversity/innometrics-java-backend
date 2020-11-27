@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.DTO;
 
-import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
+import com.innopolis.innometrics.restapi.entity.MeasurementType;
 
 import java.io.Serializable;
 import java.util.Date;

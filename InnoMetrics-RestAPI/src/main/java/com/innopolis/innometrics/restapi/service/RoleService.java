@@ -1,11 +1,9 @@
 package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.*;
-import com.innopolis.innometrics.restapi.entitiy.Page;
-import com.innopolis.innometrics.restapi.entitiy.Permission;
-import com.innopolis.innometrics.restapi.entitiy.Role;
-import com.innopolis.innometrics.restapi.repository.PageRepository;
-import com.innopolis.innometrics.restapi.repository.RoleRepository;
+import com.innopolis.innometrics.restapi.entity.Page;
+import com.innopolis.innometrics.restapi.entity.Permission;
+import com.innopolis.innometrics.restapi.entity.Role;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 

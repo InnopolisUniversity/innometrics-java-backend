@@ -34,17 +34,20 @@ public class DataCollectorsAPI {
     @Autowired
     ProcessService processService;
 
-
     @Autowired
     ReportService reportService;
 
     @Autowired
     CategoryService categoryService;
 
-    @Autowired
-    BugTrackingService bugTrackingService;
 
-    //add activity
+    @GetMapping("/activity")
+    public ResponseEntity<ActivitiesReportResponse> getActivities(@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date reportDate,
+                                                                  @RequestHeader String Token) {
+        ActivitiesReportResponse myReport = activityService.getActivitiesByEmail(reportDate, Token);
+        return ResponseEntity.ok(myReport);
+    }
+
     @PostMapping("/activity")
     public ResponseEntity<?> addReport(@RequestBody Report report,
                                        UriComponentsBuilder ucBuilder,
@@ -55,12 +58,10 @@ public class DataCollectorsAPI {
         return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    //Delete activity
     @DeleteMapping("/activity")
-    public ResponseEntity<?> deleteActivity(@RequestParam Integer activity_id,
-                                            @RequestHeader String Token) {
-        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
-        if (activityService.DeleteActivity(activity_id, UserName)) {
+    public ResponseEntity<?> deleteActivitiesWithIds(@RequestBody DeleteRequest request,
+                                                     @RequestHeader String Token) {
+        if (activityService.deleteActivitiesWithIds(request, Token)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -68,9 +69,11 @@ public class DataCollectorsAPI {
     }
 
 
-    @GetMapping("/activity")
-    public ResponseEntity<Report> getActivities(@RequestParam String email, @RequestHeader String Token) {
-        Report myReport = activityService.getActivitiesByEmail(email, Token);
+
+    @GetMapping("/process")
+    public ResponseEntity<ProcessDayReportResponse> getProcesses(@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date reportDate,
+                                                                 @RequestHeader String Token) {
+        ProcessDayReportResponse myReport = processService.getProcessReportByEmail(reportDate, Token);
         return ResponseEntity.ok(myReport);
     }
 
@@ -84,6 +87,17 @@ public class DataCollectorsAPI {
 
         return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @DeleteMapping("/process")
+    public ResponseEntity<?> deleteProcessesWithIds(@RequestBody DeleteRequest request,
+                                                     @RequestHeader String Token) {
+        if (processService.deleteProcessesWithIds(request, Token)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
+
 
     @GetMapping("/Reports/activitiesReport")
     public ResponseEntity<ActivitiesReportByUserResponse> getReportActivities(@RequestParam(required = false) String projectID,
@@ -124,59 +138,5 @@ public class DataCollectorsAPI {
     }
 
 
-    @PutMapping("/Bug")
-    public ResponseEntity<BugTrackingRequest> UpdateBug(@RequestBody BugTrackingRequest bug, @RequestHeader(required = false) String Token) {
 
-        if (bug == null || bug.getTitle() == null || bug.getTrace() == null)
-            throw new ValidationException("Not enough data provided");
-
-        if(!bugTrackingService.updateBug(bug, Token)){
-            throw new ValidationException("Bug was not updated");
-        }
-        return ResponseEntity.ok().build();
-    }
-
-
-    @PostMapping("/Bug")
-    public ResponseEntity<BugTrackingRequest> CreateBug(@RequestBody BugTrackingRequest bug, @RequestHeader(required = false) String Token) {
-
-        if (bug == null || bug.getTitle() == null || bug.getTrace() == null)
-            throw new ValidationException("Not enough data provided");
-
-
-        if(!bugTrackingService.createBug(bug,Token)){
-            throw new ValidationException("Bug was not created");
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/Bug")
-    public ResponseEntity<BugTrackingRequest> getBugById(@RequestParam Integer bugId, @RequestHeader(required = false) String Token) {
-        if (bugId !=null) {
-            BugTrackingRequest bug = bugTrackingService.findBugById(bugId, Token);
-            return ResponseEntity.ok(bug);
-        } else
-            throw new ValidationException("Not enough data provided");
-    }
-
-    @GetMapping("/Bug/all")
-    public ResponseEntity<BugTrackingListRequest> getBugsByParameters(@RequestParam(required = false) Integer status,
-                                                                      @RequestParam(required = false) String creationdateFrom,
-                                                                      @RequestParam(required = false) String creationdateTo,
-                                                                      @RequestHeader(required = false) String Token) {
-
-        BugTrackingListRequest bugs = bugTrackingService.findBugsByParameters(status, creationdateFrom, creationdateTo, Token);
-        return ResponseEntity.ok(bugs);
-    }
-
-    @DeleteMapping("/Bug")
-    public ResponseEntity<BugTrackingRequest> deleteBug(@RequestParam Integer bugId, @RequestHeader(required = false) String Token) {
-
-        if (bugId == null)
-            throw new ValidationException("Not enough data provided");
-
-        bugTrackingService.deleteBug(bugId,Token);
-
-        return ResponseEntity.ok().build();
-    }
 }

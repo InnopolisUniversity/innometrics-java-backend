@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -95,6 +96,11 @@ public class ActivityService {
 
         activityRepository.deleteById(ActivityID);
 
+        return true;
+    }
+
+    public boolean DeleteActivitiesWithIds(Integer[] ids) {
+        activityRepository.deleteActivitiesWithIds(Arrays.asList(ids));
         return true;
     }
 

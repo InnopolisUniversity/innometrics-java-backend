@@ -1,9 +1,6 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.PageListResponse;
-import com.innopolis.innometrics.restapi.DTO.PageResponse;
 import com.innopolis.innometrics.restapi.DTO.PermissionResponse;
-import com.innopolis.innometrics.restapi.entitiy.Page;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class PermissionService {

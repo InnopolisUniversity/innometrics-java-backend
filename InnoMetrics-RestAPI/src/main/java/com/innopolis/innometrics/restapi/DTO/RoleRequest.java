@@ -2,15 +2,10 @@ package com.innopolis.innometrics.restapi.DTO;
 
 
 
-import com.innopolis.innometrics.restapi.entitiy.Page;
-import com.innopolis.innometrics.restapi.entitiy.Permission;
-import com.innopolis.innometrics.restapi.entitiy.User;
-
 import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class RoleRequest implements Serializable {
 

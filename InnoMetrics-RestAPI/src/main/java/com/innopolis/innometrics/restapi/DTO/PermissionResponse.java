@@ -1,7 +1,7 @@
 package com.innopolis.innometrics.restapi.DTO;
 
 
-import com.innopolis.innometrics.restapi.entitiy.Page;
+import com.innopolis.innometrics.restapi.entity.Page;
 
 import java.io.Serializable;
 import java.util.ArrayList;

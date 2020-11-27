@@ -1,12 +1,8 @@
 package com.innopolis.innometrics.restapi.service;
 
-import com.innopolis.innometrics.restapi.DTO.ActivityReport;
-import com.innopolis.innometrics.restapi.DTO.MeasurementReport;
-import com.innopolis.innometrics.restapi.DTO.Report;
-import com.innopolis.innometrics.restapi.DTO.UserRequest;
-import com.innopolis.innometrics.restapi.entitiy.Activity;
-import com.innopolis.innometrics.restapi.entitiy.Measurement;
-import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
+import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.entity.Activity;
+import com.innopolis.innometrics.restapi.entity.Measurement;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.repository.ActivityRepository;
 import com.innopolis.innometrics.restapi.repository.MeasurementRepository;
@@ -18,13 +14,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ActivityService {
@@ -37,11 +33,6 @@ public class ActivityService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    @Autowired
-    MeasurementTypeRepository measurementTypeRepository;
-
-    @Autowired
-    MeasurementRepository measurementRepository;
 
     private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/activity";
 
@@ -75,88 +66,64 @@ public class ActivityService {
         return false;
     }
 
-    public boolean DeleteActivity(Integer ActivityID, String UserName) {
-        if (ActivityID == null || UserName == null) {
-            throw new ValidationException("Not enough data provided");
-        }
 
-        if (!activityRepository.existsById(ActivityID)) {
-            throw new ValidationException("The activity doesn't exist");
-        }
-
-        activityRepository.deleteById(ActivityID);
-
-        return true;
-    }
 
     @HystrixCommand(commandKey = "getActivitiesByEmail", fallbackMethod = "getActivitiesByEmailFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public Report getActivitiesByEmail(String userName, String token) {
-        String uri = baseURL + "/" + userName;
-
+    public ActivitiesReportResponse getActivitiesByEmail(Date reportDate, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
-        Map<String, String> vars = new HashMap<>();
-        vars.put("email", userName);
+        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseURL)
+                .queryParam("reportDate", reportDate != null ? formatter.format(reportDate) : null);
 
-        HttpEntity<Report> entity = new HttpEntity<>(headers);
-        ResponseEntity<Report> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Report.class);
+
+        HttpEntity<ActivitiesReportResponse> entity = new HttpEntity<>(headers);
+        ResponseEntity<ActivitiesReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, ActivitiesReportResponse.class);
 
         HttpStatus status = response.getStatusCode();
 
         return response.getBody();
     }
 
-    public Report getActivitiesByEmailFallback(String userName, String token, Throwable exception) {
+    public ActivitiesReportResponse getActivitiesByEmailFallback(Date reportDate, String token, Throwable exception) {
         LOG.warn("getActivitiesByEmailFallback method used");
         LOG.warn(exception);
-        Report myReport = new Report();
-        ActivityReport myDefaultActivity = new ActivityReport();
-        myDefaultActivity.setExecutable_name("Not info available");
-        myDefaultActivity.setUserID("Not info available");
-        myDefaultActivity.setIp_address("Not info available");
-        myDefaultActivity.setMac_address("Not info available");
-        myDefaultActivity.setBrowser_title("Not info available");
-        myDefaultActivity.setBrowser_url("Not info available");
-        myDefaultActivity.setActivityType("Not info available");
-        myReport.getActivities().add(myDefaultActivity);
-        return myReport;
+        return null;
     }
 
-    public Report getActivitiesByEmail(String UserName) {
-        List<Activity> myActivities = activityRepository.findByEmail(UserName);
 
-        Report response = new Report();
+    @HystrixCommand( commandKey = "deleteActivitiesWithIds", fallbackMethod = "deleteActivitiesWithIdsFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public boolean deleteActivitiesWithIds(DeleteRequest request, String token) {
+        String uri = baseURL;
 
-        for (Activity a : myActivities) {
-            ActivityReport myApp = new ActivityReport();
-            myApp.setActivityID(a.getActivityID());
-            myApp.setActivityType(a.getActivitytype());
-            myApp.setIdle_activity(a.getIdle_activity());
-            myApp.setUserID(a.getEmail());
-            myApp.setStart_time(a.getStart_time());
-            myApp.setEnd_time(a.getEnd_time());
-            myApp.setExecutable_name(a.getExecutable_name());
-            myApp.setBrowser_url(a.getBrowser_url());
-            myApp.setBrowser_title(a.getBrowser_title());
-            myApp.setIp_address(a.getIp_address());
-            myApp.setMac_address(a.getMac_address());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", token);
 
-            for (Measurement m : a.getMeasurements()) {
-                MeasurementReport myMeasure = new MeasurementReport();
-                myMeasure.setMeasurementTypeId(m.getMeasurementType().getMeasurementtypeid().toString());
-                myMeasure.setValue(m.getValue());
-                myMeasure.setAlternativeLabel(m.getMeasurementType().getLabel());
-                //myApp.getMeasurements().add(myMeasure);
-            }
+        HttpEntity<DeleteRequest> entity = new HttpEntity<>(request, headers);
+        try {
+            ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
 
-            response.getActivities().add(myApp);
+            HttpStatus status = response.getStatusCode();
 
+            return status == HttpStatus.OK;
+        } catch (Exception e) {
+            LOG.warn(e);
+            return false;
         }
 
-        return response;
     }
+
+    public boolean deleteActivitiesWithIdsFallback(DeleteRequest request, String token, Throwable exception) {
+        LOG.warn("deleteActivitiesWithIdsFallback method used");
+        LOG.warn(exception);
+        return false;
+    }
+
+
 
 }

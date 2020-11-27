@@ -1,8 +1,5 @@
 package com.innopolis.innometrics.restapi.DTO;
 
-import com.innopolis.innometrics.restapi.entitiy.Role;
-
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 

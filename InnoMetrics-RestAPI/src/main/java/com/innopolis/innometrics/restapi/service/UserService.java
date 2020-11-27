@@ -1,10 +1,7 @@
 package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.*;
-import com.innopolis.innometrics.restapi.entitiy.Page;
-import com.innopolis.innometrics.restapi.entitiy.Permission;
-import com.innopolis.innometrics.restapi.entitiy.Role;
-import com.innopolis.innometrics.restapi.entitiy.User;
+import com.innopolis.innometrics.restapi.entity.User;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {

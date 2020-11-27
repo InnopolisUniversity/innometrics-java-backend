@@ -62,4 +62,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer>, Pa
             " order by date_trunc('day', captureddate) asc, 1 asc;", nativeQuery = true)
     List<ITimeReportByUser> getTimeReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") Date min_date, @Param("max_date") Date max_date);
 
+
+    @Modifying
+    @Query(value = "Delete from innometrics.activity a where a.activityid in :idList", nativeQuery = true)
+    Void deleteActivitiesWithIds(List<Integer> idList);
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -78,6 +79,11 @@ public class ProcessService {
 
         processRepository.deleteById(ProcessID);
 
+        return true;
+    }
+
+    public boolean DeleteProcessesWithIds(Integer[] ids) {
+        processRepository.deletePorcessesWithIds(Arrays.asList(ids));
         return true;
     }
 

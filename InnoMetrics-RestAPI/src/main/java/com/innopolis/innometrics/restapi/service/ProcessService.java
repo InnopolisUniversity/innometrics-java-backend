@@ -1,13 +1,6 @@
 package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.*;
-import com.innopolis.innometrics.restapi.entitiy.Activity;
-import com.innopolis.innometrics.restapi.entitiy.Measurement;
-import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
-import com.innopolis.innometrics.restapi.exceptions.ValidationException;
-import com.innopolis.innometrics.restapi.repository.ActivityRepository;
-import com.innopolis.innometrics.restapi.repository.MeasurementRepository;
-import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.logging.log4j.LogManager;
@@ -16,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProcessService {
@@ -61,39 +54,57 @@ public class ProcessService {
     @HystrixCommand(commandKey = "getProcessReportByEmail", fallbackMethod = "getProcessReportByEmailFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public ProcessReportResponse getProcessReportByEmail(String userName, String token) {
-        String uri = baseURL + "/" + userName;
-
+    public ProcessDayReportResponse getProcessReportByEmail(Date reportDate, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
-        Map<String, String> vars = new HashMap<>();
-        vars.put("email", userName);
+        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseURL)
+                .queryParam("reportDate", reportDate != null ? formatter.format(reportDate) : null);
 
-        HttpEntity<ProcessReportResponse> entity = new HttpEntity<>(headers);
-        ResponseEntity<ProcessReportResponse> response = restTemplate.exchange(uri, HttpMethod.GET, entity, ProcessReportResponse.class);
+
+        HttpEntity<ProcessDayReportResponse> entity = new HttpEntity<>(headers);
+        ResponseEntity<ProcessDayReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, ProcessDayReportResponse.class);
 
         HttpStatus status = response.getStatusCode();
 
         return response.getBody();
     }
 
-    public ProcessReportResponse getProcessReportByEmailFallback(String userName, String token, Throwable exception) {
+    public ProcessDayReportResponse getProcessReportByEmailFallback(Date reportDate, String token, Throwable exception) {
         LOG.warn("getProcessReportByEmailFallback method used");
         LOG.warn(exception);
-        /*
-        Report myReport = new Report();
-        ActivityReport myDefaultActivity = new ActivityReport();
-        myDefaultActivity.setExecutable_name("Not info available");
-        myDefaultActivity.setUserID("Not info available");
-        myDefaultActivity.setIp_address("Not info available");
-        myDefaultActivity.setMac_address("Not info available");
-        myDefaultActivity.setBrowser_title("Not info available");
-        myDefaultActivity.setBrowser_url("Not info available");
-        myDefaultActivity.setActivityType("Not info available");
-        myReport.getActivities().add(myDefaultActivity);
-        /**/
         return null;
+    }
+
+
+    @HystrixCommand( commandKey = "deleteProcessesWithIds", fallbackMethod = "deleteProcessesWithIdsFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public boolean deleteProcessesWithIds(DeleteRequest request, String token) {
+        String uri = baseURL;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", token);
+
+        HttpEntity<DeleteRequest> entity = new HttpEntity<>(request, headers);
+        try {
+            ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
+
+            HttpStatus status = response.getStatusCode();
+
+            return status == HttpStatus.OK;
+        } catch (Exception e) {
+            LOG.warn(e);
+            return false;
+        }
+
+    }
+
+    public boolean deleteProcessesWithIdsFallback(DeleteRequest request, String token, Throwable exception) {
+        LOG.warn("deleteProcessesWithIdsFallback method used");
+        LOG.warn(exception);
+        return false;
     }
 
 

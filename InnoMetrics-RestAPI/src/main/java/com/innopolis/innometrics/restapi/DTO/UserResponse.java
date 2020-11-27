@@ -1,8 +1,5 @@
 package com.innopolis.innometrics.restapi.DTO;
 
-import com.innopolis.innometrics.restapi.entitiy.Page;
-import com.innopolis.innometrics.restapi.entitiy.Role;
-
 import java.io.Serializable;
 import java.util.List;
 

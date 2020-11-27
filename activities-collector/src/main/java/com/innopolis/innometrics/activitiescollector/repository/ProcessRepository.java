@@ -23,4 +23,9 @@ public interface ProcessRepository extends JpaRepository<Process, Integer > {
             " where email = :email\n" +
             "   and collectedtime between date_trunc('day', TO_TIMESTAMP(:ReportDate, 'DD/MM/YYYY')) and date_trunc('day', TO_TIMESTAMP(:ReportDate, 'DD/MM/YYYY')) + interval '1 day' - interval '1 second';", nativeQuery = true)
     List<IProcessReportByUserAndDay> getProcessesPerDay(@Param("email") String email, @Param("ReportDate") String ReportDate);
+
+
+    @Modifying
+    @Query(value = "Delete from innometrics.process p where p.processid in :idList", nativeQuery = true)
+    Void deletePorcessesWithIds(List<Integer> idList);
 }

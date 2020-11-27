@@ -1,6 +1,6 @@
 package com.innopolis.innometrics.restapi.repository;
 
-import com.innopolis.innometrics.restapi.entitiy.MeasurementType;
+import com.innopolis.innometrics.restapi.entity.MeasurementType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

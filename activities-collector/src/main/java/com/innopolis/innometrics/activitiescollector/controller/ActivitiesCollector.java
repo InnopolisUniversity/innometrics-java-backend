@@ -3,6 +3,7 @@ package com.innopolis.innometrics.activitiescollector.controller;
 
 import com.innopolis.innometrics.activitiescollector.DTO.ActivitiesReportResponse;
 import com.innopolis.innometrics.activitiescollector.DTO.ActivityReport;
+import com.innopolis.innometrics.activitiescollector.DTO.DeleteRequest;
 import com.innopolis.innometrics.activitiescollector.DTO.Report;
 import com.innopolis.innometrics.activitiescollector.config.JwtToken;
 import com.innopolis.innometrics.activitiescollector.entity.Activity;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 //@CrossOrigin
-@RequestMapping(value = "/V1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/V1/activity", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ActivitiesCollector {
 
     private static Logger LOG = LogManager.getLogger();
@@ -39,7 +40,7 @@ public class ActivitiesCollector {
     private ModelMapper modelMapper;
 
     //add activity
-    @PostMapping("/activity")
+    @PostMapping("/")
     public ResponseEntity<?> addReport(@RequestBody Report report,
                                        UriComponentsBuilder ucBuilder,
                                        @RequestHeader String Token) {
@@ -52,7 +53,7 @@ public class ActivitiesCollector {
     }
 
     //Delete activity
-    @DeleteMapping("/activity/{activity_id}")
+    @DeleteMapping("/{activity_id}")
     public ResponseEntity<?> deleteActivity(@PathVariable Integer activity_id,
                                             @RequestHeader String Token) {
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
@@ -63,7 +64,7 @@ public class ActivitiesCollector {
 
     }
 
-    @GetMapping(value = "/activity/")
+    @GetMapping(value = "/")
     @ResponseBody
     public ActivitiesReportResponse getActivities(@RequestHeader String Token,
                                                   @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date reportDate,
@@ -75,10 +76,15 @@ public class ActivitiesCollector {
         return myReport;
     }
 
-    private ActivityReport convertToDto(Activity post) {
-        ActivityReport activityReport = modelMapper.map(post, ActivityReport.class);
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteActivitiesWithIds(@RequestBody DeleteRequest request,
+                                            @RequestHeader String Token) {
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        if (activityService.DeleteActivitiesWithIds(request.getIds())) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return activityReport;
     }
 
     //Project activities

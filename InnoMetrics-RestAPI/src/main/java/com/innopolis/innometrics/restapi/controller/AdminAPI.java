@@ -2,7 +2,7 @@ package com.innopolis.innometrics.restapi.controller;
 
 import com.innopolis.innometrics.restapi.DTO.*;
 import com.innopolis.innometrics.restapi.config.JwtToken;
-import com.innopolis.innometrics.restapi.entitiy.*;
+import com.innopolis.innometrics.restapi.entity.*;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
 import com.innopolis.innometrics.restapi.repository.MeasurementTypeRepository;
 import com.innopolis.innometrics.restapi.repository.ProjectRepository;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 

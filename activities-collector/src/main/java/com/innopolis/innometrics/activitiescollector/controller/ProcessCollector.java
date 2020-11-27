@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @RestController
-@RequestMapping(value = "/V1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/V1/process", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProcessCollector {
 
     private static Logger LOG = LogManager.getLogger();
@@ -29,7 +29,7 @@ public class ProcessCollector {
     @Autowired
     private JwtToken jwtTokenUtil;
 
-    @PostMapping("/process")
+    @PostMapping("/")
     public ResponseEntity<?> addProcessReport(@RequestBody AddProcessReportRequest report,
                                               UriComponentsBuilder ucBuilder,
                                               @RequestHeader String Token) {
@@ -44,7 +44,7 @@ public class ProcessCollector {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/process")
+    @GetMapping("/")
     public ResponseEntity<ProcessDayReportResponse> getProcessReport(@RequestHeader String Token,
                                                                      @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date reportDate,
                                                                      UriComponentsBuilder uriBuilder,
@@ -55,11 +55,22 @@ public class ProcessCollector {
     }
 
 
-    @DeleteMapping("/process/{process_id}")
+    @DeleteMapping("/{process_id}")
     public ResponseEntity<?> deleteProcess(@PathVariable Integer process_id,
                                             @RequestHeader String Token) {
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
         if (processService.DeleteProcess(process_id, UserName)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteProcessesWithIds(@RequestBody DeleteRequest request,
+                                                     @RequestHeader String Token) {
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        if (processService.DeleteProcessesWithIds(request.getIds())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
