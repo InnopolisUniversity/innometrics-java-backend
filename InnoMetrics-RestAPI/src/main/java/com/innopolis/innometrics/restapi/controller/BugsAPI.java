@@ -1,5 +1,6 @@
 package com.innopolis.innometrics.restapi.controller;
 
+import com.innopolis.innometrics.restapi.DTO.BugReportRequest;
 import com.innopolis.innometrics.restapi.DTO.BugTrackingListRequest;
 import com.innopolis.innometrics.restapi.DTO.BugTrackingRequest;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
@@ -31,7 +32,7 @@ public class BugsAPI {
 
 
     @PostMapping("/")
-    public ResponseEntity<BugTrackingRequest> CreateBug(@RequestBody BugTrackingRequest bug, @RequestHeader(required = false) String Token) {
+    public ResponseEntity<BugTrackingRequest> CreateBug(@RequestBody BugReportRequest bug, @RequestHeader(required = false) String Token) {
 
         if (bug == null || bug.getTitle() == null || bug.getTrace() == null)
             throw new ValidationException("Not enough data provided");

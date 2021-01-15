@@ -52,6 +52,12 @@ public class DataCollectorsAPI {
     public ResponseEntity<?> addReport(@RequestBody Report report,
                                        UriComponentsBuilder ucBuilder,
                                        @RequestHeader String Token) {
+
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        LOG.info("A request received from " + UserName + ", with " + report.getActivities().size() + " activities");
+        if(report.getActivities().size() > 1000 || report.getActivities().size() == 0){
+            return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
+        }
         Boolean result = activityService.CreateActivity(report, Token);
         if (result) return new ResponseEntity<>(HttpStatus.OK);
 
@@ -82,6 +88,15 @@ public class DataCollectorsAPI {
     public ResponseEntity<?> addProcessReport(@RequestBody AddProcessReportRequest report,
                                               UriComponentsBuilder ucBuilder,
                                               @RequestHeader String Token) {
+
+        String UserName = jwtTokenUtil.getUsernameFromToken(Token);
+        Date CreationDate = new Date();
+
+        LOG.info("A request received from " + UserName + ", with " + report.getProcessesReport().size() + " process");
+        if(report.getProcessesReport().size() > 1000 || report.getProcessesReport().size() == 0){
+            return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
+        }
+
         Boolean result = processService.CreateProcessReport(report, Token);
         if (result) return new ResponseEntity<>(HttpStatus.OK);
 
@@ -137,6 +152,12 @@ public class DataCollectorsAPI {
         return ResponseEntity.ok(myReport);
     }
 
+
+    @GetMapping("/examReport")
+    public ResponseEntity<CurrentActivityReport> getExamReport(@RequestParam(required = false) String email) {
+        CurrentActivityReport myReport = reportService.getExamReport(email);
+        return ResponseEntity.ok(myReport);
+    }
 
 
 }

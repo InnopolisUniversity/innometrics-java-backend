@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,11 @@ public class ActivitiesCollector {
                                        @RequestHeader String Token) {
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
         Date CreationDate = new Date();
+        LOG.info("a request received from " + UserName + ", with " + report.getActivities().size() + " activities");
+        if(report.getActivities().size() > 1000){
+            LOG.info("");
+            return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
+        }
         for (ActivityReport activity : report.getActivities()) {
             activityService.CreateActivty(activity, UserName, CreationDate);
         }
@@ -78,7 +84,7 @@ public class ActivitiesCollector {
 
     @DeleteMapping("/")
     public ResponseEntity<?> deleteActivitiesWithIds(@RequestBody DeleteRequest request,
-                                            @RequestHeader String Token) {
+                                                     @RequestHeader String Token) {
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
         if (activityService.DeleteActivitiesWithIds(request.getIds())) {
             return new ResponseEntity<>(HttpStatus.OK);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -183,7 +184,12 @@ public class CategoryService {
 
 
     public CategoriesTimeReportResponse getTimeReport(TimeReportRequest request) {
-        List<ICategoriesReport> result = actCategoryRepository.getTimeReport(request.getProjectID(), request.getEmail(), request.getMin_Date(), request.getMax_Date());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        List<ICategoriesReport> result = actCategoryRepository.getTimeReport(
+                request.getProjectID(),
+                request.getEmail(),
+                (request.getMin_Date() != null ? formatter.format(request.getMin_Date()) : null),
+                (request.getMax_Date() != null ? formatter.format(request.getMax_Date()) : null));
 
         CategoriesTimeReportResponse response = new CategoriesTimeReportResponse();
         for (ICategoriesReport a : result) {

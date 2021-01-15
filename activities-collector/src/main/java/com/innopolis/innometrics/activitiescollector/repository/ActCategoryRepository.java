@@ -42,11 +42,11 @@ public interface ActCategoryRepository extends JpaRepository<ActCategories, Inte
             "                  where cast(projectid as text) = cast(:ProjectID as text) )\n" +
             "             )\n" +
             "            )\n" +
-            "       and captureddate >= date(COALESCE(cast(:min_date as text), '1/1/1900'))\n" +
-            "       and captureddate < date(COALESCE(cast(:max_date as text), '12/31/2999'))\n" +
+            "       and captureddate >= date_trunc('day', TO_TIMESTAMP(COALESCE(cast(:min_date as text), '1/1/1900'), 'DD/MM/YYYY'))\n" +
+            "       and captureddate < date_trunc('day', TO_TIMESTAMP(COALESCE(cast(:max_date as text), '31/12/2999'), 'DD/MM/YYYY'))\n" +
             "     group by executable_name, date_trunc('day', captureddate), ac.catid) catapp right join innometricsconfig.cl_categories cat\n" +
             "  on catapp.catid = cat.catid\n" +
             "  group by cat.catname, cat.catdescription;", nativeQuery = true)
-    List<ICategoriesReport> getTimeReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") Date min_date, @Param("max_date") Date max_date);
+    List<ICategoriesReport> getTimeReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") String min_date, @Param("max_date") String max_date);
 
 }

@@ -2,6 +2,7 @@ package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.ActivitiesReportByUserResponse;
 import com.innopolis.innometrics.restapi.DTO.CumulativeReportResponse;
+import com.innopolis.innometrics.restapi.DTO.CurrentActivityReport;
 import com.innopolis.innometrics.restapi.DTO.TimeReportResponse;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -129,5 +130,35 @@ public class ReportService {
         LOG.warn("getCumulativeReportFallback method used");
         LOG.warn(exception);
         return new CumulativeReportResponse();
+    }
+
+
+
+
+
+    @HystrixCommand(commandKey = "getExamReport", fallbackMethod = "getExamReportFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public CurrentActivityReport getExamReport(String email) {
+        String uri = baseURL + "/examReport";
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+                .queryParam("email", email);
+
+        ResponseEntity<CurrentActivityReport> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CurrentActivityReport.class);
+
+        HttpStatus status = response.getStatusCode();
+
+        return response.getBody();
+
+    }
+
+    public CurrentActivityReport getExamReportFallback(String email, Throwable exception) {
+        LOG.warn("getExamReportFallback method used");
+        LOG.warn(exception);
+        return new CurrentActivityReport();
     }
 }

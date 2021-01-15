@@ -1,6 +1,7 @@
 package com.innopolis.innometrics.restapi.service;
 
 import com.innopolis.innometrics.restapi.DTO.*;
+import com.innopolis.innometrics.restapi.config.JwtToken;
 import com.innopolis.innometrics.restapi.entity.Activity;
 import com.innopolis.innometrics.restapi.entity.Measurement;
 import com.innopolis.innometrics.restapi.exceptions.ValidationException;
@@ -34,8 +35,11 @@ public class ActivityService {
     private ActivityRepository activityRepository;
 
 
-    private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/activity";
+    private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/activity/";
 
+
+    @Autowired
+    private JwtToken jwtTokenUtil;
 
     @HystrixCommand( commandKey = "CreateActivity", fallbackMethod = "CreateActivityFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")

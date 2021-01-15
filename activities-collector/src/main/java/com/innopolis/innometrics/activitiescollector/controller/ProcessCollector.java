@@ -37,6 +37,10 @@ public class ProcessCollector {
         String UserName = jwtTokenUtil.getUsernameFromToken(Token);
         Date CreationDate = new Date();
 
+        LOG.info("A request received from " + UserName + ", with " + report.getProcessesReport().size() + " process");
+        if(report.getProcessesReport().size() > 1000){
+            return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
+        }
         for (ProcessReport activity : report.getProcessesReport()) {
             processService.CreateProcessReport(activity, UserName, CreationDate);
         }

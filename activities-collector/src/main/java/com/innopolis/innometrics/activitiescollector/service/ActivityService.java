@@ -44,8 +44,8 @@ public class ActivityService {
         myActivity.setStarttime(activityReport.getStart_time());
         myActivity.setEnd_time(activityReport.getEnd_time());
         myActivity.setExecutable_name(activityReport.getExecutable_name());
-        myActivity.setBrowser_url(activityReport.getBrowser_url());
-        myActivity.setBrowser_title(activityReport.getBrowser_title());
+        myActivity.setBrowser_url(activityReport.getBrowser_url().substring(0,Math.min(activityReport.getBrowser_url().length(), 1024)));
+        myActivity.setBrowser_title(activityReport.getBrowser_title().substring(0,Math.min(activityReport.getBrowser_title().length(), 1024)));
         myActivity.setIp_address(activityReport.getIp_address());
         myActivity.setMac_address(activityReport.getMac_address());
         myActivity.setPid(activityReport.getPid());
@@ -60,26 +60,32 @@ public class ActivityService {
             Measurement myMeasurement = new Measurement();
             myMeasurement.setActivity(myActivity);
             MeasurementType myType = new MeasurementType();
+
+//            myType.setMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
+//            ///////////////////////////////////////////////////////////////////
             try {
-                myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
+//                myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
+                myMeasurement.setMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
             } catch (Exception e) {
-                myType = measurementTypeRepository.findByMeasurementtypeid(1);
+//                myType = measurementTypeRepository.findByMeasurementtypeid(1);
+                myMeasurement.setMeasurementtypeid(1);
             }
 
             if (myType == null) {
                 //throw new ValidationException("The measurement type select does not exist");
             }
-            myMeasurement.setMeasurementType(myType);
+//            ///////////////////////////////////////////////////////////////////
+//            myMeasurement.setMeasurementtypeid(myType);
             myMeasurement.setValue(m.getValue());
             myMeasurement.setCreationdate(CreationDate);
             myMeasurement.setCreatedby(UserName);
 
-            myMeasurement = measurementRepository.save(myMeasurement);
+            //myMeasurement = measurementRepository.save(myMeasurement);
 
 
             myActivity.getMeasurements().add(myMeasurement);
         }
-
+        measurementRepository.saveAll(myActivity.getMeasurements());
         //activityRepository.save(myActivity);
 
         return true;
@@ -137,7 +143,14 @@ public class ActivityService {
     }
 
     public ActivitiesReportByUserResponse getActivitiesReportByUser(ActivitiesReportByUserRequest request) {
-        List<IActivitiesReportByUser> result = activityRepository.getActivitiesReport(request.getProjectID(), request.getEmail(), request.getMin_Date(), request.getMax_Date());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        List<IActivitiesReportByUser> result = activityRepository.getActivitiesReport(
+                request.getProjectID(),
+                request.getEmail(),
+                (request.getMin_Date() != null ? formatter.format(request.getMin_Date()) : null),
+                (request.getMax_Date() != null ? formatter.format(request.getMax_Date()) : null)
+        );
 
         ActivitiesReportByUserResponse response = new ActivitiesReportByUserResponse();
         for (IActivitiesReportByUser a : result) {
@@ -157,7 +170,14 @@ public class ActivityService {
 
 
     public TimeReportResponse getTimeReportByUser(TimeReportRequest request) {
-        List<ITimeReportByUser> result = activityRepository.getTimeReport(request.getProjectID(), request.getEmail(), request.getMin_Date(), request.getMax_Date());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        List<ITimeReportByUser> result = activityRepository.getTimeReport(
+                request.getProjectID(),
+                request.getEmail(),
+                (request.getMin_Date() != null ? formatter.format(request.getMin_Date()) : null),
+                (request.getMax_Date() != null ? formatter.format(request.getMax_Date()) : null)
+        );
 
         TimeReportResponse response = new TimeReportResponse();
         for (ITimeReportByUser a : result) {
@@ -176,7 +196,12 @@ public class ActivityService {
 
 
     public CumulativeReportResponse getCumulativeReportByEmail(String email, Date min_Date, Date max_Date) {
-        List<CumulativeReport> myReport = cumulativeReportRepository.getCumulativeReport(email, min_Date, max_Date);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        List<CumulativeReport> myReport = cumulativeReportRepository.getCumulativeReport(
+                email,
+                (min_Date != null ? formatter.format(min_Date) : null),
+                (max_Date != null ? formatter.format(max_Date) : null)
+        );
 
         CumulativeReportResponse response = new CumulativeReportResponse();
 

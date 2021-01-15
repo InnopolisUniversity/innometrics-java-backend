@@ -16,6 +16,7 @@ com\innopolis\innometrics\restapi\DTO\TeamRequest.class
 com\innopolis\innometrics\restapi\DTO\AppCategoryRequest.class
 com\innopolis\innometrics\restapi\DTO\AuthRequest.class
 com\innopolis\innometrics\restapi\DTO\UserRequest.class
+com\innopolis\innometrics\restapi\DTO\BugReportRequest.class
 com\innopolis\innometrics\restapi\DTO\BugTrackingRequest.class
 com\innopolis\innometrics\restapi\controller\BugsAPI.class
 com\innopolis\innometrics\restapi\entity\Project.class
@@ -61,6 +62,7 @@ com\innopolis\innometrics\restapi\DTO\CumulativeReportResponse.class
 com\innopolis\innometrics\restapi\exceptions\BaseErrorHandler.class
 com\innopolis\innometrics\restapi\service\TeamService.class
 com\innopolis\innometrics\restapi\DTO\RoleResponse.class
+com\innopolis\innometrics\restapi\DTO\CurrentActivityReport.class
 com\innopolis\innometrics\restapi\DTO\TimeReportByUser.class
 com\innopolis\innometrics\restapi\DTO\RoleListResponse.class
 com\innopolis\innometrics\restapi\repository\ActivityRepository.class

@@ -1,5 +1,6 @@
 package com.innopolis.innometrics.restapi.service;
 
+import com.innopolis.innometrics.restapi.DTO.BugReportRequest;
 import com.innopolis.innometrics.restapi.DTO.BugTrackingListRequest;
 import com.innopolis.innometrics.restapi.DTO.BugTrackingRequest;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -37,13 +38,13 @@ public class BugTrackingService {
     @HystrixCommand( commandKey = "createBug", fallbackMethod = "createBugFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public boolean createBug(BugTrackingRequest bug, String Token){
+    public boolean createBug(BugReportRequest bug, String Token){
         String uri = baseURL;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", Token);
 
-        HttpEntity<BugTrackingRequest> entity = new HttpEntity<>(bug, headers);
+        HttpEntity<BugReportRequest> entity = new HttpEntity<>(bug, headers);
         try {
             ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
 

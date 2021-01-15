@@ -2,7 +2,9 @@ package com.innopolis.innometrics.activitiescollector.controller;
 
 import com.innopolis.innometrics.activitiescollector.DTO.*;
 import com.innopolis.innometrics.activitiescollector.DTO.Report;
+import com.innopolis.innometrics.activitiescollector.config.JwtToken;
 import com.innopolis.innometrics.activitiescollector.service.ActivityService;
+import com.innopolis.innometrics.activitiescollector.service.ProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -16,6 +18,9 @@ import java.util.Date;
 public class ActivityReports {
     @Autowired
     ActivityService activityService;
+
+    @Autowired
+    ProcessService processService;
 
     @GetMapping("/activitiesReport")
     public ResponseEntity<ActivitiesReportByUserResponse> getReportActivitiesByUser(@RequestParam(required = false) String projectID,
@@ -47,6 +52,13 @@ public class ActivityReports {
                                                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
                                                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
         CumulativeReportResponse myReport = activityService.getCumulativeReportByEmail(email, min_Date, max_Date);
+        return ResponseEntity.ok(myReport);
+    }
+
+
+    @GetMapping("/examReport")
+    public ResponseEntity<CurrentActivityReport> getExamReport(@RequestParam(required = false) String email) {
+        CurrentActivityReport myReport = processService.getCurrentActivityReport(email, new Date());
         return ResponseEntity.ok(myReport);
     }
 }

@@ -39,12 +39,12 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer>, Pa
             "  from innometrics.cumlativerepactivity a, innometricsauth.project_users pu\n" +
             " where pu.email = COALESCE(cast(:email as text), a.email)\n" +
             "   and CAST(pu.projectID AS TEXT) = COALESCE(cast(:ProjectID as text), cast(pu.projectid as TEXT))\n" +
-            "   and captureddate >= date(COALESCE(cast(:min_date as text), '1/1/1900')) \n" +
-            "   and captureddate < date(COALESCE(cast(:max_date as text), '12/31/2999'))\n" +
+            "   and captureddate >= date_trunc('day', TO_TIMESTAMP(COALESCE(cast(:min_date as text), '1/1/1900'), 'DD/MM/YYYY')) \n" +
+            "   and captureddate < date_trunc('day', TO_TIMESTAMP(COALESCE(cast(:max_date as text), '31/12/2999'), 'DD/MM/YYYY'))\n" +
             "   and pu.email = a.email\n" +
             " group by a.email, executable_name, date_trunc('day', captureddate)\n" +
             " order by date_trunc('day', captureddate) asc, 1 asc;", nativeQuery = true)
-    List<IActivitiesReportByUser> getActivitiesReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") Date min_date, @Param("max_date") Date max_date);
+    List<IActivitiesReportByUser> getActivitiesReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") String min_date, @Param("max_date") String max_date);
 
 
     @Query( value =
@@ -55,15 +55,15 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer>, Pa
             "  from innometrics.cumlativerepactivity a, innometricsauth.project_users pu\n" +
             " where pu.email = COALESCE(cast(:email as text), a.email)\n" +
             "   and CAST(pu.projectID AS TEXT) = COALESCE(cast(:ProjectID as text), cast(pu.projectid as TEXT))\n" +
-            "   and captureddate >= date(COALESCE(cast(:min_date as text), '1/1/1900')) \n" +
-            "   and captureddate < date(COALESCE(cast(:max_date as text), '12/31/2999'))\n" +
+            "   and captureddate >= date_trunc('day', TO_TIMESTAMP(COALESCE(cast(:min_date as text), '1/1/1900'), 'DD/MM/YYYY')) \n" +
+            "   and captureddate < date_trunc('day', TO_TIMESTAMP(COALESCE(cast(:max_date as text), '31/12/2999'), 'DD/MM/YYYY'))\n" +
             "   and pu.email = a.email\n" +
             " group by a.email, date_trunc('day', captureddate)\n" +
             " order by date_trunc('day', captureddate) asc, 1 asc;", nativeQuery = true)
-    List<ITimeReportByUser> getTimeReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") Date min_date, @Param("max_date") Date max_date);
+    List<ITimeReportByUser> getTimeReport(@Param("ProjectID") String projectID, @Param("email") String email, @Param("min_date") String min_date, @Param("max_date") String max_date);
 
 
     @Modifying
     @Query(value = "Delete from innometrics.activity a where a.activityid in :idList", nativeQuery = true)
-    Void deleteActivitiesWithIds(List<Integer> idList);
+    Integer deleteActivitiesWithIds(List<Integer> idList);
 }

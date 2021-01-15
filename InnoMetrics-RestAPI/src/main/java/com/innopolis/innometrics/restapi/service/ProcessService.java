@@ -23,7 +23,7 @@ public class ProcessService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/process";
+    private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/process/";
 
 
     @HystrixCommand(commandKey = "CreateProcessReport", fallbackMethod = "CreateProcessReportFallback", commandProperties = {

@@ -45,25 +45,28 @@ public class ProcessService {
             ProcessMeasurement myMeasurement = new ProcessMeasurement();
             myMeasurement.setProcess(myProcess);
             MeasurementType myType = new MeasurementType();
-            try {
-                myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
-            } catch (Exception e) {
-                myType = measurementTypeRepository.findByMeasurementtypeid(1);
-            }
-
-            if (myType == null) {
-                //throw new ValidationException("The measurement type select does not exist");
-            }
+            myType.setMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
+//            try {
+//                myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
+//            } catch (Exception e) {
+//                myType = measurementTypeRepository.findByMeasurementtypeid(1);
+//            }
+//
+//            if (myType == null) {
+//                //throw new ValidationException("The measurement type select does not exist");
+//            }
             myMeasurement.setMeasurementType(myType);
             myMeasurement.setValue(m.getValue());
             myMeasurement.setCaptureddate(m.getCapturedDate());
             myMeasurement.setCreationdate(CreationDate);
             myMeasurement.setCreatedby(UserName);
 
-            myMeasurement = processMeasurementRepository.save(myMeasurement);
+            //myMeasurement = processMeasurementRepository.save(myMeasurement);
 
             myProcess.getProceMeasurements().add(myMeasurement);
         }
+
+        processMeasurementRepository.saveAll(myProcess.getProceMeasurements());
 
         return true;
     }
@@ -138,6 +141,15 @@ public class ProcessService {
         return response;
     }
 
+    public CurrentActivityReport getCurrentActivityReport(String UserName, Date reportDay){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        List<String> myProcesses = processRepository.getCurrentProcessList(UserName, formatter.format(reportDay));
+        List<String> myAddress = processRepository.getCurrentMACList(UserName);
 
+        CurrentActivityReport report = new CurrentActivityReport(myProcesses, myAddress);
+
+        return report;
+
+    }
 
 }

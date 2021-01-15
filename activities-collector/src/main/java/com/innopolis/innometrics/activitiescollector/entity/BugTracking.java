@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 
 @Entity
@@ -41,10 +42,10 @@ public class BugTracking implements Serializable {
     private String dataCollectorVersion;
 
     @Column(name = "creationdate", insertable = false, updatable = false)
-    private Timestamp creationdate;
+    private Date creationdate;
 
     @Column(name = "lastupdate")
-    private Timestamp lastupdate;
+    private Date lastupdate;
 
     // 0 - not solved, 1 - solved
     @Column

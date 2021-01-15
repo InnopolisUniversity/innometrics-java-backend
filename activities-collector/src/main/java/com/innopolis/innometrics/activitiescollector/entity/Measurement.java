@@ -12,14 +12,16 @@ public class Measurement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "activityid")
+    @JoinColumn(name = "activityid", updatable = false)
     private Activity activity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "measurementtypeid")
-    private MeasurementType measurementType;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "measurementtypeid")
+//    private MeasurementType measurementType;
+
+    @Column
+    private Integer measurementtypeid;
 
     @Column(nullable = true)
     private String value;
@@ -39,19 +41,7 @@ public class Measurement implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Measurement() {
-    }
-
-    public Measurement(Activity activity, MeasurementType measurementType, String value, String alternativelabel, Date creationdate, String createdby, Date lastupdate, String updateby) {
-        this.activity = activity;
-        this.measurementType = measurementType;
-        this.value = value;
-        this.alternativelabel = alternativelabel;
-        this.creationdate = creationdate;
-        this.createdby = createdby;
-        this.lastupdate = lastupdate;
-        this.updateby = updateby;
-    }
+    public Measurement() { }
 
     public Integer getId() {
         return id;
@@ -69,12 +59,12 @@ public class Measurement implements Serializable {
         this.activity = activity;
     }
 
-    public MeasurementType getMeasurementType() {
-        return measurementType;
+    public Integer getMeasurementtypeid() {
+        return measurementtypeid;
     }
 
-    public void setMeasurementType(MeasurementType measurementType) {
-        this.measurementType = measurementType;
+    public void setMeasurementtypeid(Integer measurementtypeid) {
+        this.measurementtypeid = measurementtypeid;
     }
 
     public String getValue() {

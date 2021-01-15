@@ -2,9 +2,7 @@ package com.innopolis.innometrics.activitiescollector.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -52,11 +50,12 @@ public class Process implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ProcessID")
-    private Set<ProcessMeasurement> ProceMeasurements = new HashSet<ProcessMeasurement>();
+    private List<ProcessMeasurement> ProceMeasurements;
 
     public Process() {
+        ProceMeasurements = new ArrayList<>();
     }
 
     public Integer getProcessID() {
@@ -163,11 +162,11 @@ public class Process implements Serializable {
         this.updateby = updateby;
     }
 
-    public Set<ProcessMeasurement> getProceMeasurements() {
+    public List<ProcessMeasurement> getProceMeasurements() {
         return ProceMeasurements;
     }
 
-    public void setProceMeasurements(Set<ProcessMeasurement> measurements) {
+    public void setProceMeasurements(List<ProcessMeasurement> measurements) {
         this.ProceMeasurements = measurements;
     }
 }

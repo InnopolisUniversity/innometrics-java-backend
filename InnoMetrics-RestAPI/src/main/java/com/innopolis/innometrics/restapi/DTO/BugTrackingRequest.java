@@ -31,9 +31,9 @@ public class BugTrackingRequest implements Serializable {
 
     private String dataCollectorVersion;
 
-    private Timestamp creationdate;
+    private Date creationdate;
 
-    private Timestamp lastupdate;
+    private Date lastupdate;
 
     // 0 - not solved, 1 - solved
     private boolean status;

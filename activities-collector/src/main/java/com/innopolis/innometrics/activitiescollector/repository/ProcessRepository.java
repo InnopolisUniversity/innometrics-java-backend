@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -28,4 +27,28 @@ public interface ProcessRepository extends JpaRepository<Process, Integer > {
     @Modifying
     @Query(value = "Delete from innometrics.process p where p.processid in :idList", nativeQuery = true)
     Void deletePorcessesWithIds(List<Integer> idList);
+
+    @Modifying
+    @Query(value =
+            "Select distinct executable_name\n" +
+            "  from innometrics.process\n" +
+            " where lower(email) = :email\n" +
+            "   and date_trunc('day', collectedtime) = date_trunc('day', TO_TIMESTAMP(:ReportDate, 'DD/MM/YYYY'));", nativeQuery = true)
+    List<String> getCurrentProcessList(@Param("email") String email, @Param("ReportDate") String ReportDate);
+
+
+
+    @Modifying
+    @Query(value =
+            "Select distinct mac_address\n" +
+            "  from innometrics.activity\n" +
+            " where lower(email) = :email\n" +
+            "   and date_trunc('day', start_time) = date_trunc('day', now())\n" +
+            " union \n" +
+            "Select distinct mac_address\n" +
+            "  from innometrics.process\n" +
+            " where lower(email) = :email\n" +
+            "   and date_trunc('day', collectedtime) = date_trunc('day', now());", nativeQuery = true)
+    List<String> getCurrentMACList(@Param("email") String email);
+
 }

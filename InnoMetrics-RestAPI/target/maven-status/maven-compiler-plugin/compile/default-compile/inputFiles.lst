@@ -43,9 +43,11 @@ C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\WorkingTreeListRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\service\CollectorVersionService.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\TeamRequest.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\CurrentActivityReport.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\ICategoriesReport.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\CategoryListResponse.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\controller\AuthAPI.java
+C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\BugReportRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\DTO\RoleRequest.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\config\JwtRequestFilter.java
 C:\Users\x.vasquez\Documents\repos\innometrics-java-backend\InnoMetrics-RestAPI\src\main\java\com\innopolis\innometrics\restapi\service\AdminService.java

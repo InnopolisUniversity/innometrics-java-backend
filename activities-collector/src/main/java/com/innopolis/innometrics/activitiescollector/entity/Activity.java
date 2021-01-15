@@ -67,11 +67,12 @@ public class Activity implements Serializable {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ActivityID")
     private Set<Measurement> measurements = new HashSet<Measurement>();
 
     public Activity() {
+
     }
 
     public Integer getActivityID() {
@@ -218,9 +219,7 @@ public class Activity implements Serializable {
         this.updateby = updateby;
     }
 
-    public Set<Measurement> getMeasurements() {
-        return measurements;
-    }
+    public Set<Measurement> getMeasurements() { return measurements; }
 
     public void setMeasurements(Set<Measurement> measurements) {
         this.measurements = measurements;
