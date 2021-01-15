@@ -28,6 +28,7 @@ The architecture of the backend facilitates the scale, fault-tolerance and adapt
 * [API](https://github.com/InnopolisUniversity/innometrics-backend/blob/master/documentation.yaml)
   (Access readable format by pasting `documentation.yaml` data to https://editor.swagger.io)
 *  [Website](https://innometrics.ru/) 
+* [Here](https://drive.google.com/file/d/1ghOf4uXLN9Nl4MYenroQuLhQ3GPfZMZW/view?usp=sharing) you can read about PRIVACY NOTICE of Innometrics system.
 
 
 ## Installation
@@ -35,4 +36,4 @@ The architecture of the backend facilitates the scale, fault-tolerance and adapt
 
 ## Have Question or Feedback?
 
-Contact us via email: info@innometric.guru
+Contact us via email: [Xavier Vasquez](https://github.com/xavzelada)
