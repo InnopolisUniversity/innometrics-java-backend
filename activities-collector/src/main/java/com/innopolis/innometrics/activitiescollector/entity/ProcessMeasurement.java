@@ -16,9 +16,12 @@ public class ProcessMeasurement implements Serializable {
     @JoinColumn(name = "Processid")
     private Process process;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "measurementtypeid")
-    private MeasurementType measurementType;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "measurementtypeid")
+//    private MeasurementType measurementType;
+
+    @Column
+    private Integer measurementtypeid;
 
     @Column
     private String value;
@@ -60,12 +63,20 @@ public class ProcessMeasurement implements Serializable {
         this.process = process;
     }
 
-    public MeasurementType getMeasurementType() {
-        return measurementType;
+//    public MeasurementType getMeasurementType() {
+//        return measurementType;
+//    }
+//
+//    public void setMeasurementType(MeasurementType measurementType) {
+//        this.measurementType = measurementType;
+//    }
+
+    public Integer getMeasurementtypeid() {
+        return measurementtypeid;
     }
 
-    public void setMeasurementType(MeasurementType measurementType) {
-        this.measurementType = measurementType;
+    public void setMeasurementtypeid(Integer measurementtypeid) {
+        this.measurementtypeid = measurementtypeid;
     }
 
     public String getValue() {

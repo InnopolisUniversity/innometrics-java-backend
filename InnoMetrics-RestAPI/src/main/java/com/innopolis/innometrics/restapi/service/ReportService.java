@@ -41,9 +41,9 @@ public class ReportService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
+        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("projectID", projectID)
+                .queryParam("projectid", projectID)
                 .queryParam("email", email)
                 .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
                 .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
@@ -76,10 +76,10 @@ public class ReportService {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
+        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam("projectId", projectID)
-                .queryParam("email", email)
+                .queryParam("projectid", projectID == null ? "" : projectID)
+                .queryParam("email", email == null ? "" : email)
                 .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
                 .queryParam("max_Date", max_Date != null ? formatter.format(max_Date) : null);
         ResponseEntity<TimeReportResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, TimeReportResponse.class);
@@ -111,7 +111,7 @@ public class ReportService {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        Format formatter =  new SimpleDateFormat("dd/MM/yyyy");
+        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("email", email)
                 .queryParam("min_Date", min_Date != null ? formatter.format(min_Date) : null)
@@ -125,15 +125,12 @@ public class ReportService {
     }
 
     public CumulativeReportResponse getCumulativeReportFallback(String email,
-                                                                 Date min_Date,
-                                                                 Date max_Date, Throwable exception) {
+                                                                Date min_Date,
+                                                                Date max_Date, Throwable exception) {
         LOG.warn("getCumulativeReportFallback method used");
         LOG.warn(exception);
         return new CumulativeReportResponse();
     }
-
-
-
 
 
     @HystrixCommand(commandKey = "getExamReport", fallbackMethod = "getExamReportFallback", commandProperties = {

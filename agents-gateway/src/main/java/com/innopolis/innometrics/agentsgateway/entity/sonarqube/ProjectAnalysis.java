@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "project_analysis", schema = "sonaragent")
+@Table(name = "project_analysis", schema = "sonarqube")
 @Data
 public class ProjectAnalysis {
     @Id

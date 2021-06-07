@@ -12,11 +12,7 @@ public class Reposxproject {
     @Column(updatable = false)
     private Integer configid;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "agentid")
-    private Agentconfig agentConfig;
-
-    @Column(insertable = false, updatable = false)
+    @Column
     private Integer agentid;
 
     @Column
@@ -49,14 +45,6 @@ public class Reposxproject {
 
     public void setConfigid(Integer configid) {
         this.configid = configid;
-    }
-
-    public Agentconfig getAgentConfig() {
-        return agentConfig;
-    }
-
-    public void setAgentConfig(Agentconfig agentConfig) {
-        this.agentConfig = agentConfig;
     }
 
     public Integer getAgentid() {

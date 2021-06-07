@@ -18,6 +18,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
+          <factory-entry name="Innometrics-restAPI" />
           <factory-entry name="entityManagerFactory" />
         </datasource-mapping>
         <naming-strategy-map />
@@ -34,17 +35,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="11" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.sonarsource.scanner.maven:sonar-maven-plugin:3.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-dependency-tree:2.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.5.5" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-util:0.9.0.M2" level="project" />
-    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-sec-dispatcher:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-cipher:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.0.22" level="project" />
-    <orderEntry type="library" name="Maven: org.sonarsource.sonar-runner:sonar-runner-api:2.5.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-data-jpa:2.2.1.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.2.1.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.9.4" level="project" />

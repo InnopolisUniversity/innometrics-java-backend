@@ -11,4 +11,5 @@ public interface AgentconfigmethodsRepository  extends JpaRepository<Agentconfig
     List<Agentconfigmethods> findByAgentid(Integer agentId);
 
     Agentconfigmethods findByAgentidAndOperation(Integer agentId, String operation);
+
 }

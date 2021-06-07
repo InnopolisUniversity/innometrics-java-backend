@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "coverage", schema = "sonaragent")
+@Table(name = "coverage", schema = "sonarqube")
 @Data
 public class Coverage implements Metric {
     @Id

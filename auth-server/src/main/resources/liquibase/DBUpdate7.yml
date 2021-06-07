@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: "adding user's role per project"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsauth
+            tableName: project_users
+            columns:
+              - column:
+                  name: role
+                  type: Varchar(256)
+                  defaultValue: "DEVELOPER"
+                  constraints:
+                    references: innometricsauth.role(name)
+                    foreignKeyName: fk_role
+                    nullable: false

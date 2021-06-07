@@ -1,0 +1,552 @@
+databaseChangeLog:
+  - changeSet:
+      id: SchemaCreation_innometricsagents
+      author: xvasquez
+      changes:
+        - sql: "CREATE SCHEMA innometricsagents;"
+  - changeSet:
+      id: DatabaseCreation_innometricsAgents
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            remarks: Table to store the agents basic configuration
+            columns:
+              - column:
+                  name: agentid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: agent_pk
+              - column:
+                  name: agentname
+                  type: Varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: Varchar(1024)
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agentconfigmethods
+            remarks: Table to store the agents methods endpoint
+            columns:
+              - column:
+                  name: methodid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: agentconfigmethods_pk
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agentconfig
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: endpoint
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: Varchar(128)
+              - column:
+                  name: operation
+                  type: Varchar(128)
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agentconfigdetails
+            remarks: Table to store the details of agents configuration
+            columns:
+              - column:
+                  name: configdetid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: agentconfigdet_pk
+              - column:
+                  name: methodid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_methodconfig
+                    references: innometricsagents.agentconfigmethods(methodid)
+                    nullable: false
+              - column:
+                  name: paramname
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: paramtype
+                  type: Varchar(128)
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValue: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: adding_response_config_table
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agentresponseconfig
+            remarks: Table to store the details of agents response configuration
+            columns:
+              - column:
+                  name: configresponseid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: agentresponseconfig_pk
+              - column:
+                  name: methodid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_methodresponseconfig
+                    references: innometricsagents.agentconfigmethods(methodid)
+                    nullable: false
+              - column:
+                  name: responseparam
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: paramname
+                  type: Varchar(128)
+              - column:
+                  name: paramtype
+                  type: Varchar(128)
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: "adding request type to methods config"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfigmethods
+            columns:
+              - column:
+                  name: requesttype
+                  type: Varchar(256)
+  - changeSet:
+      id: "adding fetching data structures"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: sourcetype
+                  type: Varchar(256)
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: dbschemasource
+                  type: Varchar(256)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: repos_x_project
+            remarks: Table to store the relationship between a particular project and its corresponding repos
+            columns:
+              - column:
+                  name: configid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: reposproject_pk
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_auth_users
+                    references: innometricsauth.project(projectid)
+                    nullable: false
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agentconfig_fetching
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: repoid
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agent_data_config
+            remarks: Table to store the configuration to fetch the events data from the data base
+            columns:
+              - column:
+                  name: datacofingid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: dataconfig_pk
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agentconfig_data
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: schemaname
+                  type: Varchar(128)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: tablename
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: eventdatefield
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: eventauthorfield
+                  type: Varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: eventdescriptionfield
+                  type: Varchar(128)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: "adding repo id field to agent configuration"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: repoidfield
+                  type: Varchar(256)
+  - changeSet:
+      id: "adding event type to data config"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agent_data_config
+            columns:
+              - column:
+                  name: eventtype
+                  type: Varchar(256)
+  - changeSet:
+      id: "adding OAuth field to agent configuration"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: oauthuri
+                  type: Varchar(256)
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: authenticationmethod
+                  type: Varchar(256)
+  - changeSet:
+      id: "update OAuth field to agent configuration"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: accesstokenendpoint
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: authorizationbaseurl
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: requesttokenendpoint
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: "update OAuth API field to agent configuration"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: apikey
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfig
+            columns:
+              - column:
+                  name: apisecret
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: "adding agents_x_project table"
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agents_x_project
+            remarks: Table to store the relationship between a particular project and its corresponding agents
+            columns:
+              - column:
+                  name: configid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: agentsproject_pk
+              - column:
+                  name: projectid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_project_agents
+                    references: innometricsauth.project(projectid)
+                    nullable: false
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agent_projects
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: key
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: "adding request param name to agentconfigdetails"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfigdetails
+            columns:
+              - column:
+                  name: requestparam
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: "adding default value for request param name to agentconfigdetails"
+      author: xvasquez
+      changes:
+        - addColumn:
+            schemaName: innometricsagents
+            tableName: agentconfigdetails
+            columns:
+              - column:
+                  name: defaultvalue
+                  type: Varchar(256)
+                  constraints:
+                    nullable: true

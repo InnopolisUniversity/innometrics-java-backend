@@ -37,7 +37,7 @@ public class ActivityService {
 
     private String baseURL = "http://INNOMETRICS-COLLECTOR-SERVER/V1/activity/";
 
-
+//
     @Autowired
     private JwtToken jwtTokenUtil;
 
