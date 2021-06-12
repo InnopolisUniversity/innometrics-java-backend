@@ -18,26 +18,10 @@ import java.util.concurrent.ExecutionException;
 public class AgentGateway {
 
     @Autowired
-    AgentconfigService agentconfigService;
-
-    @Autowired
     AgentsHandler agentsHandler;
 
     @Autowired
     private OAuthService oAuthService;
-
-    @GetMapping("/AgentList")
-    public ResponseEntity<AgentListResponse> getAgentList(@RequestParam Integer ProjectId) {
-        AgentListResponse response = agentconfigService.getAgentList(ProjectId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/AgentConfiguration")
-    public ResponseEntity<AgentConfigResponse> getAgentConfiguration(@RequestParam Integer AgentID,
-                                                                     @RequestParam(required = false) String CallType) {
-        AgentConfigResponse response = agentconfigService.getAgentConfig(AgentID, CallType);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
     @GetMapping("/projectList")
     public ResponseEntity<ProjectListResponse> getProjectList(@RequestParam Integer AgentID,

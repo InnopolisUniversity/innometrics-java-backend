@@ -19,6 +19,8 @@ public class AgentconfigService {
     @Autowired
     AgentconfigmethodsRepository agentconfigmethodsRepository;
 
+
+
     public AgentListResponse getAgentList(Integer projectId) {
         List<IAgentStatus> result = agentconfigRepository.getAgentList(projectId);
 
@@ -33,6 +35,61 @@ public class AgentconfigService {
             response.getAgentList().add(tmp);
         }
 
+        return response;
+    }
+
+    public AgentResponse getAgent(Integer agentId){
+        Agentconfig agent = agentconfigRepository.findById(agentId).orElseThrow(()->new RuntimeException(String.valueOf(agentId)));
+        AgentResponse response = new AgentResponse();
+        response.setAgentid(agent.getAgentid());
+        response.setAgentname(agent.getAgentname());
+        response.setDescription(agent.getDescription());
+        response.setIsconnected(agent.getIsactive());
+        return response;
+    }
+
+    public AgentResponse putAgent(Integer agentId, Agentconfig config){
+        return agentconfigRepository.findById(agentId).map(agent -> {
+            agent.setAgentname(config.getAgentname());
+            agent.setDescription(config.getDescription());
+            agent.setIsactive(config.getIsactive());
+            AgentResponse response = new AgentResponse();
+            agentconfigRepository.save(agent);
+            response.setAgentid(agent.getAgentid());
+            response.setAgentname(agent.getAgentname());
+            response.setDescription(agent.getDescription());
+            response.setIsconnected(agent.getIsactive());
+            return response;
+        }).orElseGet(()->{
+            config.setAgentid(agentId);
+            agentconfigRepository.save(config);
+            AgentResponse response = new AgentResponse();
+            response.setAgentid(config.getAgentid());
+            response.setAgentname(config.getAgentname());
+            response.setDescription(config.getDescription());
+            response.setIsconnected(config.getIsactive());
+            return response;
+        });
+    }
+
+    public AgentResponse postAgent(Agentconfig config){
+        agentconfigRepository.save(config);//todo check for autoincrement
+        AgentResponse response = new AgentResponse();
+        response.setAgentid(config.getAgentid());
+        response.setAgentname(config.getAgentname());
+        response.setDescription(config.getDescription());
+        response.setIsconnected(config.getIsactive());
+        return response;
+    }
+
+    public AgentResponse deleteAgent(Integer agentId){
+        Agentconfig agent = agentconfigRepository.findByAgentid(agentId);
+        agentconfigRepository.deleteById(agentId);
+        AgentResponse response = new AgentResponse();
+        response.setAgentid(agent.getAgentid());
+        response.setAgentname(agent.getAgentname());
+        response.setDescription(agent.getDescription());
+        response.setIsconnected(agent.getIsactive());
         return response;
     }
 
@@ -59,4 +116,8 @@ public class AgentconfigService {
 
         return response;
     }
+    //todo this and other things
+    //public AgentConfigResponse postAgentConfig(Integer agentId){}
+
+    //public void deleteAgentConfig(){}
 }
