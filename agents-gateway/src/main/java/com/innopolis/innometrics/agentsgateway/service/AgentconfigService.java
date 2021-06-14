@@ -19,7 +19,28 @@ public class AgentconfigService {
     @Autowired
     AgentconfigmethodsRepository agentconfigmethodsRepository;
 
-
+    private AgentResponse setAllFields(Agentconfig agent){
+        AgentResponse response = new AgentResponse();
+        response.setAgentid(agent.getAgentid());
+        response.setAgentname(agent.getAgentname());
+        response.setDescription(agent.getDescription());
+        response.setIsconnected(agent.getIsactive());
+        response.setCreationdate(agent.getCreationdate());
+        response.setCreatedby(agent.getCreatedby());
+        response.setLastupdate(agent.getLastupdate());
+        response.setUpdateby(agent.getUpdateby());
+        response.setSourcetype(agent.getSourcetype());
+        response.setDbschemasource(agent.getDbschemasource());
+        response.setRepoidfield(agent.getRepoidfield());
+        response.setOathuri(agent.getOauthuri());
+        response.setAuthenticationmethod(agent.getAuthenticationmethod());
+        response.setAccesstokenendpoint(agent.getAccesstokenendpoint());
+        response.setAuthorizationbaseurl(agent.getAuthorizationbaseurl());
+        response.setRequesttokenendpoint(agent.getRequesttokenendpoint());
+        response.setApikey(agent.getApikey());
+        response.setApisecret(agent.getApisecret());
+        return response;
+    }
 
     public AgentListResponse getAgentList(Integer projectId) {
         List<IAgentStatus> result = agentconfigRepository.getAgentList(projectId);
@@ -40,12 +61,7 @@ public class AgentconfigService {
 
     public AgentResponse getAgent(Integer agentId){
         Agentconfig agent = agentconfigRepository.findById(agentId).orElseThrow(()->new RuntimeException(String.valueOf(agentId)));
-        AgentResponse response = new AgentResponse();
-        response.setAgentid(agent.getAgentid());
-        response.setAgentname(agent.getAgentname());
-        response.setDescription(agent.getDescription());
-        response.setIsconnected(agent.getIsactive());
-        return response;
+        return this.setAllFields(agent);
     }
 
     public AgentResponse putAgent(Integer agentId, Agentconfig config){
@@ -53,44 +69,40 @@ public class AgentconfigService {
             agent.setAgentname(config.getAgentname());
             agent.setDescription(config.getDescription());
             agent.setIsactive(config.getIsactive());
-            AgentResponse response = new AgentResponse();
+            agent.setCreationdate(config.getCreationdate());
+            agent.setCreatedby(config.getCreatedby());
+            agent.setLastupdate(config.getLastupdate());
+            agent.setUpdateby(config.getUpdateby());
+            agent.setSourcetype(config.getSourcetype());
+            agent.setDbschemasource(config.getDbschemasource());
+            agent.setRepoidfield(config.getRepoidfield());
+            agent.setOauthuri(config.getOauthuri());
+            agent.setAuthenticationmethod(config.getAuthenticationmethod());
+            agent.setAccesstokenendpoint(config.getAccesstokenendpoint());
+            agent.setAuthorizationbaseurl(config.getAuthorizationbaseurl());
+            agent.setRequesttokenendpoint(config.getRequesttokenendpoint());
+            agent.setApikey(config.getApikey());
+            agent.setApisecret(config.getApisecret());
+
+
             agentconfigRepository.save(agent);
-            response.setAgentid(agent.getAgentid());
-            response.setAgentname(agent.getAgentname());
-            response.setDescription(agent.getDescription());
-            response.setIsconnected(agent.getIsactive());
-            return response;
+            return this.setAllFields(agent);
         }).orElseGet(()->{
             config.setAgentid(agentId);
             agentconfigRepository.save(config);
-            AgentResponse response = new AgentResponse();
-            response.setAgentid(config.getAgentid());
-            response.setAgentname(config.getAgentname());
-            response.setDescription(config.getDescription());
-            response.setIsconnected(config.getIsactive());
-            return response;
+            return this.setAllFields(config);
         });
     }
 
     public AgentResponse postAgent(Agentconfig config){
-        agentconfigRepository.save(config);//todo check for autoincrement
-        AgentResponse response = new AgentResponse();
-        response.setAgentid(config.getAgentid());
-        response.setAgentname(config.getAgentname());
-        response.setDescription(config.getDescription());
-        response.setIsconnected(config.getIsactive());
-        return response;
+        agentconfigRepository.save(config);
+        return this.setAllFields(config);
     }
 
     public AgentResponse deleteAgent(Integer agentId){
         Agentconfig agent = agentconfigRepository.findByAgentid(agentId);
         agentconfigRepository.deleteById(agentId);
-        AgentResponse response = new AgentResponse();
-        response.setAgentid(agent.getAgentid());
-        response.setAgentname(agent.getAgentname());
-        response.setDescription(agent.getDescription());
-        response.setIsconnected(agent.getIsactive());
-        return response;
+        return this.setAllFields(agent);
     }
 
     public AgentConfigResponse getAgentConfig(Integer AgentId, String CallType) {
@@ -116,8 +128,6 @@ public class AgentconfigService {
 
         return response;
     }
-    //todo this and other things
-    //public AgentConfigResponse postAgentConfig(Integer agentId){}
+    //todo other tables
 
-    //public void deleteAgentConfig(){}
 }
