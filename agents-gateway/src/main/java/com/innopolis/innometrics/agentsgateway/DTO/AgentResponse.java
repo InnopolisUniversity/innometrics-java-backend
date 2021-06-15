@@ -1,6 +1,5 @@
 package com.innopolis.innometrics.agentsgateway.DTO;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,15 +22,24 @@ public class AgentResponse implements Serializable {
     private String requesttokenendpoint;
     private String apikey;
     private String apisecret;
+
     public AgentResponse() {
+    }
+
+    public AgentResponse(Integer agentid, String agentname, String description, String isconnected) {
+        this.agentid = agentid;
+        this.agentname = agentname;
+        this.description = description;
+        this.isconnected = isconnected;
     }
 
     public AgentResponse(Integer agentid, String agentname, String description,
                          String isconnected, Date creationdate, String createdby,
                          Date lastupdate, String updateby, String sourcetype,
                          String dbschemasource, String repoidfield, String oathuri,
-                         String authenticationmethod, String accesstokenendpoint, String authorizationbaseurl,
-                         String requesttokenendpoint, String apikey, String apisecret) {
+                         String authenticationmethod, String accesstokenendpoint,
+                         String authorizationbaseurl, String requesttokenendpoint,
+                         String apikey, String apisecret) {
         this.agentid = agentid;
         this.agentname = agentname;
         this.description = description;

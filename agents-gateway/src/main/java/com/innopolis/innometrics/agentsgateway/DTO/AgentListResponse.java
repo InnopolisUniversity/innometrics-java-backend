@@ -7,7 +7,7 @@ public class AgentListResponse {
     private List<AgentResponse> AgentList;
 
     public AgentListResponse() {
-        AgentList  = new ArrayList<>();
+        AgentList = new ArrayList<>();
     }
 
     public List<AgentResponse> getAgentList() {
@@ -16,5 +16,13 @@ public class AgentListResponse {
 
     public void setAgentList(List<AgentResponse> agentList) {
         AgentList = agentList;
+    }
+
+    public void add(AgentResponse agentResponse) {
+        this.AgentList.add(agentResponse);
+    }
+
+    public boolean isEmpty() {
+        return AgentList.isEmpty();
     }
 }
