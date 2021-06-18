@@ -1,7 +1,5 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
-import com.innopolis.innometrics.agentsgateway.DTO.*;
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
 import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
 import com.innopolis.innometrics.agentsgateway.repository.AgentconfigmethodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,79 +7,75 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AgentconfigmethodsService {
     @Autowired
     AgentconfigmethodsRepository agentconfigmethodsRepository;
 
-    public List<MethodConfigDTO> getMethodsList() {
-        List<Agentconfigmethods> result = agentconfigmethodsRepository.findAll();
-        return this.getMethodConfigListFromAgentconfigmethods(result);
+    public List<Agentconfigmethods> getMethodsList() {
+        return agentconfigmethodsRepository.findAll();
     }
 
-    public List<MethodConfigDTO> getMethod(Integer methodId) {
-        List<Agentconfigmethods> result = agentconfigmethodsRepository.findByAgentid(methodId);
-        if (result == null) {
-            return null;
-        }
-        return this.getMethodConfigListFromAgentconfigmethods(result);
+    public List<Agentconfigmethods> getMethodsByAgentId(Integer agentId) {
+        return agentconfigmethodsRepository.findByAgentid(agentId);
     }
 
-    public MethodConfigDTO postMethod(Agentconfigmethods method) {
-        agentconfigmethodsRepository.save(method);
-        return this.getMethodConfigFromAgentconfigmethods(method);
+    public Agentconfigmethods getMethodByMethodId(Integer methodId) {
+        return agentconfigmethodsRepository.findById(methodId).orElse(null);
     }
 
-    public MethodConfigDTO putMethod(Integer methodId, Agentconfigmethods method) {
+    public Agentconfigmethods getMethodsByAgentidAndOperation(Integer agentId, String operation) {
+        return agentconfigmethodsRepository.findByAgentidAndOperation(agentId, operation);
+    }
+
+    public Agentconfigmethods postMethod(Agentconfigmethods agentconfigmethods) {
+        //todo set creation date manually?
+        return agentconfigmethodsRepository.save(agentconfigmethods);
+    }
+
+    public Agentconfigmethods putMethod(Integer methodId, Agentconfigmethods method) {
         return agentconfigmethodsRepository.findById(methodId).map(agentMethod -> {
+            agentMethod.setAgentid(method.getAgentid());
             agentMethod.setAgentConfig(method.getAgentConfig());
-            agentMethod.setCreatedby(method.getCreatedby());
-            agentMethod.setCreationdate(method.getCreationdate());
             agentMethod.setDescription(method.getDescription());
             agentMethod.setEndpoint(method.getEndpoint());
             agentMethod.setIsactive(method.getIsactive());
-            agentMethod.setLastupdate(method.getLastupdate());
-            agentMethod.setMethodid(method.getMethodid());
             agentMethod.setOperation(method.getOperation());
-            agentMethod.setParams(method.getParams());
             agentMethod.setRequesttype(method.getRequesttype());
-            agentMethod.setResponseParams(method.getResponseParams());
-            agentMethod.setUpdateby(method.getUpdateby());
+            //todo set last updated date manually?
 
             agentconfigmethodsRepository.save(agentMethod);
-            return this.getMethodConfigFromAgentconfigmethods(agentMethod);
+            return agentMethod;
         }).orElseGet(() -> {
             agentconfigmethodsRepository.save(method);
-            return this.getMethodConfigFromAgentconfigmethods(method);
+            return method;
         });
     }
 
-    public List<MethodConfigDTO> deleteMethod(Integer methodId) {
-        List<Agentconfigmethods> methods = agentconfigmethodsRepository.findByAgentid(methodId);
-        if (methods == null) {
+    public List<Agentconfigmethods> deleteMethodsByAgentId(Integer agentId) {
+        List<Agentconfigmethods> methods = agentconfigmethodsRepository.findByAgentid(agentId);
+        if (methods == null || methods.isEmpty()) {
+            return null;
+        }
+        List<Agentconfigmethods> deletedMethods = new ArrayList<>(methods.size());
+        for (Agentconfigmethods method : methods) {
+            Agentconfigmethods deletedMethod = this.deleteMethodByMethodId(method.getMethodid());
+            if (deletedMethod != null) {
+                deletedMethods.add(deletedMethod);
+            }
+        }
+
+        return deletedMethods;
+    }
+
+    public Agentconfigmethods deleteMethodByMethodId(Integer methodId) {
+        Optional<Agentconfigmethods> methods = agentconfigmethodsRepository.findById(methodId);
+        if (!methods.isPresent()) {
             return null;
         }
         agentconfigmethodsRepository.deleteById(methodId);
-        return this.getMethodConfigListFromAgentconfigmethods(methods);
-    }
-
-    private List<MethodConfigDTO> getMethodConfigListFromAgentconfigmethods(List<Agentconfigmethods> agentconfigmethods) {
-        List<MethodConfigDTO> methodsList = new ArrayList<>();
-        for (Agentconfigmethods method : agentconfigmethods) {
-            methodsList.add(this.getMethodConfigFromAgentconfigmethods(method));
-        }
-        return methodsList;
-    }
-
-    //todo add .setParameters()
-    private MethodConfigDTO getMethodConfigFromAgentconfigmethods(Agentconfigmethods agentconfigmethod) {
-        MethodConfigDTO methodConfig = new MethodConfigDTO();
-        methodConfig.setMethodid(agentconfigmethod.getAgentid());
-        methodConfig.setDescription(agentconfigmethod.getDescription());
-        methodConfig.setOperation(agentconfigmethod.getOperation());
-        //methodConfig.setParameters(agentconfigmethod.getParams());
-
-        return methodConfig;
+        return methods.get();
     }
 }

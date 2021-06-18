@@ -1,17 +1,24 @@
 package com.innopolis.innometrics.agentsgateway.DTO;
 
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
 
 public class MethodConfigDTO implements Serializable {
     private Integer methodid;
     private String description;
     private String operation;
+    private Integer agentid;
+    private String endpoint;
+    private String isactive;
+    private Date creationdate;
+    private String createdby;
+    private Date lastupdate;
+    private String updateby;
+    private String requesttype;
     private List<ParamsConfigDTO> parameters;
+    //todo should we create List<ParamsResponseDTO> ?
 
     public MethodConfigDTO() {
         parameters = new ArrayList<>();
@@ -54,5 +61,69 @@ public class MethodConfigDTO implements Serializable {
 
     public void setParameters(List<ParamsConfigDTO> parameters) {
         this.parameters = parameters;
+    }
+
+    public Integer getAgentid() {
+        return agentid;
+    }
+
+    public void setAgentid(Integer agentid) {
+        this.agentid = agentid;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(String isactive) {
+        this.isactive = isactive;
+    }
+
+    public Date getCreationdate() {
+        return creationdate;
+    }
+
+    public void setCreationdate(Date creationdate) {
+        this.creationdate = creationdate;
+    }
+
+    public String getCreatedby() {
+        return createdby;
+    }
+
+    public void setCreatedby(String createdby) {
+        this.createdby = createdby;
+    }
+
+    public Date getLastupdate() {
+        return lastupdate;
+    }
+
+    public void setLastupdate(Date lastupdate) {
+        this.lastupdate = lastupdate;
+    }
+
+    public String getUpdateby() {
+        return updateby;
+    }
+
+    public void setUpdateby(String updateby) {
+        this.updateby = updateby;
+    }
+
+    public String getRequesttype() {
+        return requesttype;
+    }
+
+    public void setRequesttype(String requesttype) {
+        this.requesttype = requesttype;
     }
 }

@@ -1,111 +1,66 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
-import com.innopolis.innometrics.agentsgateway.DTO.*;
 import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfigdetails;
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
-import com.innopolis.innometrics.agentsgateway.repository.AgentconfigRepository;
-import com.innopolis.innometrics.agentsgateway.repository.AgentconfigmethodsRepository;
+import com.innopolis.innometrics.agentsgateway.entity.Agentdataconfig;
 import com.innopolis.innometrics.agentsgateway.repository.AgentdataconfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AgentdataconfigService {
     @Autowired
     AgentdataconfigRepository agentdataconfigRepository;
 
-    // todo write methods
-/*
-    public AgentListResponse getDataConfigList() {
-        List<IAgentStatus> result = agentdataconfigRepository.getAgentList();
+    @Autowired
+    AgentconfigService agentconfigService;
 
-        AgentListResponse agentListResponse = new AgentListResponse();
-        for (IAgentStatus element : result) {
-            AgentResponse agentResponse = new AgentResponse(
-                    Integer.valueOf(element.getAgentid()),
-                    element.getAgentname(),
-                    element.getDescription(),
-                    element.getIsconnected()
-            );
-
-            agentListResponse.add(agentResponse);
-        }
-
-        return agentListResponse;
+    public List<Agentdataconfig> getDataConfigList() {
+        return agentdataconfigRepository.findAll();
     }
 
-    public AgentResponse getDataConfig(Integer agentId) {
-        //Agentconfig agent = agentconfigRepository.findById(agentId).orElseThrow(() -> new RuntimeException(String.valueOf(agentId)));
-        Agentconfig agent = agentdataconfigRepository.findByAgentid(agentId);
-        return agent == null ? null : this.getResponseFromAgentConfig(agent);
+    public Agentdataconfig getDataConfig(Integer dataId) {
+        return agentdataconfigRepository.findById(dataId).orElse(null);
     }
 
-    public AgentResponse postDataConfig(Agentconfig config) {
-        agentdataconfigRepository.save(config);
-        return this.getResponseFromAgentConfig(config);
+    public Agentconfig getAgent(Integer agentId) {
+        return agentconfigService.getAgent(agentId);
     }
 
-    public AgentResponse putDataConfig(Integer agentId, Agentconfig config) {
-        return agentdataconfigRepository.findById(agentId).map(agent -> {
-            agent.setAgentname(config.getAgentname());
-            agent.setDescription(config.getDescription());
-            agent.setIsactive(config.getIsactive());
-            agent.setCreationdate(config.getCreationdate());
-            agent.setCreatedby(config.getCreatedby());
-            agent.setLastupdate(config.getLastupdate());
-            agent.setUpdateby(config.getUpdateby());
-            agent.setSourcetype(config.getSourcetype());
-            agent.setDbschemasource(config.getDbschemasource());
-            agent.setRepoidfield(config.getRepoidfield());
-            agent.setOauthuri(config.getOauthuri());
-            agent.setAuthenticationmethod(config.getAuthenticationmethod());
-            agent.setAccesstokenendpoint(config.getAccesstokenendpoint());
-            agent.setAuthorizationbaseurl(config.getAuthorizationbaseurl());
-            agent.setRequesttokenendpoint(config.getRequesttokenendpoint());
-            agent.setApikey(config.getApikey());
-            agent.setApisecret(config.getApisecret());
+    public Agentdataconfig postDataConfig(Agentdataconfig agentdataconfig) {
+        //todo set creation date manually?
+        return agentdataconfigRepository.save(agentdataconfig);
+    }
 
-            agentdataconfigRepository.save(agent);
-            return this.getResponseFromAgentConfig(agent);
+    public Agentdataconfig putDataConfig(Integer dataId, Agentdataconfig data) {
+        return agentdataconfigRepository.findById(dataId).map(agentData -> {
+            agentData.setAgentid(data.getAgentid());
+            agentData.setAgentConfig(data.getAgentConfig());
+            agentData.setSchemaname(data.getSchemaname());
+            agentData.setTablename(data.getTablename());
+            agentData.setEventdatefield(data.getEventdatefield());
+            agentData.setEventauthorfield(data.getEventauthorfield());
+            agentData.setEventdescriptionfield(data.getEventdescriptionfield());
+            agentData.setEventtype(data.getEventtype());
+            agentData.setIsactive(data.getIsactive());
+            //todo set last updated date manually?
+
+            agentdataconfigRepository.save(agentData);
+            return agentData;
         }).orElseGet(() -> {
-            agentdataconfigRepository.save(config);
-            return this.getResponseFromAgentConfig(config);
+            agentdataconfigRepository.save(data);
+            return data;
         });
     }
 
-    public AgentResponse deleteDataConfig(Integer agentId) {
-        Agentconfig agent = agentdataconfigRepository.findByAgentid(agentId);
-        if (agent == null) {
+    public Agentdataconfig deleteDataConfig(Integer dataId) {
+        Optional<Agentdataconfig> data = agentdataconfigRepository.findById(dataId);
+        if (!data.isPresent()) {
             return null;
         }
-        agentdataconfigRepository.deleteById(agentId);
-        return this.getResponseFromAgentConfig(agent);
-    }
-*/
-    private AgentResponse getResponseFromAgentConfig(Agentconfig agentConfig) {
-        return new AgentResponse(
-                agentConfig.getAgentid(),
-                agentConfig.getAgentname(),
-                agentConfig.getDescription(),
-                agentConfig.getIsactive(),
-                agentConfig.getCreationdate(),
-                agentConfig.getCreatedby(),
-                agentConfig.getLastupdate(),
-                agentConfig.getUpdateby(),
-                agentConfig.getSourcetype(),
-                agentConfig.getDbschemasource(),
-                agentConfig.getRepoidfield(),
-                agentConfig.getOauthuri(),
-                agentConfig.getAuthenticationmethod(),
-                agentConfig.getAccesstokenendpoint(),
-                agentConfig.getAuthorizationbaseurl(),
-                agentConfig.getRequesttokenendpoint(),
-                agentConfig.getApikey(),
-                agentConfig.getApisecret()
-        );
+        agentdataconfigRepository.deleteById(dataId);
+        return data.get();
     }
 }
