@@ -6,6 +6,7 @@ import com.innopolis.innometrics.agentsgateway.repository.AgentdataconfigReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,25 +18,35 @@ public class AgentdataconfigService {
     @Autowired
     AgentconfigService agentconfigService;
 
-    public List<Agentdataconfig> getDataConfigList() {
-        return agentdataconfigRepository.findAll();
+    public List<Agentdataconfig> getDataList() {
+        return this.agentdataconfigRepository.findAll();
     }
 
-    public Agentdataconfig getDataConfig(Integer dataId) {
-        return agentdataconfigRepository.findById(dataId).orElse(null);
+    public List<Agentdataconfig> getDataAgentsByAgentId(Integer agentId) {
+        List<Agentdataconfig> dataList = this.agentdataconfigRepository.findAll();
+        List<Agentdataconfig> result = new ArrayList<>();
+        for (Agentdataconfig agentdataconfig : dataList) {
+            if (agentdataconfig.getAgentid().equals(agentId)) {
+                result.add(agentdataconfig);
+            }
+        }
+        return result;
+    }
+
+    public Agentdataconfig getDataById(Integer dataId) {
+        return this.agentdataconfigRepository.findById(dataId).orElse(null);
     }
 
     public Agentconfig getAgent(Integer agentId) {
-        return agentconfigService.getAgent(agentId);
+        return this.agentconfigService.getAgentById(agentId);
     }
 
-    public Agentdataconfig postDataConfig(Agentdataconfig agentdataconfig) {
-        //todo set creation date manually?
-        return agentdataconfigRepository.save(agentdataconfig);
+    public Agentdataconfig postData(Agentdataconfig agentdataconfig) {
+        return this.agentdataconfigRepository.save(agentdataconfig);
     }
 
-    public Agentdataconfig putDataConfig(Integer dataId, Agentdataconfig data) {
-        return agentdataconfigRepository.findById(dataId).map(agentData -> {
+    public Agentdataconfig putData(Integer dataId, Agentdataconfig data) {
+        return this.agentdataconfigRepository.findById(dataId).map(agentData -> {
             agentData.setAgentid(data.getAgentid());
             agentData.setAgentConfig(data.getAgentConfig());
             agentData.setSchemaname(data.getSchemaname());
@@ -45,22 +56,21 @@ public class AgentdataconfigService {
             agentData.setEventdescriptionfield(data.getEventdescriptionfield());
             agentData.setEventtype(data.getEventtype());
             agentData.setIsactive(data.getIsactive());
-            //todo set last updated date manually?
 
-            agentdataconfigRepository.save(agentData);
+            this.agentdataconfigRepository.save(agentData);
             return agentData;
         }).orElseGet(() -> {
-            agentdataconfigRepository.save(data);
+            this.agentdataconfigRepository.save(data);
             return data;
         });
     }
 
     public Agentdataconfig deleteDataConfig(Integer dataId) {
-        Optional<Agentdataconfig> data = agentdataconfigRepository.findById(dataId);
+        Optional<Agentdataconfig> data = this.agentdataconfigRepository.findById(dataId);
         if (!data.isPresent()) {
             return null;
         }
-        agentdataconfigRepository.deleteById(dataId);
+        this.agentdataconfigRepository.deleteById(dataId);
         return data.get();
     }
 }

@@ -21,8 +21,4 @@ public class MethodsListResponse {
     public void add(MethodConfigDTO methodConfigDTO) {
         this.methodsList.add(methodConfigDTO);
     }
-
-    public boolean isEmpty() {
-        return methodsList.isEmpty();
-    }
 }

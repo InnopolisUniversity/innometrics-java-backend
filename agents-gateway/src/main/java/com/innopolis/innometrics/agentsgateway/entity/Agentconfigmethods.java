@@ -1,5 +1,10 @@
 package com.innopolis.innometrics.agentsgateway.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -36,15 +41,19 @@ public class Agentconfigmethods {
     @Column
     private String isactive;
 
+    @CreationTimestamp
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
 
+    @CreatedBy
     @Column(name = "createdby", insertable = false, updatable = false)
     private String createdby;
 
+    @UpdateTimestamp
     @Column(name = "lastupdate", insertable = false)
     private Date lastupdate;
 
+    @LastModifiedBy
     @Column(name = "updateby", insertable = false)
     private String updateby;
 

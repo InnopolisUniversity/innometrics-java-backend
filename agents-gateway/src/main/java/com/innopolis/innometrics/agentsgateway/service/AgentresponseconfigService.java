@@ -6,6 +6,7 @@ import com.innopolis.innometrics.agentsgateway.repository.AgentresponseconfigRep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,46 +18,55 @@ public class AgentresponseconfigService {
     @Autowired
     AgentconfigmethodsService agentconfigmethodsService;
 
-    public List<Agentresponseconfig> getResponseList() {
-        return agentresponseconfigRepository.findAll();
+    public List<Agentresponseconfig> getResponsesList() {
+        return this.agentresponseconfigRepository.findAll();
     }
 
-    public Agentresponseconfig getResponse(Integer responseId) {
-        return agentresponseconfigRepository.findById(responseId).orElse(null);
+    public List<Agentresponseconfig> getResponsesByMethodId(Integer methodId) {
+        List<Agentresponseconfig> responsesList = this.agentresponseconfigRepository.findAll();
+        List<Agentresponseconfig> result = new ArrayList<>();
+        for (Agentresponseconfig agentresponseconfig : responsesList) {
+            if (agentresponseconfig.getAgentconfigmethods().getMethodid().equals(methodId)) {
+                result.add(agentresponseconfig);
+            }
+        }
+        return result;
+    }
+
+    public Agentresponseconfig getResponseById(Integer responseId) {
+        return this.agentresponseconfigRepository.findById(responseId).orElse(null);
     }
 
     public Agentconfigmethods getMethod(Integer methodid) {
-        return agentconfigmethodsService.getMethodByMethodId(methodid);
+        return this.agentconfigmethodsService.getMethodById(methodid);
     }
 
     public Agentresponseconfig postResponse(Agentresponseconfig agentresponseconfig) {
-        //todo set creation date manually?
-        return agentresponseconfigRepository.save(agentresponseconfig);
+        return this.agentresponseconfigRepository.save(agentresponseconfig);
     }
 
     public Agentresponseconfig putResponse(Integer responseId, Agentresponseconfig response) {
-        return agentresponseconfigRepository.findById(responseId).map(agentDetails -> {
+        return this.agentresponseconfigRepository.findById(responseId).map(agentDetails -> {
             agentDetails.setAgentconfigmethods(response.getAgentconfigmethods());
             agentDetails.setResponseparam(response.getResponseparam());
             agentDetails.setParamname(response.getParamname());
             agentDetails.setParamtype(response.getParamtype());
             agentDetails.setIsactive(response.getIsactive());
-            //todo set last updated date manually?
 
-            agentresponseconfigRepository.save(agentDetails);
+            this.agentresponseconfigRepository.save(agentDetails);
             return agentDetails;
         }).orElseGet(() -> {
-            agentresponseconfigRepository.save(response);
+            this.agentresponseconfigRepository.save(response);
             return response;
         });
     }
 
     public Agentresponseconfig deleteResponse(Integer responseId) {
-        Optional<Agentresponseconfig> details = agentresponseconfigRepository.findById(responseId);
+        Optional<Agentresponseconfig> details = this.agentresponseconfigRepository.findById(responseId);
         if (!details.isPresent()) {
             return null;
         }
-        agentresponseconfigRepository.deleteById(responseId);
+        this.agentresponseconfigRepository.deleteById(responseId);
         return details.get();
     }
 }

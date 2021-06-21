@@ -6,6 +6,7 @@ import com.innopolis.innometrics.agentsgateway.repository.AgentconfigdetailsRepo
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,24 +19,34 @@ public class AgentconfigdetailsService {
     AgentconfigmethodsService agentconfigmethodsService;
 
     public List<Agentconfigdetails> getDetailsList() {
-        return agentconfigdetailsRepository.findAll();
+        return this.agentconfigdetailsRepository.findAll();
     }
 
-    public Agentconfigdetails getConfigDetails(Integer detailsId) {
-        return agentconfigdetailsRepository.findById(detailsId).orElse(null);
+    public List<Agentconfigdetails> getDetailsByMethodId(Integer methodId) {
+        List<Agentconfigdetails> detailsList = this.agentconfigdetailsRepository.findAll();
+        List<Agentconfigdetails> result = new ArrayList<>();
+        for (Agentconfigdetails agentconfigdetails : detailsList) {
+            if (agentconfigdetails.getAgentconfigmethods().getMethodid().equals(methodId)) {
+                result.add(agentconfigdetails);
+            }
+        }
+        return result;
+    }
+
+    public Agentconfigdetails getDetailsById(Integer detailsId) {
+        return this.agentconfigdetailsRepository.findById(detailsId).orElse(null);
     }
 
     public Agentconfigmethods getMethod(Integer methodid) {
-        return agentconfigmethodsService.getMethodByMethodId(methodid);
+        return this.agentconfigmethodsService.getMethodById(methodid);
     }
 
-    public Agentconfigdetails postConfigDetails(Agentconfigdetails agentconfigdetails) {
-        //todo set creation date manually?
-        return agentconfigdetailsRepository.save(agentconfigdetails);
+    public Agentconfigdetails postDetails(Agentconfigdetails agentconfigdetails) {
+        return this.agentconfigdetailsRepository.save(agentconfigdetails);
     }
 
-    public Agentconfigdetails putConfigDetails(Integer detailsId, Agentconfigdetails details) {
-        return agentconfigdetailsRepository.findById(detailsId).map(agentDetails -> {
+    public Agentconfigdetails putDetails(Integer detailsId, Agentconfigdetails details) {
+        return this.agentconfigdetailsRepository.findById(detailsId).map(agentDetails -> {
             agentDetails.setAgentconfigmethods(details.getAgentconfigmethods());
             agentDetails.setParamname(details.getParamname());
             agentDetails.setParamtype(details.getParamtype());
@@ -43,22 +54,21 @@ public class AgentconfigdetailsService {
             agentDetails.setRequesttype(details.getRequesttype());
             agentDetails.setIsactive(details.getIsactive());
             agentDetails.setDefaultvalue(details.getDefaultvalue());
-            //todo set last updated date manually?
 
-            agentconfigdetailsRepository.save(agentDetails);
+            this.agentconfigdetailsRepository.save(agentDetails);
             return agentDetails;
         }).orElseGet(() -> {
-            agentconfigdetailsRepository.save(details);
+            this.agentconfigdetailsRepository.save(details);
             return details;
         });
     }
 
-    public Agentconfigdetails deleteConfigDetails(Integer detailsId) {
-        Optional<Agentconfigdetails> details = agentconfigdetailsRepository.findById(detailsId);
+    public Agentconfigdetails deleteDetails(Integer detailsId) {
+        Optional<Agentconfigdetails> details = this.agentconfigdetailsRepository.findById(detailsId);
         if (!details.isPresent()) {
             return null;
         }
-        agentconfigdetailsRepository.deleteById(detailsId);
+        this.agentconfigdetailsRepository.deleteById(detailsId);
         return details.get();
     }
 }

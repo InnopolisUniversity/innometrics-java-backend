@@ -21,8 +21,4 @@ public class DataListResponse {
     public void add(DataConfigDTO data) {
         this.dataList.add(data);
     }
-
-    public boolean isEmpty() {
-        return this.dataList.isEmpty();
-    }
 }

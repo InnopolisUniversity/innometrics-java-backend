@@ -21,7 +21,7 @@ public class AgentconfigService {
     AgentconfigmethodsRepository agentconfigmethodsRepository;
 
     public AgentConfigResponse getAgentConfig(Integer agentId, String CallType) {
-        List<Agentconfigmethods> result = agentconfigmethodsRepository.findByAgentid(agentId);
+        List<Agentconfigmethods> result = this.agentconfigmethodsRepository.findByAgentid(agentId);
         if (result == null) {
             return null;
         }
@@ -56,7 +56,7 @@ public class AgentconfigService {
     public AgentListResponse getAgentList(Integer projectId) {
         AgentListResponse agentListResponse = new AgentListResponse();
 
-        for (IAgentStatus agentStatus : agentconfigRepository.getAgentList(projectId)) {
+        for (IAgentStatus agentStatus : this.agentconfigRepository.getAgentList(projectId)) {
             agentListResponse.add(
                     new AgentResponse(
                             Integer.valueOf(agentStatus.getAgentid()),
@@ -70,17 +70,16 @@ public class AgentconfigService {
         return agentListResponse;
     }
 
-    public Agentconfig getAgent(Integer agentId) {
-        return agentconfigRepository.findByAgentid(agentId);
+    public Agentconfig getAgentById(Integer agentId) {
+        return this.agentconfigRepository.findByAgentid(agentId);
     }
 
     public Agentconfig postAgent(Agentconfig agentconfig) {
-        //todo set creation date manually?
-        return agentconfigRepository.save(agentconfig);
+        return this.agentconfigRepository.save(agentconfig);
     }
 
     public Agentconfig putAgent(Integer agentId, Agentconfig agentconfig) {
-        return agentconfigRepository.findById(agentId).map(agent -> {
+        return this.agentconfigRepository.findById(agentId).map(agent -> {
             agent.setAgentname(agentconfig.getAgentname());
             agent.setDescription(agentconfig.getDescription());
             agent.setIsactive(agentconfig.getIsactive());
@@ -94,18 +93,17 @@ public class AgentconfigService {
             agent.setRequesttokenendpoint(agentconfig.getRequesttokenendpoint());
             agent.setApikey(agentconfig.getApikey());
             agent.setApisecret(agentconfig.getApisecret());
-            //todo set last updated date manually?
 
-            return agentconfigRepository.save(agent);
-        }).orElseGet(() -> agentconfigRepository.save(agentconfig));
+            return this.agentconfigRepository.save(agent);
+        }).orElseGet(() -> this.agentconfigRepository.save(agentconfig));
     }
 
     public Agentconfig deleteAgent(Integer agentId) {
-        Agentconfig agent = agentconfigRepository.findByAgentid(agentId);
-        if (agent == null) {
+        Agentconfig agentconfig = this.agentconfigRepository.findByAgentid(agentId);
+        if (agentconfig == null) {
             return null;
         }
-        agentconfigRepository.deleteById(agentId);
-        return agent;
+        this.agentconfigRepository.deleteById(agentId);
+        return agentconfig;
     }
 }
