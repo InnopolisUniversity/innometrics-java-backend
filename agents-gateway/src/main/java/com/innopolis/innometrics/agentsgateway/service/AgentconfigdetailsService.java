@@ -63,7 +63,23 @@ public class AgentconfigdetailsService {
         });
     }
 
-    public Agentconfigdetails deleteDetails(Integer detailsId) {
+    public List<Agentconfigdetails> deleteDetailsByMethodId(Integer methodId) {
+        List<Agentconfigdetails> detailsList = this.getDetailsByMethodId(methodId);
+        if (detailsList == null || detailsList.isEmpty()) {
+            return null;
+        }
+        List<Agentconfigdetails> deletedDetailsList = new ArrayList<>(detailsList.size());
+        for (Agentconfigdetails details : detailsList) {
+            Agentconfigdetails deletedDetails = this.deleteDetailsById(details.getConfigDetId());
+            if (deletedDetails != null) {
+                deletedDetailsList.add(deletedDetails);
+            }
+        }
+
+        return deletedDetailsList;
+    }
+
+    public Agentconfigdetails deleteDetailsById(Integer detailsId) {
         Optional<Agentconfigdetails> details = this.agentconfigdetailsRepository.findById(detailsId);
         if (!details.isPresent()) {
             return null;

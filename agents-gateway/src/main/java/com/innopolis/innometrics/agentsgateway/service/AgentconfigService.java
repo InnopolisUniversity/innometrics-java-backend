@@ -16,9 +16,13 @@ import java.util.List;
 public class AgentconfigService {
     @Autowired
     AgentconfigRepository agentconfigRepository;
-
     @Autowired
     AgentconfigmethodsRepository agentconfigmethodsRepository;
+
+    @Autowired
+    AgentdataconfigService agentdataconfigService;
+    @Autowired
+    AgentconfigmethodsService agentconfigmethodsService;
 
     public AgentConfigResponse getAgentConfig(Integer agentId, String CallType) {
         List<Agentconfigmethods> result = this.agentconfigmethodsRepository.findByAgentid(agentId);
@@ -98,11 +102,19 @@ public class AgentconfigService {
         }).orElseGet(() -> this.agentconfigRepository.save(agentconfig));
     }
 
-    public Agentconfig deleteAgent(Integer agentId) {
+    public Agentconfig deleteAgentById(Integer agentId) {
+        // Check agent existence
         Agentconfig agentconfig = this.agentconfigRepository.findByAgentid(agentId);
         if (agentconfig == null) {
             return null;
         }
+
+        // Delete methods which belong to this agent
+        this.agentconfigmethodsService.deleteMethodsByAgentId(agentId);
+        // Delete data which belong to this agent
+        this.agentdataconfigService.deleteDataByAgentId(agentId);
+
+        // Delete agent itself
         this.agentconfigRepository.deleteById(agentId);
         return agentconfig;
     }

@@ -61,7 +61,23 @@ public class AgentresponseconfigService {
         });
     }
 
-    public Agentresponseconfig deleteResponse(Integer responseId) {
+    public List<Agentresponseconfig> deleteResponseByMethodId(Integer methodId) {
+        List<Agentresponseconfig> responsesList = this.getResponsesByMethodId(methodId);
+        if (responsesList == null || responsesList.isEmpty()) {
+            return null;
+        }
+        List<Agentresponseconfig> deletedResponsesList = new ArrayList<>(responsesList.size());
+        for (Agentresponseconfig response : responsesList) {
+            Agentresponseconfig deletedResponse = this.deleteResponseById(response.getConfigresponseid());
+            if (deletedResponse != null) {
+                deletedResponsesList.add(deletedResponse);
+            }
+        }
+
+        return deletedResponsesList;
+    }
+
+    public Agentresponseconfig deleteResponseById(Integer responseId) {
         Optional<Agentresponseconfig> details = this.agentresponseconfigRepository.findById(responseId);
         if (!details.isPresent()) {
             return null;

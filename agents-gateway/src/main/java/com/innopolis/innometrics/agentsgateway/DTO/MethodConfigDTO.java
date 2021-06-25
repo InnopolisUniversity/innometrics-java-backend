@@ -17,18 +17,18 @@ public class MethodConfigDTO implements Serializable {
     private Date lastupdate;
     private String updateby;
     private String requesttype;
-    private List<ParamsConfigDTO> parameters;
-    //todo should we create List<ParamsResponseDTO> ?
+    private List<ParamsConfigDTO> configParameters;
+    //private List<ParamsResponseDTO> responseParameters;
 
     public MethodConfigDTO() {
-        parameters = new ArrayList<>();
+        configParameters = new ArrayList<>();
     }
 
-    public MethodConfigDTO(Integer methodid, String description, String operation, List<ParamsConfigDTO> parameters) {
+    public MethodConfigDTO(Integer methodid, String description, String operation, List<ParamsConfigDTO> configParameters) {
         this.methodid = methodid;
         this.description = description;
         this.operation = operation;
-        this.parameters = parameters;
+        this.configParameters = configParameters;
     }
 
     public Integer getMethodid() {
@@ -55,12 +55,12 @@ public class MethodConfigDTO implements Serializable {
         this.operation = operation;
     }
 
-    public List<ParamsConfigDTO> getParameters() {
-        return parameters;
+    public List<ParamsConfigDTO> getConfigParameters() {
+        return configParameters;
     }
 
-    public void setParameters(List<ParamsConfigDTO> parameters) {
-        this.parameters = parameters;
+    public void setConfigParameters(List<ParamsConfigDTO> configParameters) {
+        this.configParameters = configParameters;
     }
 
     public Integer getAgentid() {

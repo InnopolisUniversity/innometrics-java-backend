@@ -52,7 +52,7 @@ public class AgentAdminController {
     }
 
     @GetMapping(value = "/Agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AgentResponse> getAgent(@PathVariable Integer id) {
+    public ResponseEntity<AgentResponse> getAgentById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -81,15 +81,18 @@ public class AgentAdminController {
         }
         Agentconfig agentconfig = this.convertToAgentconfigEntity(agent);
         Agentconfig response = this.agentconfigService.putAgent(id, agentconfig);
-        return new ResponseEntity<>(this.convertToAgentResponseDto(response), HttpStatus.OK);
+        if (response.getAgentid().equals(agent.getAgentid())) {
+            return new ResponseEntity<>(this.convertToAgentResponseDto(response), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(this.convertToAgentResponseDto(response), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/Agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AgentResponse> deleteAgent(@PathVariable Integer id) {
+    public ResponseEntity<AgentResponse> deleteAgentById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Agentconfig response = this.agentconfigService.deleteAgent(id);
+        Agentconfig response = this.agentconfigService.deleteAgentById(id);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -158,37 +161,33 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/AgentData/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DataListResponse> getData(@PathVariable Integer id,
-                                                    @RequestParam(value = "id_type") String idType) {
+    // Get by datacofingid - get a method specifying its ID
+    @GetMapping(value = "/AgentData/data/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DataConfigDTO> getDataById(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Agentdataconfig agentdataconfig = this.agentdataconfigService.getDataById(id);
+        if (agentdataconfig == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        DataConfigDTO response = this.convertToDataConfigDto(agentdataconfig);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Get by agentid - get all data config agents which belong to specified agentId
+    @GetMapping(value = "/AgentData/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DataListResponse> getDataByAgentId(@PathVariable Integer id) {
 
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Agentdataconfig> dataList;
-
-        switch (idType.toLowerCase()) {
-            // Get by agentid - get all data config agents which belong to specified agentId
-            case "agent":
-                dataList = this.agentdataconfigService.getDataAgentsByAgentId(id);
-
-                if (dataList == null || dataList.isEmpty()) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                break;
-
-            // Get by methodid - get a method specifying its ID
-            case "data":
-                Agentdataconfig agentdataconfig = this.agentdataconfigService.getDataById(id);
-                if (agentdataconfig == null) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                dataList = new ArrayList<>(1);
-                dataList.add(agentdataconfig);
-                break;
-            default:
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        List<Agentdataconfig> dataList = this.agentdataconfigService.getDataAgentsByAgentId(id);
+        if (dataList == null || dataList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         DataListResponse response = new DataListResponse();
@@ -213,7 +212,8 @@ public class AgentAdminController {
     }
 
     @PutMapping(value = "/AgentData/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DataConfigDTO> putData(@PathVariable Integer id, @RequestBody DataConfigDTO dataConfigDTO) {
+    public ResponseEntity<DataConfigDTO> putData(@PathVariable Integer id,
+                                                 @RequestBody DataConfigDTO dataConfigDTO) {
         if (id == null || dataConfigDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -222,19 +222,40 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Agentdataconfig response = this.agentdataconfigService.putData(id, agentdataconfig);
-        return new ResponseEntity<>(this.convertToDataConfigDto(response), HttpStatus.OK);
+        if (response.getDatacofingid().equals(dataConfigDTO.getDatacofingid())) {
+            return new ResponseEntity<>(this.convertToDataConfigDto(response), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(this.convertToDataConfigDto(response), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/AgentData/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DataConfigDTO> deleteData(@PathVariable Integer id) {
+    @DeleteMapping(value = "/AgentData/data/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DataConfigDTO> deleteDataById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Agentdataconfig response = this.agentdataconfigService.deleteDataConfig(id);
+        Agentdataconfig response = this.agentdataconfigService.deleteDataById(id);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(this.convertToDataConfigDto(response), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/AgentData/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DataListResponse> deleteDataByAgentId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Agentdataconfig> dataList = this.agentdataconfigService.deleteDataByAgentId(id);
+        if (dataList == null || dataList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        DataListResponse response = new DataListResponse();
+        for (Agentdataconfig agentdataconfig : dataList) {
+            response.add(this.convertToDataConfigDto(agentdataconfig));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private DataConfigDTO convertToDataConfigDto(Agentdataconfig agentdataconfig) {
@@ -299,37 +320,32 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/AgentConfigMethods/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MethodsListResponse> getMethodsById(@PathVariable Integer id,
-                                                              @RequestParam(value = "id_type") String idType) {
+    // Get by methodid - get a method specifying its ID
+    @GetMapping(value = "/AgentConfigMethods/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MethodConfigDTO> getMethodById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Agentconfigmethods> methodsList;
+        Agentconfigmethods agentconfigmethods = this.agentconfigmethodsService.getMethodById(id);
+        if (agentconfigmethods == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        switch (idType.toLowerCase()) {
-            // Get by agentid - get all methods which belong to specified agentId
-            case "agent":
-                methodsList = this.agentconfigmethodsService.getMethodsByAgentId(id);
+        MethodConfigDTO response = this.convertToMethodConfigDto(agentconfigmethods);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-                if (methodsList == null || methodsList.isEmpty()) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                break;
+    // Get by agentid - get all methods which belong to specified agentId
+    @GetMapping(value = "/AgentConfigMethods/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MethodsListResponse> getMethodsByAgentId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-            // Get by methodid - get a method specifying its ID
-            case "method":
-                Agentconfigmethods method = this.agentconfigmethodsService.getMethodById(id);
-                if (method == null) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-
-                methodsList = new ArrayList<>(1);
-                methodsList.add(method);
-                break;
-            default:
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        List<Agentconfigmethods> methodsList = this.agentconfigmethodsService.getMethodsByAgentId(id);
+        if (methodsList == null || methodsList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         MethodsListResponse response = new MethodsListResponse();
@@ -378,38 +394,38 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Agentconfigmethods response = this.agentconfigmethodsService.putMethod(id, agentconfigmethods);
-        return new ResponseEntity<>(this.convertToMethodConfigDto(response), HttpStatus.OK);
+        if (response.getMethodid().equals(method.getMethodid())) {
+            return new ResponseEntity<>(this.convertToMethodConfigDto(response), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(this.convertToMethodConfigDto(response), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/AgentConfigMethods/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MethodsListResponse> deleteMethods(@PathVariable Integer id,
-                                                             @RequestParam(value = "id_type") String idType) {
+    // Delete by methodid - delete a method specifying its ID
+    @DeleteMapping(value = "/AgentConfigMethods/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MethodConfigDTO> deleteMethodsById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Agentconfigmethods> methodsList;
+        Agentconfigmethods agentconfigmethod = this.agentconfigmethodsService.deleteMethodById(id);
+        if (agentconfigmethod == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        switch (idType.toLowerCase()) {
-            // Delete by agentid - delete all methods which belong to specified agentId
-            case "agent":
-                methodsList = this.agentconfigmethodsService.deleteMethodsByAgentId(id);
-                if (methodsList == null || methodsList.isEmpty()) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                break;
+        MethodConfigDTO response = this.convertToMethodConfigDto(agentconfigmethod);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-            // Delete by methodid - delete a method specifying its ID
-            case "method":
-                Agentconfigmethods method = this.agentconfigmethodsService.deleteMethodByMethodId(id);
-                if (method == null) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                methodsList = new ArrayList<>(1);
-                methodsList.add(method);
-                break;
-            default:
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    // Delete by agentid - delete all methods which belong to specified agentId
+    @DeleteMapping(value = "/AgentConfigMethods/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MethodsListResponse> deleteMethodsByAgentId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Agentconfigmethods> methodsList = this.agentconfigmethodsService.deleteMethodsByAgentId(id);
+        if (methodsList == null || methodsList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         MethodsListResponse response = new MethodsListResponse();
@@ -434,7 +450,6 @@ public class AgentAdminController {
         methodConfig.setUpdateby(agentconfigmethod.getUpdateby());
         methodConfig.setRequesttype(agentconfigmethod.getRequesttype());
 
-
         List<ParamsConfigDTO> parameters = new ArrayList<>();
         for (Agentconfigdetails agentconfigdetails : agentconfigmethod.getParams()) {
             ParamsConfigDTO paramsConfigDTO = new ParamsConfigDTO();
@@ -442,10 +457,11 @@ public class AgentAdminController {
             paramsConfigDTO.setParamtype(agentconfigdetails.getParamtype());
             parameters.add(paramsConfigDTO);
         }
-        methodConfig.setParameters(parameters);
+        methodConfig.setConfigParameters(parameters);
 
         // todo what about Response Parameters?
         // Should we create ParamsResponseDTO?
+
 
         return methodConfig;
     }
@@ -471,10 +487,7 @@ public class AgentAdminController {
         agentconfigmethods.setIsactive(methodConfigDTO.getIsactive());
         agentconfigmethods.setRequesttype(methodConfigDTO.getRequesttype());
 
-        // todo fix parameters getter
-        // What's the point of passing random parameters?
-        // They must be strongly linked to 'Agentconfigdetails' table.
-        List<ParamsConfigDTO> parameters = methodConfigDTO.getParameters();
+        List<ParamsConfigDTO> parameters = methodConfigDTO.getConfigParameters();
         if (parameters != null) {
             Set<Agentconfigdetails> params = new HashSet<>();
             for (ParamsConfigDTO paramsConfigDTO : parameters) {
@@ -513,37 +526,34 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/AgentDetails/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DetailsListResponse> getDetails(@PathVariable Integer id,
-                                                          @RequestParam(value = "id_type") String idType) {
+    // Get by configDetId - get config details specifying its ID
+    @GetMapping(value = "/AgentDetails/details/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DetailsConfigDTO> getDetailsById(@PathVariable Integer id) {
 
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Agentconfigdetails> detailsList;
+        Agentconfigdetails agentconfigdetails = this.agentconfigdetailsService.getDetailsById(id);
+        if (agentconfigdetails == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        switch (idType.toLowerCase()) {
-            // Get by methodid - get all config details which belong to specified methodid
-            case "method":
-                detailsList = this.agentconfigdetailsService.getDetailsByMethodId(id);
-                if (detailsList == null || detailsList.isEmpty()) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                break;
+        DetailsConfigDTO responseList = this.convertToDetailsConfigDto(agentconfigdetails);
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
 
-            // Get by configDetId - get config details specifying its ID
-            case "details":
-                Agentconfigdetails agentconfigdetails = this.agentconfigdetailsService.getDetailsById(id);
-                if (agentconfigdetails == null) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                detailsList = new ArrayList<>(1);
-                detailsList.add(agentconfigdetails);
-                break;
+    // Get by methodid - get all config details which belong to specified methodid
+    @GetMapping(value = "/AgentDetails/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DetailsListResponse> getDetailsByMethodId(@PathVariable Integer id) {
 
-            default:
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Agentconfigdetails> detailsList = this.agentconfigdetailsService.getDetailsByMethodId(id);
+        if (detailsList == null || detailsList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         DetailsListResponse responseList = new DetailsListResponse();
@@ -577,19 +587,40 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Agentconfigdetails response = this.agentconfigdetailsService.putDetails(id, agentconfigdetails);
-        return new ResponseEntity<>(this.convertToDetailsConfigDto(response), HttpStatus.OK);
+        if (response.getConfigDetId().equals(detailsConfigDTO.getConfigDetId())) {
+            return new ResponseEntity<>(this.convertToDetailsConfigDto(response), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(this.convertToDetailsConfigDto(response), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/AgentDetails/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DetailsConfigDTO> deleteDetails(@PathVariable Integer id) {
+    @DeleteMapping(value = "/AgentDetails/details/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DetailsConfigDTO> deleteDetailsById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Agentconfigdetails response = this.agentconfigdetailsService.deleteDetails(id);
+        Agentconfigdetails response = this.agentconfigdetailsService.deleteDetailsById(id);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(this.convertToDetailsConfigDto(response), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/AgentDetails/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DetailsListResponse> deleteDetailsByMethodId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<Agentconfigdetails> detailsList = this.agentconfigdetailsService.deleteDetailsByMethodId(id);
+
+        if (detailsList == null || detailsList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        DetailsListResponse response = new DetailsListResponse();
+        for (Agentconfigdetails agentconfigdetails : detailsList) {
+            response.add(this.convertToDetailsConfigDto(agentconfigdetails));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private DetailsConfigDTO convertToDetailsConfigDto(Agentconfigdetails agentconfigdetails) {
@@ -650,37 +681,34 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/AgentResponse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseListResponse> getResponse(@PathVariable Integer id,
-                                                            @RequestParam(value = "id_type") String idType) {
+    // Get by configresponseid - get response details specifying its ID
+    @GetMapping(value = "/AgentResponse/response/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseConfigDTO> getResponseById(@PathVariable Integer id) {
 
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Agentresponseconfig> responsesList;
+        Agentresponseconfig agentresponseconfig = this.agentresponseconfigService.getResponseById(id);
+        if (agentresponseconfig == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        switch (idType.toLowerCase()) {
-            // Get by methodid - get all config details which belong to specified methodid
-            case "method":
-                responsesList = this.agentresponseconfigService.getResponsesByMethodId(id);
-                if (responsesList == null || responsesList.isEmpty()) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                break;
+        ResponseConfigDTO responseList = this.convertToResponseConfigDto(agentresponseconfig);
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
 
-            // Get by configresponseid - get response details specifying its ID
-            case "response":
-                Agentresponseconfig agentresponseconfig = this.agentresponseconfigService.getResponseById(id);
-                if (agentresponseconfig == null) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-                responsesList = new ArrayList<>(1);
-                responsesList.add(agentresponseconfig);
-                break;
+    // Get by methodid - get all config details which belong to specified methodid
+    @GetMapping(value = "/AgentResponse/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseListResponse> getResponsesByMethodId(@PathVariable Integer id) {
 
-            default:
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Agentresponseconfig> responsesList = this.agentresponseconfigService.getResponsesByMethodId(id);
+        if (responsesList == null || responsesList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         ResponseListResponse responseList = new ResponseListResponse();
@@ -714,19 +742,39 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Agentresponseconfig response = this.agentresponseconfigService.putResponse(id, agentresponseconfig);
-        return new ResponseEntity<>(this.convertToResponseConfigDto(response), HttpStatus.OK);
+        if (response.getConfigresponseid().equals(responseConfigDTO.getConfigresponseid())) {
+            return new ResponseEntity<>(this.convertToResponseConfigDto(response), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(this.convertToResponseConfigDto(response), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/AgentResponse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseConfigDTO> deleteResponse(@PathVariable Integer id) {
+    @DeleteMapping(value = "/AgentResponse/response/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseConfigDTO> deleteResponseById(@PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Agentresponseconfig response = this.agentresponseconfigService.deleteResponse(id);
+        Agentresponseconfig response = this.agentresponseconfigService.deleteResponseById(id);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(this.convertToResponseConfigDto(response), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/AgentResponse/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseListResponse> deleteResponseByMethodId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<Agentresponseconfig> responseList = this.agentresponseconfigService.deleteResponseByMethodId(id);
+        if (responseList == null || responseList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ResponseListResponse response = new ResponseListResponse();
+        for (Agentresponseconfig agentresponseconfig : responseList) {
+            response.add(this.convertToResponseConfigDto(agentresponseconfig));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private ResponseConfigDTO convertToResponseConfigDto(Agentresponseconfig agentresponseconfig) {

@@ -65,7 +65,23 @@ public class AgentdataconfigService {
         });
     }
 
-    public Agentdataconfig deleteDataConfig(Integer dataId) {
+    public List<Agentdataconfig> deleteDataByAgentId(Integer agentId) {
+        List<Agentdataconfig> dataList = this.getDataAgentsByAgentId(agentId);
+        if (dataList == null || dataList.isEmpty()) {
+            return null;
+        }
+        List<Agentdataconfig> deletedDataList = new ArrayList<>(dataList.size());
+        for (Agentdataconfig data : dataList) {
+            Agentdataconfig deletedData = this.deleteDataById(data.getDatacofingid());
+            if (deletedData != null) {
+                deletedDataList.add(deletedData);
+            }
+        }
+
+        return deletedDataList;
+    }
+
+    public Agentdataconfig deleteDataById(Integer dataId) {
         Optional<Agentdataconfig> data = this.agentdataconfigRepository.findById(dataId);
         if (!data.isPresent()) {
             return null;

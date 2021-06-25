@@ -1,18 +1,22 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfigdetails;
 import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
 import com.innopolis.innometrics.agentsgateway.repository.AgentconfigmethodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AgentconfigmethodsService {
     @Autowired
     AgentconfigmethodsRepository agentconfigmethodsRepository;
+
+    @Autowired
+    AgentconfigdetailsService agentconfigdetailsService;
+    @Autowired
+    AgentresponseconfigService agentresponseconfigService;
 
     public List<Agentconfigmethods> getMethodsList() {
         return this.agentconfigmethodsRepository.findAll();
@@ -31,7 +35,19 @@ public class AgentconfigmethodsService {
     }
 
     public Agentconfigmethods postMethod(Agentconfigmethods agentconfigmethods) {
-        return this.agentconfigmethodsRepository.save(agentconfigmethods);
+        Set<Agentconfigdetails> configParameters = new HashSet<>(agentconfigmethods.getParams());
+
+        agentconfigmethods.setParams(new HashSet<Agentconfigdetails>());
+        Agentconfigmethods createdEntity = this.agentconfigmethodsRepository.save(agentconfigmethods);
+
+        /*
+        for (Agentconfigdetails configParameter : configParameters) {
+            configParameter.setAgentconfigmethods(createdEntity);
+            this.agentconfigdetailsService.postDetails(configParameter);
+        }
+         */
+
+        return createdEntity;
     }
 
     public Agentconfigmethods putMethod(Integer methodId, Agentconfigmethods method) {
@@ -59,7 +75,7 @@ public class AgentconfigmethodsService {
         }
         List<Agentconfigmethods> deletedMethods = new ArrayList<>(methods.size());
         for (Agentconfigmethods method : methods) {
-            Agentconfigmethods deletedMethod = this.deleteMethodByMethodId(method.getMethodid());
+            Agentconfigmethods deletedMethod = this.deleteMethodById(method.getMethodid());
             if (deletedMethod != null) {
                 deletedMethods.add(deletedMethod);
             }
@@ -68,12 +84,20 @@ public class AgentconfigmethodsService {
         return deletedMethods;
     }
 
-    public Agentconfigmethods deleteMethodByMethodId(Integer methodId) {
-        Optional<Agentconfigmethods> methods = this.agentconfigmethodsRepository.findById(methodId);
-        if (!methods.isPresent()) {
+    public Agentconfigmethods deleteMethodById(Integer methodId) {
+        // Check method existence
+        Optional<Agentconfigmethods> method = this.agentconfigmethodsRepository.findById(methodId);
+        if (!method.isPresent()) {
             return null;
         }
+
+        // Delete config parameters which belong to this method
+        agentconfigdetailsService.deleteDetailsByMethodId(methodId);
+        // Delete response parameters which belong to this method
+        agentresponseconfigService.deleteResponseByMethodId(methodId);
+
+        // Delete method itself
         this.agentconfigmethodsRepository.deleteById(methodId);
-        return methods.get();
+        return method.get();
     }
 }
