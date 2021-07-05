@@ -45,7 +45,7 @@ public class AgentAdminController {
     @GetMapping(value = "/Agent", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentListResponse> getAgentList(@RequestParam Integer ProjectId) {
         AgentListResponse response = this.agentconfigService.getAgentList(ProjectId);
-        if (response == null || response.isEmpty()) {
+        if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -149,7 +149,7 @@ public class AgentAdminController {
     @GetMapping(value = "/AgentData", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DataListResponse> getDataList() {
         List<Agentdataconfig> dataList = this.agentdataconfigService.getDataList();
-        if (dataList == null || dataList.isEmpty()) {
+        if (dataList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -185,8 +185,12 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Agentdataconfig> dataList = this.agentdataconfigService.getDataAgentsByAgentId(id);
-        if (dataList == null || dataList.isEmpty()) {
+        if (dataList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -246,8 +250,12 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Agentdataconfig> dataList = this.agentdataconfigService.deleteDataByAgentId(id);
-        if (dataList == null || dataList.isEmpty()) {
+        if (dataList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -308,7 +316,7 @@ public class AgentAdminController {
     @GetMapping(value = "/AgentConfigMethods", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MethodsListResponse> getMethodsList() {
         List<Agentconfigmethods> methodsList = this.agentconfigmethodsService.getMethodsList();
-        if (methodsList == null || methodsList.isEmpty()) {
+        if (methodsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -343,8 +351,12 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Agentconfigmethods> methodsList = this.agentconfigmethodsService.getMethodsByAgentId(id);
-        if (methodsList == null || methodsList.isEmpty()) {
+        if (methodsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -423,8 +435,12 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Agentconfigmethods> methodsList = this.agentconfigmethodsService.deleteMethodsByAgentId(id);
-        if (methodsList == null || methodsList.isEmpty()) {
+        if (methodsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -514,7 +530,7 @@ public class AgentAdminController {
     @GetMapping(value = "/AgentDetails", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DetailsListResponse> getDetailsList() {
         List<Agentconfigdetails> detailsList = this.agentconfigdetailsService.getDetailsList();
-        if (detailsList == null || detailsList.isEmpty()) {
+        if (detailsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -551,8 +567,12 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (this.agentconfigmethodsService.getMethodById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Agentconfigdetails> detailsList = this.agentconfigdetailsService.getDetailsByMethodId(id);
-        if (detailsList == null || detailsList.isEmpty()) {
+        if (detailsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -612,7 +632,11 @@ public class AgentAdminController {
         }
         List<Agentconfigdetails> detailsList = this.agentconfigdetailsService.deleteDetailsByMethodId(id);
 
-        if (detailsList == null || detailsList.isEmpty()) {
+        if (this.agentconfigmethodsService.getMethodById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (detailsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -671,7 +695,7 @@ public class AgentAdminController {
     @GetMapping(value = "/AgentResponse", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseListResponse> getResponsesList() {
         List<Agentresponseconfig> responseList = this.agentresponseconfigService.getResponsesList();
-        if (responseList == null || responseList.isEmpty()) {
+        if (responseList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         ResponseListResponse response = new ResponseListResponse();
@@ -706,8 +730,12 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (this.agentconfigmethodsService.getMethodById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Agentresponseconfig> responsesList = this.agentresponseconfigService.getResponsesByMethodId(id);
-        if (responsesList == null || responsesList.isEmpty()) {
+        if (responsesList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -766,7 +794,11 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<Agentresponseconfig> responseList = this.agentresponseconfigService.deleteResponseByMethodId(id);
-        if (responseList == null || responseList.isEmpty()) {
+        if (responseList == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (this.agentconfigmethodsService.getMethodById(id) == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.innopolis.innometrics.agentsgateway.DTO.AgentResponse;
-import com.innopolis.innometrics.agentsgateway.DTO.DataConfigDTO;
-import com.innopolis.innometrics.agentsgateway.DTO.DetailsConfigDTO;
-import com.innopolis.innometrics.agentsgateway.DTO.MethodConfigDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.*;
 import com.innopolis.innometrics.agentsgateway.controller.AgentAdminController;
 import com.innopolis.innometrics.agentsgateway.service.*;
 import org.apache.commons.lang.StringUtils;
@@ -899,7 +896,7 @@ class AgentsGatewayApplicationTests {
         Assertions.assertEquals(count, finalSize - initialSize);
 
 
-        mockMvc.perform(delete("/AgentAdmin/AgentConfigMethods/agent/"+ agentId)
+        mockMvc.perform(delete("/AgentAdmin/AgentConfigMethods/agent/" + agentId)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -1302,6 +1299,307 @@ class AgentsGatewayApplicationTests {
                 .getContentAsString();
 
         int finalSize = StringUtils.countMatches(jsonString, "configDetId");
+
+        Assertions.assertEquals(count, finalSize - initialSize);
+    }
+
+    /**
+     * Table: agentresponseconfig
+     */
+
+    private ResponseConfigDTO responseConfigDTOResult;
+
+    private ResponseConfigDTO createResponseConfigDTO() {
+        ResponseConfigDTO responseConfigDTO = new ResponseConfigDTO();
+        responseConfigDTO.setMethodid(151);
+        responseConfigDTO.setResponseparam("test");
+        responseConfigDTO.setParamname("test");
+        responseConfigDTO.setParamtype("test");
+        responseConfigDTO.setIsactive("Y");
+        return responseConfigDTO;
+    }
+
+    @Test
+    public void testGetResponseList() throws Exception {
+        mockMvc.perform(get("/AgentAdmin/AgentResponse")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetResponseById200() throws Exception {
+        mockMvc.perform(get("/AgentAdmin/AgentResponse/response/1")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.configresponseid").value("1"))
+                .andExpect(jsonPath("$.paramname").value("ProjectName"));
+    }
+
+    @Test
+    public void testGetResponseById404() throws Exception {
+        mockMvc.perform(get("/AgentAdmin/AgentResponse/response/1000000")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetResponseByMethodId200() throws Exception {
+        mockMvc.perform(get("/AgentAdmin/AgentResponse/method/1")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetResponseByMethodId404() throws Exception {
+        mockMvc.perform(get("/AgentAdmin/AgentResponse/method/1000000")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testPostResponse201() throws Exception {
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Assertions.assertEquals(responseConfigDTO.getParamname(), responseConfigDTOResult.getParamname());
+    }
+
+    @Test
+    public void testPostResponseEmptyBody400() throws Exception {
+        mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testPostResponseWrongMethodId400() throws Exception {
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        responseConfigDTO.setMethodid(100000);
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testPutResponseUpdate() throws Exception {
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Integer responseId = responseConfigDTOResult.getConfigresponseid();
+
+        responseConfigDTO.setConfigresponseid(responseId);
+        responseConfigDTO.setMethodid(151);
+        responseConfigDTO.setResponseparam("test");
+        responseConfigDTO.setParamname("test");
+        responseConfigDTO.setParamtype("test");
+        responseConfigDTO.setIsactive("Y");
+        requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(put("/AgentAdmin/AgentResponse/" + responseId)
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Assertions.assertEquals(responseConfigDTO.getParamname(), responseConfigDTOResult.getParamname());
+        Assertions.assertEquals(responseConfigDTO.getConfigresponseid(), responseConfigDTOResult.getConfigresponseid());
+        Assertions.assertEquals(responseConfigDTO.getMethodid(), responseConfigDTOResult.getMethodid());
+    }
+
+    @Test
+    public void testPutResponseCreate() throws Exception {
+
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        responseConfigDTO.setConfigresponseid(100000);
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(put("/AgentAdmin/AgentResponse/100000")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Assertions.assertEquals(responseConfigDTO.getParamname(), responseConfigDTOResult.getParamname());
+        Assertions.assertNotEquals(responseConfigDTO.getConfigresponseid(), responseConfigDTOResult.getConfigresponseid());
+    }
+
+    @Test
+    public void testPutResponseEmptyBody400() throws Exception {
+        mockMvc.perform(put("/AgentAdmin/AgentResponse/26")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testPutResponseWrongMethodId400() throws Exception {
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        responseConfigDTO.setMethodid(100000);
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(put("/AgentAdmin/AgentResponse/26")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDeleteResponse200() throws Exception {
+
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Integer responseId = responseConfigDTOResult.getConfigresponseid();
+
+        mockMvc.perform(delete("/AgentAdmin/AgentResponse/response/" + responseId)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Assertions.assertEquals(responseConfigDTO.getParamname(), responseConfigDTOResult.getParamname());
+        Assertions.assertEquals(responseId, responseConfigDTOResult.getConfigresponseid());
+
+        mockMvc.perform(delete("/AgentAdmin/AgentResponse/response/" + responseId)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteResponse404() throws Exception {
+        mockMvc.perform(delete("/AgentAdmin/AgentResponse/response/1000000")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testCRUDResponse() throws Exception {
+
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        String requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Integer responseId = responseConfigDTOResult.getConfigresponseid();
+
+        responseConfigDTO.setConfigresponseid(responseId);
+        responseConfigDTO.setMethodid(151);
+        responseConfigDTO.setResponseparam("test");
+        responseConfigDTO.setParamname("test");
+        responseConfigDTO.setParamtype("test");
+        responseConfigDTO.setIsactive("Y");
+        requestJson = getJSON(responseConfigDTO);
+
+        mockMvc.perform(put("/AgentAdmin/AgentResponse/" + responseId)
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paramname").value(responseConfigDTO.getParamname()))
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Assertions.assertEquals(responseConfigDTO.getParamname(), responseConfigDTOResult.getParamname());
+        Assertions.assertEquals(responseConfigDTO.getConfigresponseid(), responseConfigDTOResult.getConfigresponseid());
+        Assertions.assertEquals(responseConfigDTO.getMethodid(), responseConfigDTOResult.getMethodid());
+
+        mockMvc.perform(delete("/AgentAdmin/AgentResponse/response/" + responseId)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(mvcResult -> {
+                    String json = mvcResult.getResponse().getContentAsString();
+                    responseConfigDTOResult = (ResponseConfigDTO) this.convertJSONStringToObject(json, ResponseConfigDTO.class);
+                });
+
+        Assertions.assertEquals(responseConfigDTO.getParamname(), responseConfigDTOResult.getParamname());
+        Assertions.assertEquals(responseId, responseConfigDTOResult.getConfigresponseid());
+
+        mockMvc.perform(delete("/AgentAdmin/AgentResponse/response/" + responseId)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetCreateSeveralResponse() throws Exception {
+        ResponseConfigDTO responseConfigDTO = createResponseConfigDTO();
+        String requestJson = getJSON(responseConfigDTO);
+
+        String jsonString = mockMvc.perform(get("/AgentAdmin/AgentResponse")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        int initialSize = StringUtils.countMatches(jsonString, "configresponseid");
+
+        int count = 5;
+        for (int i = 0; i < count; i++) {
+            mockMvc.perform(post("/AgentAdmin/AgentResponse")
+                    .contentType(APPLICATION_JSON)
+                    .content(requestJson))
+                    .andExpect(status().isCreated());
+        }
+
+        jsonString = mockMvc.perform(get("/AgentAdmin/AgentResponse")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        int finalSize = StringUtils.countMatches(jsonString, "configresponseid");
 
         Assertions.assertEquals(count, finalSize - initialSize);
     }
