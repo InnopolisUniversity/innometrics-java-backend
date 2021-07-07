@@ -85,6 +85,14 @@ public class Agentconfig {
     @JoinColumn(name = "agentid")
     private Set<Reposxproject> reposconfig = new HashSet<Reposxproject>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agentid")
+    private Set<Externalprojectxteam> externalProjectTeam = new HashSet<Externalprojectxteam>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agentid")
+    private Set<Agentsxcompany> agentsCompany = new HashSet<Agentsxcompany>();
+
     public Agentconfig() {
     }
 
@@ -214,6 +222,22 @@ public class Agentconfig {
 
     public void setReposconfig(Set<Reposxproject> reposconfig) {
         this.reposconfig = reposconfig;
+    }
+
+    public Set<Externalprojectxteam> getExternalProjectTeam() {
+        return externalProjectTeam;
+    }
+
+    public void setExternalProjectTeam(Set<Externalprojectxteam> externalProject) {
+        this.externalProjectTeam = externalProject;
+    }
+
+    public Set<Agentsxcompany> getAgentsCompany() {
+        return agentsCompany;
+    }
+
+    public void setAgentsCompany(Set<Agentsxcompany> agentsCompany) {
+        this.agentsCompany = agentsCompany;
     }
 
     public String getAccesstokenendpoint() {

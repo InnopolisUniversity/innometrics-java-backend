@@ -23,6 +23,10 @@ public class AgentconfigService {
     AgentdataconfigService agentdataconfigService;
     @Autowired
     AgentconfigmethodsService agentconfigmethodsService;
+    @Autowired
+    ExternalprojectxteamService externalprojectxteamService;
+    @Autowired
+    AgentsxcompanyService agentsxcompanyService;
 
     public AgentConfigResponse getAgentConfig(Integer agentId, String CallType) {
         List<Agentconfigmethods> result = this.agentconfigmethodsRepository.findByAgentid(agentId);
@@ -113,6 +117,10 @@ public class AgentconfigService {
         this.agentconfigmethodsService.deleteMethodsByAgentId(agentId);
         // Delete data which belong to this agent
         this.agentdataconfigService.deleteDataByAgentId(agentId);
+        // Delete ExternalProjectTeam entries which belong to this agent
+        this.externalprojectxteamService.deleteExternalProjectTeamByAgentId(agentId);
+        // Delete AgentsCompany entries which belong to this agent
+        this.agentsxcompanyService.deleteAgentsCompanyByAgentId(agentId);
 
         // Delete agent itself
         this.agentconfigRepository.deleteById(agentId);

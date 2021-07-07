@@ -1,6 +1,5 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
 import com.innopolis.innometrics.agentsgateway.entity.Agentresponseconfig;
 import com.innopolis.innometrics.agentsgateway.repository.AgentresponseconfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,6 @@ import java.util.Optional;
 public class AgentresponseconfigService {
     @Autowired
     AgentresponseconfigRepository agentresponseconfigRepository;
-
-    @Autowired
-    AgentconfigmethodsService agentconfigmethodsService;
 
     public List<Agentresponseconfig> getResponsesList() {
         return this.agentresponseconfigRepository.findAll();
@@ -37,10 +33,6 @@ public class AgentresponseconfigService {
         return this.agentresponseconfigRepository.findById(responseId).orElse(null);
     }
 
-    public Agentconfigmethods getMethod(Integer methodid) {
-        return this.agentconfigmethodsService.getMethodById(methodid);
-    }
-
     public Agentresponseconfig postResponse(Agentresponseconfig agentresponseconfig) {
         return this.agentresponseconfigRepository.save(agentresponseconfig);
     }
@@ -53,12 +45,8 @@ public class AgentresponseconfigService {
             agentDetails.setParamtype(response.getParamtype());
             agentDetails.setIsactive(response.getIsactive());
 
-            this.agentresponseconfigRepository.save(agentDetails);
-            return agentDetails;
-        }).orElseGet(() -> {
-            this.agentresponseconfigRepository.save(response);
-            return response;
-        });
+            return this.agentresponseconfigRepository.save(agentDetails);
+        }).orElseGet(() -> this.agentresponseconfigRepository.save(response));
     }
 
     public List<Agentresponseconfig> deleteResponseByMethodId(Integer methodId) {
@@ -78,11 +66,11 @@ public class AgentresponseconfigService {
     }
 
     public Agentresponseconfig deleteResponseById(Integer responseId) {
-        Optional<Agentresponseconfig> details = this.agentresponseconfigRepository.findById(responseId);
-        if (!details.isPresent()) {
+        Optional<Agentresponseconfig> response = this.agentresponseconfigRepository.findById(responseId);
+        if (!response.isPresent()) {
             return null;
         }
         this.agentresponseconfigRepository.deleteById(responseId);
-        return details.get();
+        return response.get();
     }
 }

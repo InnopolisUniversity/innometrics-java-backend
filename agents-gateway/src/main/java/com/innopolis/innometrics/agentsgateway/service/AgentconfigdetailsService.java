@@ -1,7 +1,6 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
 import com.innopolis.innometrics.agentsgateway.entity.Agentconfigdetails;
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
 import com.innopolis.innometrics.agentsgateway.repository.AgentconfigdetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +13,6 @@ import java.util.Optional;
 public class AgentconfigdetailsService {
     @Autowired
     AgentconfigdetailsRepository agentconfigdetailsRepository;
-
-    @Autowired
-    AgentconfigmethodsService agentconfigmethodsService;
 
     public List<Agentconfigdetails> getDetailsList() {
         return this.agentconfigdetailsRepository.findAll();
@@ -37,10 +33,6 @@ public class AgentconfigdetailsService {
         return this.agentconfigdetailsRepository.findById(detailsId).orElse(null);
     }
 
-    public Agentconfigmethods getMethod(Integer methodid) {
-        return this.agentconfigmethodsService.getMethodById(methodid);
-    }
-
     public Agentconfigdetails postDetails(Agentconfigdetails agentconfigdetails) {
         return this.agentconfigdetailsRepository.save(agentconfigdetails);
     }
@@ -55,12 +47,8 @@ public class AgentconfigdetailsService {
             agentDetails.setIsactive(details.getIsactive());
             agentDetails.setDefaultvalue(details.getDefaultvalue());
 
-            this.agentconfigdetailsRepository.save(agentDetails);
-            return agentDetails;
-        }).orElseGet(() -> {
-            this.agentconfigdetailsRepository.save(details);
-            return details;
-        });
+            return this.agentconfigdetailsRepository.save(agentDetails);
+        }).orElseGet(() -> this.agentconfigdetailsRepository.save(details));
     }
 
     public List<Agentconfigdetails> deleteDetailsByMethodId(Integer methodId) {

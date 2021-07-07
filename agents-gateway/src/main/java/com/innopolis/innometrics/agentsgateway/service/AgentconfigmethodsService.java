@@ -60,12 +60,8 @@ public class AgentconfigmethodsService {
             agentMethod.setOperation(method.getOperation());
             agentMethod.setRequesttype(method.getRequesttype());
 
-            this.agentconfigmethodsRepository.save(agentMethod);
-            return agentMethod;
-        }).orElseGet(() -> {
-            this.agentconfigmethodsRepository.save(method);
-            return method;
-        });
+            return this.agentconfigmethodsRepository.save(agentMethod);
+        }).orElseGet(() -> this.agentconfigmethodsRepository.save(method));
     }
 
     public List<Agentconfigmethods> deleteMethodsByAgentId(Integer agentId) {

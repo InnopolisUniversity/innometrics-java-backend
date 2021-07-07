@@ -1,6 +1,5 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
-import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
 import com.innopolis.innometrics.agentsgateway.entity.Agentdataconfig;
 import com.innopolis.innometrics.agentsgateway.repository.AgentdataconfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,6 @@ import java.util.Optional;
 public class AgentdataconfigService {
     @Autowired
     AgentdataconfigRepository agentdataconfigRepository;
-
-    @Autowired
-    AgentconfigService agentconfigService;
 
     public List<Agentdataconfig> getDataList() {
         return this.agentdataconfigRepository.findAll();
@@ -37,10 +33,6 @@ public class AgentdataconfigService {
         return this.agentdataconfigRepository.findById(dataId).orElse(null);
     }
 
-    public Agentconfig getAgent(Integer agentId) {
-        return this.agentconfigService.getAgentById(agentId);
-    }
-
     public Agentdataconfig postData(Agentdataconfig agentdataconfig) {
         return this.agentdataconfigRepository.save(agentdataconfig);
     }
@@ -57,12 +49,8 @@ public class AgentdataconfigService {
             agentData.setEventtype(data.getEventtype());
             agentData.setIsactive(data.getIsactive());
 
-            this.agentdataconfigRepository.save(agentData);
-            return agentData;
-        }).orElseGet(() -> {
-            this.agentdataconfigRepository.save(data);
-            return data;
-        });
+            return this.agentdataconfigRepository.save(agentData);
+        }).orElseGet(() -> this.agentdataconfigRepository.save(data));
     }
 
     public List<Agentdataconfig> deleteDataByAgentId(Integer agentId) {
