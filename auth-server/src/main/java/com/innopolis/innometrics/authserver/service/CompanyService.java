@@ -47,7 +47,7 @@ public class CompanyService {
         return detail;
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id) throws Exception {
 
         Company entity = companyRepository.findById(id).orElse(null);
         assertNotNull(entity,

@@ -47,7 +47,7 @@ public class TeamService {
         return detail;
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id) throws Exception {
 
         Team entity = teamRepository.findById(id).orElse(null);
         assertNotNull(entity,
