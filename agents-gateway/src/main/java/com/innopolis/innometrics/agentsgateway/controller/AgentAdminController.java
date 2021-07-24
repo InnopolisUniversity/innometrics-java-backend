@@ -31,6 +31,10 @@ public class AgentAdminController {
     @Autowired
     AgentresponseconfigService agentresponseconfigService;
     @Autowired
+    ReposxprojectService reposxprojectService;
+    @Autowired
+    AgentsxprojectService agentsxprojectService;
+    @Autowired
     ExternalprojectxteamService externalprojectxteamService;
     @Autowired
     AgentsxcompanyService agentsxcompanyService;
@@ -966,6 +970,7 @@ public class AgentAdminController {
         if (agentconfig == null) {
             return null;
         }
+        // todo how to check external Team entity existence?
 
         Externalprojectxteam externalprojectxteam = new Externalprojectxteam();
 
@@ -1154,5 +1159,391 @@ public class AgentAdminController {
         agentsxcompany.setIsactive(agentsCompanyDTO.getIsactive());
 
         return agentsxcompany;
+    }
+
+    /**
+     * Table: repos_x_project
+     */
+
+    @GetMapping(value = "/ReposProject", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectListResponse> getReposProjectList() {
+        List<Reposxproject> reposProjectList = this.reposxprojectService.getReposProjectList();
+        return this.convertToReposProjectListResponseEntity(reposProjectList);
+    }
+
+    // Get by configid - get ReposProject entry specifying its ID
+    @GetMapping(value = "/ReposProject/config/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectDTO> getReposProjectById(@PathVariable Integer id) {
+
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Reposxproject reposxproject = this.reposxprojectService.getReposProjectById(id);
+        if (reposxproject == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ReposProjectDTO response = this.convertToReposProjectDto(reposxproject);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Get by agentid - get all ReposProject entries which belong to specified agentid
+    @GetMapping(value = "/ReposProject/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectListResponse> getReposProjectByAgentId(@PathVariable Integer id) {
+
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<Reposxproject> reposProjectList = this.reposxprojectService.getReposProjectByAgentId(id);
+        return this.convertToReposProjectListResponseEntity(reposProjectList);
+    }
+
+    // Get by projectid - get all ReposProject entries which belong to specified projectid
+    @GetMapping(value = "/ReposProject/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectListResponse> getReposProjectByProjectId(@PathVariable Integer id) {
+
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // todo check if external Project entity with specified id exists
+
+        List<Reposxproject> reposProjectList = this.reposxprojectService.getReposProjectByProjectId(id);
+        return this.convertToReposProjectListResponseEntity(reposProjectList);
+    }
+
+    @PostMapping(value = "/ReposProject", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectDTO> postReposProject(@RequestBody ReposProjectDTO reposProjectDTO) {
+        if (reposProjectDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Reposxproject reposxproject = this.convertToReposxprojectEntity(reposProjectDTO);
+        if (reposxproject == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Reposxproject response = this.reposxprojectService.postReposProject(reposxproject);
+            return new ResponseEntity<>(this.convertToReposProjectDto(response), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/ReposProject/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectDTO> putReposProject(@PathVariable Integer id,
+                                                           @RequestBody ReposProjectDTO reposProjectDTO) {
+        if (id == null || reposProjectDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Reposxproject reposxproject = this.convertToReposxprojectEntity(reposProjectDTO);
+        if (reposxproject == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Reposxproject response = this.reposxprojectService.putReposProject(id, reposxproject);
+            return new ResponseEntity<>(
+                    this.convertToReposProjectDto(response),
+                    response.getConfigid().equals(reposProjectDTO.getConfigid())
+                            ? HttpStatus.OK
+                            : HttpStatus.CREATED
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping(value = "/ReposProject/config/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectDTO> deleteReposProjectById(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Reposxproject deletedReposProject = this.reposxprojectService.deleteReposProjectById(id);
+        return deletedReposProject == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(this.convertToReposProjectDto(deletedReposProject), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/ReposProject/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectListResponse> deleteReposProjectByAgentId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<Reposxproject> deletedReposProjectList = this.reposxprojectService.deleteReposProjectByAgentId(id);
+        return this.convertToReposProjectListResponseEntity(deletedReposProjectList);
+    }
+
+    @DeleteMapping(value = "/ReposProject/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReposProjectListResponse> deleteReposProjectByProjectId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // todo check if external Project entity with specified id exists
+
+        List<Reposxproject> deletedReposProjectList = this.reposxprojectService.deleteReposProjectByProjectId(id);
+        return this.convertToReposProjectListResponseEntity(deletedReposProjectList);
+    }
+
+    private ResponseEntity<ReposProjectListResponse> convertToReposProjectListResponseEntity(List<Reposxproject> reposProjectList) {
+        if (reposProjectList == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ReposProjectListResponse responseList = new ReposProjectListResponse();
+        for (Reposxproject reposxproject : reposProjectList) {
+            responseList.add(this.convertToReposProjectDto(reposxproject));
+        }
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
+    private ReposProjectDTO convertToReposProjectDto(Reposxproject reposxproject) {
+        return new ReposProjectDTO(
+                reposxproject.getConfigid(),
+                reposxproject.getAgentid(),
+                reposxproject.getProjectid(),
+                reposxproject.getRepoid(),
+                reposxproject.getIsactive(),
+                reposxproject.getCreationdate(),
+                reposxproject.getCreatedby(),
+                reposxproject.getLastupdate(),
+                reposxproject.getUpdateby()
+        );
+    }
+
+    private Reposxproject convertToReposxprojectEntity(ReposProjectDTO reposProjectDTO) {
+
+        Integer agentid = reposProjectDTO.getAgentid();
+        Integer projectid = reposProjectDTO.getProjectid();
+        if (agentid == null || projectid == null) {
+            return null;
+        }
+        Agentconfig agentconfig = this.agentconfigService.getAgentById(agentid);
+        if (agentconfig == null) {
+            return null;
+        }
+        // todo how to check external Project entity existence?
+
+        Reposxproject reposxproject = new Reposxproject();
+
+        reposxproject.setAgentConfig(agentconfig);
+        reposxproject.setAgentid(agentid);
+        // todo maybe assign external Project entity?
+        reposxproject.setProjectid(projectid);
+        reposxproject.setRepoid(reposProjectDTO.getRepoid());
+        reposxproject.setIsactive(reposProjectDTO.getIsactive());
+
+        return reposxproject;
+    }
+
+    /**
+     * Table: agents_x_project
+     */
+
+    @GetMapping(value = "/AgentsProject", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectListResponse> getAgentsProjectList() {
+        List<Agentsxproject> agentsProjectList = this.agentsxprojectService.getAgentsProjectList();
+        return this.convertToAgentsProjectListResponseEntity(agentsProjectList);
+    }
+
+    // Get by configid - get AgentsProject entry specifying its ID
+    @GetMapping(value = "/AgentsProject/config/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectDTO> getAgentsProjectById(@PathVariable Integer id) {
+
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Agentsxproject agentsxproject = this.agentsxprojectService.getAgentsProjectById(id);
+        if (agentsxproject == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        AgentsProjectDTO response = this.convertToAgentsProjectDto(agentsxproject);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Get by agentid - get all AgentsProject entries which belong to specified agentid
+    @GetMapping(value = "/AgentsProject/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectListResponse> getAgentsProjectByAgentId(@PathVariable Integer id) {
+
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<Agentsxproject> agentsProjectList = this.agentsxprojectService.getAgentsProjectByAgentId(id);
+        return this.convertToAgentsProjectListResponseEntity(agentsProjectList);
+    }
+
+    // Get by projectid - get all AgentsProject entries which belong to specified projectid
+    @GetMapping(value = "/AgentsProject/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectListResponse> getAgentsProjectByProjectId(@PathVariable Integer id) {
+
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // todo check if external Project entity with specified id exists
+
+        List<Agentsxproject> agentsProjectList = this.agentsxprojectService.getAgentsProjectByProjectId(id);
+        return this.convertToAgentsProjectListResponseEntity(agentsProjectList);
+    }
+
+    // Get by agentid and projectid - get AgentsProject entry specifying its agentid and projectid
+    @GetMapping(value = "/AgentsProject/config", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectDTO> getAgentsProjectByAgentIdAndProjectId(@RequestParam Integer agentid,
+                                                                                  @RequestParam Integer projectid) {
+
+        if (agentid == null || projectid == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Agentsxproject agentsxproject = this.agentsxprojectService.getAgentsProjectByAgentIdAndProjectId(agentid, projectid);
+        if (agentsxproject == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        AgentsProjectDTO response = this.convertToAgentsProjectDto(agentsxproject);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/AgentsProject", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectDTO> postAgentsProject(@RequestBody AgentsProjectDTO agentsProjectDTO) {
+        if (agentsProjectDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Agentsxproject agentsxproject = this.convertToAgentsxprojectEntity(agentsProjectDTO);
+        if (agentsxproject == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Agentsxproject response = this.agentsxprojectService.postAgentsProject(agentsxproject);
+            return new ResponseEntity<>(this.convertToAgentsProjectDto(response), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/AgentsProject/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectDTO> putAgentsProject(@PathVariable Integer id,
+                                                             @RequestBody AgentsProjectDTO agentsProjectDTO) {
+        if (id == null || agentsProjectDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Agentsxproject agentsxproject = this.convertToAgentsxprojectEntity(agentsProjectDTO);
+        if (agentsxproject == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Agentsxproject response = this.agentsxprojectService.putAgentsProject(id, agentsxproject);
+            return new ResponseEntity<>(
+                    this.convertToAgentsProjectDto(response),
+                    response.getConfigid().equals(agentsProjectDTO.getConfigid())
+                            ? HttpStatus.OK
+                            : HttpStatus.CREATED
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping(value = "/AgentsProject/config/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectDTO> deleteAgentsProjectById(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Agentsxproject deletedAgentsProject = this.agentsxprojectService.deleteAgentsProjectById(id);
+        return deletedAgentsProject == null
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(this.convertToAgentsProjectDto(deletedAgentsProject), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/AgentsProject/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectListResponse> deleteAgentsProjectByAgentId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (this.agentconfigService.getAgentById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<Agentsxproject> deletedAgentsProjectList = this.agentsxprojectService.deleteAgentsProjectByAgentId(id);
+        return this.convertToAgentsProjectListResponseEntity(deletedAgentsProjectList);
+    }
+
+    @DeleteMapping(value = "/AgentsProject/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AgentsProjectListResponse> deleteAgentsProjectByProjectId(@PathVariable Integer id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // todo check if external Project entity with specified id exists
+
+        List<Agentsxproject> deletedAgentsProjectList = this.agentsxprojectService.deleteAgentsProjectByProjectId(id);
+        return this.convertToAgentsProjectListResponseEntity(deletedAgentsProjectList);
+    }
+
+    private ResponseEntity<AgentsProjectListResponse> convertToAgentsProjectListResponseEntity(List<Agentsxproject> agentsProjectList) {
+        if (agentsProjectList == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        AgentsProjectListResponse responseList = new AgentsProjectListResponse();
+        for (Agentsxproject agentsxproject : agentsProjectList) {
+            responseList.add(this.convertToAgentsProjectDto(agentsxproject));
+        }
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
+    private AgentsProjectDTO convertToAgentsProjectDto(Agentsxproject agentsxproject) {
+        return new AgentsProjectDTO(
+                agentsxproject.getConfigid(),
+                agentsxproject.getAgentid(),
+                agentsxproject.getProjectid(),
+                agentsxproject.getKey(),
+                agentsxproject.getToken(),
+                agentsxproject.getIsactive(),
+                agentsxproject.getCreationdate(),
+                agentsxproject.getCreatedby(),
+                agentsxproject.getLastupdate(),
+                agentsxproject.getUpdateby()
+        );
+    }
+
+    private Agentsxproject convertToAgentsxprojectEntity(AgentsProjectDTO agentsProjectDTO) {
+
+        Integer agentid = agentsProjectDTO.getAgentid();
+        Integer projectid = agentsProjectDTO.getProjectid();
+        if (agentid == null || projectid == null) {
+            return null;
+        }
+        Agentconfig agentconfig = this.agentconfigService.getAgentById(agentid);
+        if (agentconfig == null) {
+            return null;
+        }
+        // todo how to check external Project entity existence?
+
+        Agentsxproject agentsxproject = new Agentsxproject();
+
+        agentsxproject.setAgentConfig(agentconfig);
+        agentsxproject.setAgentid(agentid);
+        // todo maybe assign external Project entity?
+        agentsxproject.setProjectid(projectid);
+        agentsxproject.setKey(agentsProjectDTO.getKey());
+        agentsxproject.setToken(agentsProjectDTO.getToken());
+        agentsxproject.setIsactive(agentsProjectDTO.getIsactive());
+
+        return agentsxproject;
     }
 }

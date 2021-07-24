@@ -51,17 +51,14 @@ public class ExternalprojectxteamService {
     public Externalprojectxteam putExternalProjectTeam(Integer configId, Externalprojectxteam externalprojectxteam) throws Exception {
         return this.externalprojectxteamRepository.findById(configId).map(externalProjectTeam -> {
             externalProjectTeam.setAgentConfig(externalprojectxteam.getAgentConfig());
+            externalProjectTeam.setAgentid(externalprojectxteam.getAgentid());
             // todo maybe pass external entity?
             externalProjectTeam.setTeamid(externalprojectxteam.getTeamid());
             externalProjectTeam.setRepoid(externalprojectxteam.getRepoid());
             externalProjectTeam.setIsactive(externalprojectxteam.getIsactive());
 
-            this.externalprojectxteamRepository.save(externalProjectTeam);
-            return externalProjectTeam;
-        }).orElseGet(() -> {
-            this.externalprojectxteamRepository.save(externalprojectxteam);
-            return externalprojectxteam;
-        });
+            return this.externalprojectxteamRepository.save(externalProjectTeam);
+        }).orElseGet(() -> this.externalprojectxteamRepository.save(externalprojectxteam));
     }
 
     public List<Externalprojectxteam> deleteExternalProjectTeamByAgentId(Integer agentId) {

@@ -87,6 +87,10 @@ public class Agentconfig {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "agentid")
+    private Set<Agentsxproject> agentsProject = new HashSet<Agentsxproject>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agentid")
     private Set<Externalprojectxteam> externalProjectTeam = new HashSet<Externalprojectxteam>();
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -226,6 +230,14 @@ public class Agentconfig {
 
     public Set<Externalprojectxteam> getExternalProjectTeam() {
         return externalProjectTeam;
+    }
+
+    public Set<Agentsxproject> getAgentsProject() {
+        return agentsProject;
+    }
+
+    public void setAgentsProject(Set<Agentsxproject> agentsProject) {
+        this.agentsProject = agentsProject;
     }
 
     public void setExternalProjectTeam(Set<Externalprojectxteam> externalProject) {

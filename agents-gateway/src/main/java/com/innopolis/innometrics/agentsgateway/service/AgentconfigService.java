@@ -24,6 +24,10 @@ public class AgentconfigService {
     @Autowired
     AgentconfigmethodsService agentconfigmethodsService;
     @Autowired
+    ReposxprojectService reposxprojectService;
+    @Autowired
+    AgentsxprojectService agentsxprojectService;
+    @Autowired
     ExternalprojectxteamService externalprojectxteamService;
     @Autowired
     AgentsxcompanyService agentsxcompanyService;
@@ -117,6 +121,10 @@ public class AgentconfigService {
         this.agentconfigmethodsService.deleteMethodsByAgentId(agentId);
         // Delete data which belong to this agent
         this.agentdataconfigService.deleteDataByAgentId(agentId);
+        // Delete ReposProject entries which belong to this agent
+        this.reposxprojectService.deleteReposProjectByAgentId(agentId);
+        // Delete AgentsProject entries which belong to this agent
+        this.agentsxprojectService.deleteAgentsProjectByAgentId(agentId);
         // Delete ExternalProjectTeam entries which belong to this agent
         this.externalprojectxteamService.deleteExternalProjectTeamByAgentId(agentId);
         // Delete AgentsCompany entries which belong to this agent
