@@ -112,7 +112,27 @@ public class CompanyService {
     @HystrixCommand(commandKey = "getActiveCompanies", fallbackMethod = "getActiveCompaniesFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public CompanyListRequest getActiveCompanies(String token) {
+    public CompanyListRequest getAllActiveCompanies(String token) {
+        String uri = baseURL + "/active";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", token);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
+
+        ResponseEntity<CompanyListRequest> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CompanyListRequest.class);
+
+        HttpStatus status = response.getStatusCode();
+
+        return response.getBody();
+    }
+
+    @HystrixCommand(commandKey = "getAllCompanies", fallbackMethod = "getAllCompaniesFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public CompanyListRequest getAllCompanies(String token) {
         String uri = baseURL + "/all";
 
         HttpHeaders headers = new HttpHeaders();

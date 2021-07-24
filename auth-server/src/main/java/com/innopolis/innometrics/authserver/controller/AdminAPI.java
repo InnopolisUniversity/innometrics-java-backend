@@ -67,9 +67,15 @@ public class AdminAPI {
 
     }
 
-    @GetMapping("/Project")
+    @GetMapping("/Project/active")
     public ResponseEntity<ProjectListRequest> getActiveProjects() {
-        ProjectListRequest response = projectService.getProjectList();
+        ProjectListRequest response = projectService.getActiveProjectList();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Project/all")
+    public ResponseEntity<ProjectListRequest> getAllProjects() {
+        ProjectListRequest response = projectService.getAllProjectList();
         return ResponseEntity.ok(response);
     }
 
@@ -95,9 +101,16 @@ public class AdminAPI {
         if (id == null)
             throw new ValidationException("Not enough data provided");
 
-        projectService.delete(id);
-
-        return ResponseEntity.ok().build();
+        try {
+            projectService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (Exception e) {
+            throw new ValidationException(
+                    "Entries from 'repos_x_project' and 'agents_x_project' tables with such projectid must be deleted firstly"
+            );
+        }
     }
 
     @GetMapping("/Users")
@@ -391,7 +404,7 @@ public class AdminAPI {
         );
     }
 
-    @GetMapping("/Company/all")
+    @GetMapping("/Company/active")
     public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
         //change later to required = true and delete this line
         String UserName = "API";
@@ -400,6 +413,18 @@ public class AdminAPI {
 
         return ResponseEntity.ok(
                 companyService.findAllActiveCompanies()
+        );
+    }
+
+    @GetMapping("/Company/all")
+    public ResponseEntity<CompanyListRequest> findAllCompanies(@RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        return ResponseEntity.ok(
+                companyService.findAllCompanies()
         );
     }
 

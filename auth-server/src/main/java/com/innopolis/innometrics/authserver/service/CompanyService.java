@@ -86,6 +86,21 @@ public class CompanyService {
 
     }
 
+    public CompanyListRequest findAllCompanies(){
+        List<Company> activeCompanies = companyRepository.findAll();
+
+        CompanyListRequest companyListRequest = new CompanyListRequest();
+        for (Company activeCompany : activeCompanies) {
+            CompanyRequest detail = new CompanyRequest();
+
+            BeanUtils.copyProperties(activeCompany,detail);
+            companyListRequest.addCompanyRequest(detail);
+        }
+
+        return companyListRequest;
+
+    }
+
     private String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         Set emptyNames = new HashSet();

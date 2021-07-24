@@ -121,7 +121,31 @@ public class AdminService {
             fallbackMethod = "getActiveProjectsFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectListRequest getActiveProjects() {
-        String uri = baseURL + "/Project";
+        String uri = baseURL + "/Project/active";
+
+        HttpHeaders headers = new HttpHeaders();
+        //headers.set("Token", token);
+
+
+        //HttpEntity<ProjectListRequest> entity = new HttpEntity<>(request, headers);
+        try {
+            ResponseEntity<ProjectListRequest> response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectListRequest.class);
+
+            HttpStatus status = response.getStatusCode();
+
+            return response.getBody();
+        } catch (Exception e) {
+            LOG.warn(e);
+            return null;
+        }
+
+    }
+
+    @HystrixCommand(commandKey = "getAllProjects",
+            fallbackMethod = "getAllProjectsFallback",
+            commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
+    public ProjectListRequest getAllProjects() {
+        String uri = baseURL + "/Project/all";
 
         HttpHeaders headers = new HttpHeaders();
         //headers.set("Token", token);

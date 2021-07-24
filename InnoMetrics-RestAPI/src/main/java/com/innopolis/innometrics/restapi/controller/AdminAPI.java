@@ -334,6 +334,18 @@ public class AdminAPI {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/Project/active")
+    public ResponseEntity<ProjectListRequest> getActiveProjects() {
+        ProjectListRequest response = adminService.getActiveProjects();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Project/all")
+    public ResponseEntity<ProjectListRequest> getAllProjects() {
+        ProjectListRequest response = adminService.getAllProjects();
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/Project")
     public ResponseEntity<ProjectRequest> deleteProject(@RequestParam Integer id, @RequestHeader(required = false) String Token) {
 
@@ -405,13 +417,6 @@ public class AdminAPI {
         MeasurementTypeResponse response = new MeasurementTypeResponse(myType);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-
-    @GetMapping("/Project")
-    public ResponseEntity<ProjectListRequest> getActiveProjects() {
-        ProjectListRequest response = adminService.getActiveProjects();
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/Users")
@@ -552,10 +557,19 @@ public class AdminAPI {
     }
 
     @GetMapping("/Company/all")
+    public ResponseEntity<CompanyListRequest> findAllCompanies(@RequestHeader(required = false) String Token) {
+
+        return new ResponseEntity<>(
+                companyService.getAllCompanies(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Company/active")
     public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
 
         return new ResponseEntity<>(
-                companyService.getActiveCompanies(Token),
+                companyService.getAllActiveCompanies(Token),
                 HttpStatus.OK
         );
     }

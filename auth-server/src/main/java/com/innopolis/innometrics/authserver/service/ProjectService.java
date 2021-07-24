@@ -62,8 +62,19 @@ public class ProjectService {
         return detail;
     }
 
-    public ProjectListRequest getProjectList() {
+    public ProjectListRequest getActiveProjectList() {
         List<Project> result = Repository.findAllActive();
+        ProjectListRequest response = new ProjectListRequest();
+        for (Project p : result) {
+            ProjectRequest detail = new ProjectRequest();
+            BeanUtils.copyProperties(p,detail);
+            response.getProjectList().add(detail);
+        }
+        return response;
+    }
+
+    public ProjectListRequest getAllProjectList() {
+        List<Project> result = Repository.findAll();
         ProjectListRequest response = new ProjectListRequest();
         for (Project p : result) {
             ProjectRequest detail = new ProjectRequest();
