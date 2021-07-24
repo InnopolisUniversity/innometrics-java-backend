@@ -86,8 +86,19 @@ public class TeammemberService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public TeammembersListRequest getActiveTeammembers(String token) {
-        String uri = baseURL + "/all";
+        String uri = baseURL + "/active";
+        return getTeammembers(token, uri);
+    }
 
+    @HystrixCommand(commandKey = "getAllTeammembers", fallbackMethod = "getAllTeammembersFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public TeammembersListRequest getAllTeammembers(String token) {
+        String uri = baseURL + "/all";
+        return getTeammembers(token, uri);
+    }
+
+    private TeammembersListRequest getTeammembers(String token, String uri) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 

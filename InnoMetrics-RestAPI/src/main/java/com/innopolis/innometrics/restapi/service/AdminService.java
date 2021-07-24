@@ -21,18 +21,30 @@ public class AdminService {
     private String baseURL = "http://INNOMETRICS-AUTH-SERVER/AdminAPI";
 
 
+    @HystrixCommand(commandKey = "createProject",
+            fallbackMethod = "createProjectFallback",
+            commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
+    public ProjectRequest createProject(ProjectRequest project, String token) {
+        String uri = baseURL + "/Project";
+        return uploadProject(project, token, uri, HttpMethod.POST);
+    }
+
     @HystrixCommand(commandKey = "updateProject",
             fallbackMethod = "updateProjectFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectRequest updateProject(ProjectRequest project, String token) {
-        String uri = baseURL + "/Project";
+        String uri = baseURL + "/Project/" + project.getProjectID();
+        return uploadProject(project, token, uri, HttpMethod.PUT);
+    }
+
+    private ProjectRequest uploadProject(ProjectRequest project, String token, String uri, HttpMethod method) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
         HttpEntity<ProjectRequest> entity = new HttpEntity<>(project, headers);
         try {
-            ResponseEntity<ProjectRequest> response = restTemplate.exchange(uri, HttpMethod.POST, entity, ProjectRequest.class);
+            ResponseEntity<ProjectRequest> response = restTemplate.exchange(uri, method, entity, ProjectRequest.class);
 
             HttpStatus status = response.getStatusCode();
 
@@ -92,15 +104,13 @@ public class AdminService {
         //headers.set("Token", token);
 
 
-
-
         //HttpEntity<UserListRequest> entity = new HttpEntity<>(null, headers);
         try {
             ResponseEntity<ProjectRequest> response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectRequest.class);
             HttpStatus status = response.getStatusCode();
 
             //if (status==HttpStatus.NOT_FOUND)
-               // return
+            // return
             return response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
@@ -116,29 +126,12 @@ public class AdminService {
     }
 
 
-
     @HystrixCommand(commandKey = "getActiveProjects",
             fallbackMethod = "getActiveProjectsFallback",
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectListRequest getActiveProjects() {
         String uri = baseURL + "/Project/active";
-
-        HttpHeaders headers = new HttpHeaders();
-        //headers.set("Token", token);
-
-
-        //HttpEntity<ProjectListRequest> entity = new HttpEntity<>(request, headers);
-        try {
-            ResponseEntity<ProjectListRequest> response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectListRequest.class);
-
-            HttpStatus status = response.getStatusCode();
-
-            return response.getBody();
-        } catch (Exception e) {
-            LOG.warn(e);
-            return null;
-        }
-
+        return getProjects(uri);
     }
 
     @HystrixCommand(commandKey = "getAllProjects",
@@ -146,23 +139,21 @@ public class AdminService {
             commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")})
     public ProjectListRequest getAllProjects() {
         String uri = baseURL + "/Project/all";
+        return getProjects(uri);
+    }
 
+    private ProjectListRequest getProjects(String uri) {
         HttpHeaders headers = new HttpHeaders();
         //headers.set("Token", token);
-
-
         //HttpEntity<ProjectListRequest> entity = new HttpEntity<>(request, headers);
         try {
             ResponseEntity<ProjectListRequest> response = restTemplate.exchange(uri, HttpMethod.GET, null, ProjectListRequest.class);
-
             HttpStatus status = response.getStatusCode();
-
             return response.getBody();
         } catch (Exception e) {
             LOG.warn(e);
             return null;
         }
-
     }
 
     public ProjectListRequest getActiveProjectsFallback(Throwable exception) {

@@ -322,7 +322,17 @@ public class AdminAPI {
 
     //Add project
     @PostMapping("/Project")
-    public ResponseEntity<ProjectRequest> UpdateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+    public ResponseEntity<ProjectRequest> createProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+        project.setProjectID(null);
+        ProjectRequest response = adminService.createProject(project, Token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/Project/{id}")
+    public ResponseEntity<ProjectRequest> updateProject(@PathVariable Integer id,
+                                                        @RequestBody ProjectRequest project,
+                                                        @RequestHeader(required = false) String Token) {
+        project.setProjectID(id);
         ProjectRequest response = adminService.updateProject(project, Token);
         return ResponseEntity.ok(response);
     }
@@ -609,6 +619,14 @@ public class AdminAPI {
     }
 
     @GetMapping("/Team/all")
+    public ResponseEntity<TeamListRequest> findAllTeams(@RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teamService.getAllTeams(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Team/active")
     public ResponseEntity<TeamListRequest> findAllActiveTeams(@RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teamService.getActiveTeams(Token),
@@ -647,10 +665,18 @@ public class AdminAPI {
         return teammemberService.deleteTeammember(id, Token);
     }
 
-    @GetMapping("/Teammember/all")
+    @GetMapping("/Teammember/active")
     public ResponseEntity<TeammembersListRequest> findAllActiveTeammembers(@RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teammemberService.getActiveTeammembers(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Teammember/all")
+    public ResponseEntity<TeammembersListRequest> findAllTeammembers(@RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teammemberService.getAllTeammembers(Token),
                 HttpStatus.OK
         );
     }

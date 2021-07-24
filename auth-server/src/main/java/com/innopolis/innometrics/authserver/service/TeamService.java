@@ -152,6 +152,13 @@ public class TeamService {
 
     }
 
+    public TeamListRequest findAllTeams(){
+        List<Team> allTeams = teamRepository.findAll();
+        assertNotNull(allTeams,
+                "No teams found " );
+        return convertFromList(allTeams);
+    }
+
     private TeamListRequest convertFromList(List<Team> teamList){
         TeamListRequest teamListRequest = new TeamListRequest();
         for (Team activeTeam : teamList) {

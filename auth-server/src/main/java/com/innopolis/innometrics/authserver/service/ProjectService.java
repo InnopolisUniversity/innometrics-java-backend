@@ -33,17 +33,17 @@ public class ProjectService {
     public ProjectRequest create(ProjectRequest detail) {
         Project entity = new Project();
         detail.setProjectID(null);
-        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
+        BeanUtils.copyProperties(detail, entity, getNullPropertyNames(detail));
         entity = Repository.saveAndFlush(entity);
-        BeanUtils.copyProperties(entity,detail);
+        BeanUtils.copyProperties(entity, detail);
         return detail;
 
     }
 
-    public ProjectRequest getById(Integer projectId){
+    public ProjectRequest getById(Integer projectId) {
         Project project = Repository.findByProjectID(projectId);
         ProjectRequest detail = new ProjectRequest();
-        BeanUtils.copyProperties(project,detail);
+        BeanUtils.copyProperties(project, detail);
         return detail;
     }
 
@@ -55,36 +55,35 @@ public class ProjectService {
                 "No project found by this id " + detail.getProjectID());
 
         detail.setProjectID(null);
-        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
+        BeanUtils.copyProperties(detail, entity, getNullPropertyNames(detail));
         entity = Repository.saveAndFlush(entity);
-        BeanUtils.copyProperties(entity,detail);
+        BeanUtils.copyProperties(entity, detail);
 
         return detail;
     }
 
     public ProjectListRequest getActiveProjectList() {
         List<Project> result = Repository.findAllActive();
-        ProjectListRequest response = new ProjectListRequest();
-        for (Project p : result) {
-            ProjectRequest detail = new ProjectRequest();
-            BeanUtils.copyProperties(p,detail);
-            response.getProjectList().add(detail);
-        }
-        return response;
+        return convertFromList(result);
     }
 
     public ProjectListRequest getAllProjectList() {
         List<Project> result = Repository.findAll();
+        return convertFromList(result);
+    }
+
+    private ProjectListRequest convertFromList(List<Project> projectList) {
         ProjectListRequest response = new ProjectListRequest();
-        for (Project p : result) {
+        for (Project p : projectList) {
             ProjectRequest detail = new ProjectRequest();
-            BeanUtils.copyProperties(p,detail);
+            BeanUtils.copyProperties(p, detail);
             response.getProjectList().add(detail);
         }
         return response;
     }
 
-    public void delete(Integer projectId){
+
+    public void delete(Integer projectId) {
         Project entity = Repository.findById(projectId).orElse(null);
         assertNotNull(entity,
                 "No profile found by id " + projectId);
@@ -97,7 +96,7 @@ public class ProjectService {
         final BeanWrapper src = new BeanWrapperImpl(source);
         Set emptyNames = new HashSet();
 
-        for(java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
+        for (java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
 
             if (src.getPropertyValue(descriptor.getName()) == null) {
                 emptyNames.add(descriptor.getName());

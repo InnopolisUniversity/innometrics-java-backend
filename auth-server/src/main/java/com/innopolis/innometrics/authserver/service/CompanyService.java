@@ -22,27 +22,27 @@ public class CompanyService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    public boolean existsById(Integer id){
+    public boolean existsById(Integer id) {
         return companyRepository.existsByCompanyid(id);
     }
 
-    public CompanyRequest create(CompanyRequest detail){
+    public CompanyRequest create(CompanyRequest detail) {
         Company entity = new Company();
-        BeanUtils.copyProperties(detail,entity);
+        BeanUtils.copyProperties(detail, entity);
         entity = companyRepository.saveAndFlush(entity);
-        BeanUtils.copyProperties(entity,detail);
+        BeanUtils.copyProperties(entity, detail);
 
         return detail;
     }
 
-    public CompanyRequest update(CompanyRequest detail){
+    public CompanyRequest update(CompanyRequest detail) {
         Company entity = companyRepository.findByCompanyid(detail.getCompanyid());
         assertNotNull(entity,
                 "No company found by this id " + detail.getCompanyid());
         detail.setCompanyid(null);
-        BeanUtils.copyProperties(detail,entity,getNullPropertyNames(detail));
+        BeanUtils.copyProperties(detail, entity, getNullPropertyNames(detail));
         entity = companyRepository.saveAndFlush(entity);
-        BeanUtils.copyProperties(entity,detail);
+        BeanUtils.copyProperties(entity, detail);
 
         return detail;
     }
@@ -57,55 +57,47 @@ public class CompanyService {
         companyRepository.delete(entity);
     }
 
-    public CompanyRequest findByCompanyId(Integer id){
+    public CompanyRequest findByCompanyId(Integer id) {
         Company entity = companyRepository.findByCompanyid(id);
 
         assertNotNull(entity,
-                "No company found by this id " + id );
+                "No company found by this id " + id);
 
         CompanyRequest detail = new CompanyRequest();
 
-        BeanUtils.copyProperties(entity,detail);
+        BeanUtils.copyProperties(entity, detail);
 
         return detail;
 
     }
 
-    public CompanyListRequest findAllActiveCompanies(){
+    public CompanyListRequest findAllActiveCompanies() {
         List<Company> activeCompanies = companyRepository.findAllActive();
-
-        CompanyListRequest companyListRequest = new CompanyListRequest();
-        for (Company activeCompany : activeCompanies) {
-            CompanyRequest detail = new CompanyRequest();
-
-            BeanUtils.copyProperties(activeCompany,detail);
-            companyListRequest.addCompanyRequest(detail);
-        }
-
-        return companyListRequest;
-
+        return convertFromList(activeCompanies);
     }
 
-    public CompanyListRequest findAllCompanies(){
-        List<Company> activeCompanies = companyRepository.findAll();
+    public CompanyListRequest findAllCompanies() {
+        List<Company> allCompanies = companyRepository.findAll();
+        return convertFromList(allCompanies);
+    }
 
+    private CompanyListRequest convertFromList(List<Company> companyList) {
         CompanyListRequest companyListRequest = new CompanyListRequest();
-        for (Company activeCompany : activeCompanies) {
+        for (Company activeCompany : companyList) {
             CompanyRequest detail = new CompanyRequest();
 
-            BeanUtils.copyProperties(activeCompany,detail);
+            BeanUtils.copyProperties(activeCompany, detail);
             companyListRequest.addCompanyRequest(detail);
         }
 
         return companyListRequest;
-
     }
 
     private String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         Set emptyNames = new HashSet();
 
-        for(java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
+        for (java.beans.PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
 
             if (src.getPropertyValue(descriptor.getName()) == null) {
                 emptyNames.add(descriptor.getName());

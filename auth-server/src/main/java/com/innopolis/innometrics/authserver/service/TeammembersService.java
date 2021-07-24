@@ -76,6 +76,14 @@ public class TeammembersService {
 
     }
 
+    public TeammembersListRequest findAllTeammembers(){
+        List<Teammembers> allTeams = teammembersRepository.findAll();
+        assertNotNull(allTeams,
+                "No team members found " );
+        return convertFromList(allTeams);
+
+    }
+
     public TeammembersListRequest findByTeammemberProperties(Integer memberId, Integer teamId, String email){
         TeammembersListRequest teammembersListRequest = new TeammembersListRequest();
         if (memberId != null){

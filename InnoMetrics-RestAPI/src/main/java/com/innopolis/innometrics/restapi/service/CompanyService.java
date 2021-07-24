@@ -114,19 +114,7 @@ public class CompanyService {
     })
     public CompanyListRequest getAllActiveCompanies(String token) {
         String uri = baseURL + "/active";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Token", token);
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
-
-        ResponseEntity<CompanyListRequest> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CompanyListRequest.class);
-
-        HttpStatus status = response.getStatusCode();
-
-        return response.getBody();
+        return getCompanies(token, uri);
     }
 
     @HystrixCommand(commandKey = "getAllCompanies", fallbackMethod = "getAllCompaniesFallback", commandProperties = {
@@ -134,7 +122,10 @@ public class CompanyService {
     })
     public CompanyListRequest getAllCompanies(String token) {
         String uri = baseURL + "/all";
+        return getCompanies(token, uri);
+    }
 
+    private CompanyListRequest getCompanies(String token, String uri) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 

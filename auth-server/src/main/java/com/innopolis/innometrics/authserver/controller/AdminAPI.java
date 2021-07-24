@@ -44,7 +44,8 @@ public class AdminAPI {
 
 
     @PostMapping("/Project")
-    public ResponseEntity<ProjectRequest> updateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+    public ResponseEntity<ProjectRequest> createProject(@RequestBody ProjectRequest project,
+                                                        @RequestHeader(required = false) String Token) {
         String UserName = "API";
 
         if (project == null)
@@ -56,6 +57,23 @@ public class AdminAPI {
         if (Token != null && Token != "")
             UserName = jwtToken.getUsernameFromToken(Token);
 
+        ProjectRequest response = projectService.create(project);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/Project/{id}")
+    public ResponseEntity<ProjectRequest> updateProject(@PathVariable Integer id,
+                                                        @RequestBody ProjectRequest project,
+                                                        @RequestHeader(required = false) String Token) {
+        String UserName = "API";
+
+        if (project == null)
+            throw new ValidationException("Not enough data provided");
+
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        project.setProjectID(id);
         ProjectRequest response;
         if (!projectService.existsByProjectID(project.getProjectID())) {
             response = projectService.create(project);
@@ -493,7 +511,7 @@ public class AdminAPI {
         }
     }
 
-    @GetMapping("/Team/all")
+    @GetMapping("/Team/active")
     public ResponseEntity<TeamListRequest> findAllActiveTeams(@RequestHeader(required = false) String Token) {
         //change later to required = true and delete this line
         String UserName = "API";
@@ -502,6 +520,18 @@ public class AdminAPI {
 
         return ResponseEntity.ok(
                 teamService.findAllActiveTeams()
+        );
+    }
+
+    @GetMapping("/Team/all")
+    public ResponseEntity<TeamListRequest> findAllTeams(@RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        return ResponseEntity.ok(
+                teamService.findAllTeams()
         );
     }
 
@@ -590,7 +620,7 @@ public class AdminAPI {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/Teammember/all")
+    @GetMapping("/Teammember/active")
     public ResponseEntity<TeammembersListRequest> findAllActiveTeammembers(@RequestHeader(required = false) String Token) {
         //change later to required = true and delete this line
         String UserName = "API";
@@ -599,6 +629,18 @@ public class AdminAPI {
 
         return ResponseEntity.ok(
                 teammembersService.findAllActiveTeammembers()
+        );
+    }
+
+    @GetMapping("/Teammember/all")
+    public ResponseEntity<TeammembersListRequest> findAllTeammembers(@RequestHeader(required = false) String Token) {
+        //change later to required = true and delete this line
+        String UserName = "API";
+        if (Token != null && Token != "")
+            UserName = jwtToken.getUsernameFromToken(Token);
+
+        return ResponseEntity.ok(
+                teammembersService.findAllTeammembers()
         );
     }
 
