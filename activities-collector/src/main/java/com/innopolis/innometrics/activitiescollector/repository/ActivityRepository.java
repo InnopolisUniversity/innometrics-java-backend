@@ -33,8 +33,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer>, Pa
     @Query( value =
             "select a.email, \n" +
             "       executable_name, \n" +
-            "   CONCAT(trunc(EXTRACT(EPOCH FROM ( max(used_time) ))/60/60),':',\n" +
-            "       TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ( max(used_time) ))), 'MI:SS')) time_used,\n" +
+            "   CONCAT(trunc(EXTRACT(EPOCH FROM ( sum(used_time) ))/60/60),':',\n" +
+            "       TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ( sum(used_time) ))), 'MI:SS')) time_used,\n" +
             "   cast(to_char(date_trunc('day', captureddate), 'DD/MM/YYYY') as varchar) activity_day\n" +
             "  from innometrics.cumlativerepactivity a, innometricsauth.project_users pu\n" +
             " where pu.email = COALESCE(cast(:email as text), a.email)\n" +
@@ -50,8 +50,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer>, Pa
 
     @Query( value =
             "select a.email, \n" +
-            "       CONCAT(trunc(EXTRACT(EPOCH FROM ( max(used_time) ))/60/60),':',\n" +
-            "       TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ( max(used_time) ))), 'MI:SS')) time_used,\n" +
+            "       CONCAT(trunc(EXTRACT(EPOCH FROM ( sum(used_time) ))/60/60),':',\n" +
+            "       TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ( sum(used_time) ))), 'MI:SS')) time_used,\n" +
             "       cast(to_char(date_trunc('day', captureddate), 'DD/MM/YYYY') as varchar) activity_day\n" +
             "  from innometrics.cumlativerepactivity a, innometricsauth.project_users pu\n" +
             " where pu.email = COALESCE(cast(:email as text), a.email)\n" +

@@ -1,0 +1,180 @@
+databaseChangeLog:
+  - changeSet:
+      id: "multi agent handler"
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agent_webhooks
+            remarks: "Table to store the webhook header"
+            columns:
+              - column:
+                  name: webookid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: webhook_pk
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agent_webhooks
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: webhooktag
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: webhook_mapping
+            remarks: "Table to store the configuration for the webhook fields"
+            columns:
+              - column:
+                  name: configid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: webhook_mapping_pk
+              - column:
+                  name: webookid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agent_webhooks
+                    references: innometricsagents.agent_webhooks(webookid)
+                    nullable: false
+              - column:
+                  name: eventfieldid
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mappingrule
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: defaultvalue
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: datatype
+                  type: Varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: repos_events
+            remarks: "table to store multiple agents events"
+            columns:
+              - column:
+                  name: eventid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: repos_events_pk
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agentconfig_repos_events
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: repoid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agentconfig_repo_id
+                    references: innometricsagents.repos_x_project(configid)
+                    nullable: false
+              - column:
+                  name: eventtype
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: eventdate
+                  type: Date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: eventauthor
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: metadata
+                  type: json
+                  constraints:
+                    nullable: true
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
