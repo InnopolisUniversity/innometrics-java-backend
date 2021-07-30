@@ -217,4 +217,10 @@ public class AdminService {
         LOG.warn(exception);
         return null;
     }
+
+    public ProjectListRequest getAllProjectsFallback(Throwable exception) {
+        LOG.warn("getAllProjectsFallback method used");
+        LOG.warn(exception);
+        return new ProjectListRequest();
+    }
 }
