@@ -4,14 +4,31 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.innopolis.innometrics.agentsgateway.DTO.ConnectProjectRequest;
+import com.innopolis.innometrics.agentsgateway.DTO.MetricsResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.ProjectDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.ProjectListResponse;
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfigdetails;
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
+import com.innopolis.innometrics.agentsgateway.entity.Agentsxproject;
 import com.innopolis.innometrics.agentsgateway.entity.sonarqube.*;
+import com.innopolis.innometrics.agentsgateway.repository.AgentconfigRepository;
+import com.innopolis.innometrics.agentsgateway.repository.AgentconfigmethodsRepository;
 import com.innopolis.innometrics.agentsgateway.repository.sonarqube.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +37,12 @@ import static org.hibernate.validator.internal.util.Contracts.*;
 
 @Service
 public class SonarQubeService {
+    private static Logger LOG = LogManager.getLogger();
+
+
+    final private static String MetricsHistory = "MetricsHistory";
+    final private static String SonarAgentId = "Sonarqube";
+
     @Autowired
     ProjectRepository projectRepository;
 
@@ -46,77 +69,68 @@ public class SonarQubeService {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
+    AgentconfigmethodsRepository agentconfigmethodsRepository;
 
-//    Map<Class<? extends Metric>, JpaRepository<? extends Metric,Long>> metircToRepo = new HashMap<>();
-//
-//    @PostConstruct
-//    public void postLoad() {
-//        metircToRepo.put(Issues.class,issuesRepository);
-//        metircToRepo.put(Coverage.class,coverageRepository);
-//        metircToRepo.put(Maintainability.class,maintainabilityRepository);
-//        metircToRepo.put(Reliability.class,reliabilityRepository);
-//        metircToRepo.put(Security.class,securityRepository);
-//        metircToRepo.put(Sizeandcomplexity.class,sizeAndComplexityRepository);
-//    }
+    @Autowired
+    AgentconfigRepository agentconfigRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
 
-    // TODO: 20.11.2020 add filter by timeshtamp
-    public Coverage getLastCoverage(Long projectAnalysisid) {
-        ProjectAnalysis projectAnalysis = projectAnalysisRepository.findById(projectAnalysisid).orElse(null);
-        assertNotNull(projectAnalysis, "no project analysis found");
+    public ProjectListResponse getProjectList() {
+        List<Project> Listp = projectRepository.findAll();
+        ProjectListResponse response =  new ProjectListResponse();
+        for (Project p: Listp) {
+            ProjectDTO tmp = new ProjectDTO();
 
-        List<Coverage> coverages = coverageRepository.findAllByAnalysisid(projectAnalysisid);
+            tmp.setProjectId(p.getId().toString());
+            tmp.setProjectName(p.getProjectname());
+            tmp.setReference(p.getProjectid());
+            response.getProjectList().add(tmp);
+        }
 
-
-        return coverages.get(0);
+        return response;
 
     }
 
-    public ArrayNode getMetrics(List<Long> projectIds) {
-        List<Project> projects;
 
-        if (projectIds != null) {
-            projects = projectRepository.findByIdIn(projectIds);
-        } else {
-            projects = projectRepository.findAll();
-        }
+    public MetricsResponse getMetrics() {
 
-        ArrayNode result = objectMapper.createArrayNode();
+        MetricsResponse response = new MetricsResponse();
 
-        for (Project project : projects) {
-            Map<String,List<? extends Metric>> metrics = new HashMap<>();
+        response.getMetricList().put("security_hotspots" , "Security");
+        response.getMetricList().put("security_rating" , "Security");
+        response.getMetricList().put("new_security_hotspots" , "Security");
+        response.getMetricList().put("new_security_hotspots_reviewed" , "Security");
+        response.getMetricList().put("new_vulnerabilities" , "Security");
+        response.getMetricList().put("classes" , "SizeAndComplexity");
+        response.getMetricList().put("lines" , "SizeAndComplexity");
+        response.getMetricList().put("ncloc" , "SizeAndComplexity");
+        response.getMetricList().put("complexity_in_classes" , "SizeAndComplexity");
+        response.getMetricList().put("branch_coverage" , "Coverage");
+        response.getMetricList().put("coverage" , "Coverage");
+        response.getMetricList().put("line_coverage" , "Coverage");
+        response.getMetricList().put("bugs" , "Reliability");
+        response.getMetricList().put("alert_status" , "Reliability");
+        response.getMetricList().put("reliability_rating" , "Reliability");
+        response.getMetricList().put("new_bugs" , "Reliability");
+        response.getMetricList().put("blocker_violations" , "Issues");
+        response.getMetricList().put("violations" , "Issues");
+        response.getMetricList().put("major_violations" , "Issues");
+        response.getMetricList().put("minor_violations" , "Issues");
+        response.getMetricList().put("reopened_issues" , "Issues");
+        response.getMetricList().put("new_blocker_violations" , "Issues");
+        response.getMetricList().put("new_critical_violations" , "Issues");
+        response.getMetricList().put("new_major_violations" , "Issues");
+        response.getMetricList().put("new_minor_violations" , "Issues");
+        response.getMetricList().put("new_technical_debt" , "Maintainability");
+        response.getMetricList().put("code_smells" , "Maintainability");
+        response.getMetricList().put("sqale_rating" , "Maintainability");
+        response.getMetricList().put("new_code_smells" , "Maintainability");
 
-            ProjectAnalysis analysis = projectAnalysisRepository.findByProjectid(project.getId());
-
-
-
-            List<Coverage> coverages = coverageRepository.findAllByAnalysisid(analysis.getId());
-            metrics.put("coverages", coverages);
-
-            List<Issues> issues = issuesRepository.findAllByAnalysisid(analysis.getId());
-            metrics.put("issues", issues);
-
-            List<Maintainability> maintainabilities = maintainabilityRepository.findAllByAnalysisid(analysis.getId());
-            metrics.put("maintainabilities", maintainabilities);
-
-            List<Reliability> reliabilities = reliabilityRepository.findAllByAnalysisid(analysis.getId());
-            metrics.put("reliabilities", reliabilities);
-
-            List<Security> securities = securityRepository.findAllByAnalysisid(analysis.getId());
-            metrics.put("securities", securities);
-
-            List<Sizeandcomplexity> sizeandcomplexities = sizeAndComplexityRepository.findAllByAnalysisid(analysis.getId());
-            metrics.put("sizeandcomplexities", sizeandcomplexities);
-
-
-            result.add(
-                    objectMapper.createObjectNode()
-                            .put("project_id",project.getId())
-                            .putPOJO("metrics",metrics)
-            );
-        }
-
-        return result;
+        return response;
 
     }
 
@@ -166,6 +180,52 @@ public class SonarQubeService {
                 .putPOJO("history",metrics);
 
 
+
+
+    }
+
+
+
+    public Object getHistroyOfMetrics(String sonarProjectId) throws NoSuchFieldException, IllegalAccessException {
+        Agentconfig agent = agentconfigRepository.findByAgentname(SonarAgentId);
+        Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(agent.getAgentid(), MetricsHistory);
+
+        String uri = agentConfig.getEndpoint();
+
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
+
+        Class<?> agentConfigMapping = Agentsxproject.class;
+
+        Class<?> requestMapping = ConnectProjectRequest.class;
+
+        builder.queryParam("projectId", sonarProjectId);
+
+
+
+        HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
+
+        ResponseEntity<Object> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, Object.class);
+
+        HttpStatus status = response.getStatusCode();
+
+        return response.getBody();
+    }
+
+    private HttpMethod getRequestType(String requestType) {
+        switch (requestType) {
+            case "GET":
+                return HttpMethod.GET;
+            case "POST":
+                return HttpMethod.POST;
+            case "PUT":
+                return HttpMethod.PUT;
+            default:
+                return null;
+        }
 
 
     }

@@ -44,8 +44,8 @@ public class ActivityService {
         myActivity.setStarttime(activityReport.getStart_time());
         myActivity.setEnd_time(activityReport.getEnd_time());
         myActivity.setExecutable_name(activityReport.getExecutable_name());
-        myActivity.setBrowser_url(activityReport.getBrowser_url().substring(0,Math.min(activityReport.getBrowser_url().length(), 1024)));
-        myActivity.setBrowser_title(activityReport.getBrowser_title().substring(0,Math.min(activityReport.getBrowser_title().length(), 1024)));
+        myActivity.setBrowser_url(activityReport.getBrowser_url().substring(0, Math.min(activityReport.getBrowser_url().length(), 1024)));
+        myActivity.setBrowser_title(activityReport.getBrowser_title().substring(0, Math.min(activityReport.getBrowser_title().length(), 1024)));
         myActivity.setIp_address(activityReport.getIp_address());
         myActivity.setMac_address(activityReport.getMac_address());
         myActivity.setPid(activityReport.getPid());
@@ -210,10 +210,10 @@ public class ActivityService {
             myApp.setEmail(r.getEmail());
             myApp.setExecutable_name(r.getExecutable_name());
             myApp.setCapturedDate(r.getCapturedDate().toString());
-            myApp.setDailySum(r.getDailySum().toString());
-            myApp.setMonthlySum(r.getMonthlySum().toString());
-            myApp.setYearlySum(r.getYearlySum().toString());
-            myApp.setUsed_time(r.getUsed_time().toString());
+            myApp.setDailySum(r.getDailySum() != null ? r.getDailySum().toString() : "");
+            myApp.setMonthlySum(r.getDailySum() != null ? r.getMonthlySum().toString() : "");
+            myApp.setYearlySum(r.getDailySum() != null ? r.getYearlySum().toString() : "");
+            myApp.setUsed_time(r.getDailySum() != null ? r.getUsed_time().toString() : "");
 
             response.getActivityReports().add(myApp);
         }

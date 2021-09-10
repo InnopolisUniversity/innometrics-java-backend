@@ -6,6 +6,7 @@ public class ProjectDTO implements Serializable {
     private String ProjectId;
     private String ProjectName;
     private String reference;
+    private String isconnected;
 
     public ProjectDTO() {
     }
@@ -32,5 +33,13 @@ public class ProjectDTO implements Serializable {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public String getIsconnected() {
+        return isconnected;
+    }
+
+    public void setIsconnected(String isconnected) {
+        this.isconnected = isconnected;
     }
 }

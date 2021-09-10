@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ReposxprojectRepository extends JpaRepository<Reposxproject, Integer> {
     List<Reposxproject> findByProjectid(Integer projectid);
+    List<Reposxproject> findByRepoid(String repoid);
 
 }

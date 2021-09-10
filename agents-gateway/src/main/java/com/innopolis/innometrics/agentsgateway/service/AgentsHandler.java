@@ -71,13 +71,16 @@ public class AgentsHandler {
         Class<?> requestMapping = Agentsxproject.class;
 
         for (Agentconfigdetails param : agentConfig.getParams()) {
+
             String paramValue = "";
             if (param.getRequestparam() != null) {
+                LOG.info("getRequestparam -> " + param.getRequestparam());
                 Field f = requestMapping.getDeclaredField(param.getRequestparam());
                 f.setAccessible(true);
                 paramValue = f.get(agentskeys).toString();
             } else {
                 paramValue = param.getDefaultvalue();
+                LOG.info("getDefaultvalue -> " + param.getDefaultvalue());
             }
 
 
@@ -105,12 +108,18 @@ public class AgentsHandler {
             ProjectList.getProjectList().add(projectTmp);
         }
 
+        for (ProjectDTO project :ProjectList.getProjectList()) {
+            List<Reposxproject> saved = reposxprojectRepository.findByRepoid(project.getReference());
+            if(saved.size() > 0) project.setIsconnected("Y");
+            else project.setIsconnected("N");
+        }
+
         return ProjectList;
     }
 
 
     public Boolean getConnectProject(ConnectProjectRequest request) throws NoSuchFieldException, IllegalAccessException {
-
+        LOG.info("getConnectProject...");
         Agentconfigmethods agentConfig = agentconfigmethodsRepository.findByAgentidAndOperation(request.getAgentId(), ConnectRepo);
         Agentsxproject agentskeys = agentsxprojectRepository.findByAgentidAndProjectid(request.getAgentId(), request.getProjectID());
 
@@ -125,7 +134,7 @@ public class AgentsHandler {
         Class<?> agentConfigMapping = Agentsxproject.class;
 
         Class<?> requestMapping = ConnectProjectRequest.class;
-
+        LOG.info("setting paramters...");
         for (Agentconfigdetails param : agentConfig.getParams()) {
             String paramValue = "";
 
@@ -138,7 +147,7 @@ public class AgentsHandler {
                 f.setAccessible(true);
                 paramValue = f.get(agentskeys).toString();
             }
-
+            LOG.info("setting " + param.getParamname() + " -> " + paramValue);
             builder.queryParam(
                     param.getParamname(),
                     paramValue
@@ -155,25 +164,19 @@ public class AgentsHandler {
         */
 
         HttpMethod requestMethod = getRequestType(agentConfig.getRequesttype().toUpperCase());
-
+        LOG.info("creating webhook...");
         ResponseEntity<LinkedHashMap> response = restTemplate.exchange(builder.toUriString(), requestMethod, null, LinkedHashMap.class);
 
         HttpStatus status = response.getStatusCode();
-
+        LOG.info("response -> " + status);
         if (status == HttpStatus.CREATED || status == HttpStatus.OK) {
-            /*Agentconfig agent = agentconfigRepository.getOne(request.getAgentId());
-            String repoID = "";
             Reposxproject newrepo = new Reposxproject();
-            newrepo.setAgentConfig(agent);
             newrepo.setAgentid(request.getAgentId());
             newrepo.setProjectid(request.getProjectID());
-            for (ParamsConfigDTO p : request.getParams()) {
-                if (p.getParamname().equalsIgnoreCase(agent.getRepoidfield()))
-                    repoID = p.getValue();
-            }
-            newrepo.setRepoid(repoID);
-
-            reposxprojectRepository.save(newrepo);*/
+            newrepo.setRepoid(request.getRepoReference());
+            newrepo.setIsactive("Y");
+            LOG.info("Saving repo connected");
+            reposxprojectRepository.save(newrepo);
             return true;
         }
 

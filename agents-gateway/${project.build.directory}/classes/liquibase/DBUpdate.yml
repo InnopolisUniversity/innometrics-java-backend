@@ -1,0 +1,136 @@
+databaseChangeLog:
+  - changeSet:
+      id: "update db structure agents"
+      author: xvasquez
+      changes:
+        - createTable:
+            schemaName: innometricsagents
+            tableName: agents_x_company
+            remarks: "Table to store the configuration for an agent linked to on particular company"
+            columns:
+              - column:
+                  name: configid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: agentscompany_pk
+              - column:
+                  name: companyid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_company_agents
+                    references: innometricsauth.company(companyid)
+                    nullable: false
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agent_projects
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: key
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+        - createTable:
+            schemaName: innometricsagents
+            tableName: externalproject_x_team
+            remarks: Table to store teams information
+            columns:
+              - column:
+                  name: configid
+                  type: Integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: externalproject_pk
+              - column:
+                  name: teamid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_teams_auth_project
+                    references: innometricsauth.teams(teamid)
+                    nullable: false
+              - column:
+                  name: agentid
+                  type: Integer
+                  constraints:
+                    foreignKeyName: fk_agentconfig_fetching
+                    references: innometricsagents.agentconfig(agentid)
+                    nullable: false
+              - column:
+                  name: repoid
+                  type: Varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isactive
+                  type: Varchar(1)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'Y'
+              - column:
+                  name: creationdate
+                  type: Date
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: current_timestamp
+              - column:
+                  name: createdby
+                  type: Varchar(25)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: USER
+              - column:
+                  name: lastupdate
+                  type: Date
+              - column:
+                  name: updateby
+                  type: Varchar(25)
+  - changeSet:
+      id: "Remove not null constraint"
+      author: xvasquez
+      changes:
+        - dropNotNullConstraint:
+            schemaName: innometricsagents
+            tableName: agents_x_company
+            columnName: key
+  - changeSet:
+      id: "Remove not null constraint 2"
+      author: xvasquez
+      changes:
+        - dropNotNullConstraint:
+            schemaName: innometricsagents
+            tableName: agents_x_project
+            columnName: key

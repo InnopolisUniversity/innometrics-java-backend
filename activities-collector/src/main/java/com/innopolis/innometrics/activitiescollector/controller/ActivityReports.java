@@ -23,26 +23,26 @@ public class ActivityReports {
     ProcessService processService;
 
     @GetMapping("/activitiesReport")
-    public ResponseEntity<ActivitiesReportByUserResponse> getReportActivitiesByUser(@RequestParam(required = false) String projectID,
+    public ResponseEntity<ActivitiesReportByUserResponse> getReportActivitiesByUser(@RequestParam(required = false) String projectid,
                                                                                     @RequestParam(required = false) String email,
                                                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
                                                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
 
-        projectID = projectID == "" ? null : projectID;
+        projectid = projectid == "" ? null : projectid;
         email = email == "" ? null : email;
-        ActivitiesReportByUserRequest request = new ActivitiesReportByUserRequest(projectID, email, min_Date, max_Date);
+        ActivitiesReportByUserRequest request = new ActivitiesReportByUserRequest(projectid, email, min_Date, max_Date);
         ActivitiesReportByUserResponse myReport = activityService.getActivitiesReportByUser(request);
         return ResponseEntity.ok(myReport);
     }
 
     @GetMapping("/timeReport")
-    public ResponseEntity<TimeReportResponse> getTimeReport(@RequestParam(required = false) String projectID,
-                                                            @RequestParam(required = false) String email,
+    public ResponseEntity<TimeReportResponse> getTimeReport(@RequestParam(required = false, name = "projectid") String projectid,
+                                                            @RequestParam(required = false, name = "email") String email,
                                                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date min_Date,
                                                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date max_Date) {
-        projectID = projectID == "" ? null : projectID;
+        projectid = projectid == "" ? null : projectid;
         email = email == "" ? null : email;
-        TimeReportRequest request = new TimeReportRequest(projectID, email, min_Date, max_Date);
+        TimeReportRequest request = new TimeReportRequest(projectid, email, min_Date, max_Date);
         TimeReportResponse myReport = activityService.getTimeReportByUser(request);
         return ResponseEntity.ok(myReport);
     }

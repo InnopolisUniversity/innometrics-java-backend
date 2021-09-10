@@ -221,9 +221,9 @@ public class User implements Serializable {
 
 
 //
-//    @PreUpdate
-//    public void preUpdate(){
-//        this.lastupdate = new Date();
-//    }
+    @PreUpdate
+    public void preUpdate(){
+        this.lastupdate = new Date();
+    }
 
 }

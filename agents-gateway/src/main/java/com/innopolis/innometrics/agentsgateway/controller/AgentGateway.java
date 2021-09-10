@@ -2,14 +2,21 @@ package com.innopolis.innometrics.agentsgateway.controller;
 
 import com.innopolis.innometrics.agentsgateway.DTO.*;
 import com.innopolis.innometrics.agentsgateway.service.*;
+import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -120,5 +127,25 @@ public class AgentGateway {
         response.setHeader("Location", cb);
         response.setHeader("Accept", "application/json");
         response.setStatus(302);
+    }
+
+    @PostMapping("/webhook")
+    public Object webhooktest(HttpServletRequest request, @RequestParam String pathRule) throws IOException {
+        Enumeration<String> headerNames = request.getHeaderNames();
+        String headername = "";
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                headername = headerNames.nextElement();
+                System.out.println("Header - " + headername+": " + request.getHeader(headername));
+            }
+        }
+
+        Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A");
+//        return s.hasNext() ? s.next() : "";
+        String jsonString = s.hasNext() ? s.next() : "";
+//        Object dataObject = JsonPath.parse(jsonString).read("$" + pathRule);
+        Object dataObject = JsonPath.parse(jsonString).read("$..conditions[metric, value, status]");
+        return  dataObject;
+//        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

@@ -1,0 +1,6 @@
+projectKey=restapi
+serverUrl=http://188.130.155.202:7000
+serverVersion=8.2.0.32929
+dashboardUrl=http://188.130.155.202:7000/dashboard?id=restapi
+ceTaskId=AXrNJu7xS7104Lbc3O5a
+ceTaskUrl=http://188.130.155.202:7000/api/ce/task?id=AXrNJu7xS7104Lbc3O5a

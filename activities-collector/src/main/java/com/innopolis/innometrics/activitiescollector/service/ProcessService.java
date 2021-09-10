@@ -44,8 +44,8 @@ public class ProcessService {
         for (MeasurementReport m : processReport.getMeasurementReportList()) {
             ProcessMeasurement myMeasurement = new ProcessMeasurement();
             myMeasurement.setProcess(myProcess);
-            MeasurementType myType = new MeasurementType();
-            myType.setMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
+//            MeasurementType myType = new MeasurementType();
+//            myType.setMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
 //            try {
 //                myType = measurementTypeRepository.findByMeasurementtypeid(Integer.parseInt(m.getMeasurementTypeId()));
 //            } catch (Exception e) {
@@ -55,7 +55,7 @@ public class ProcessService {
 //            if (myType == null) {
 //                //throw new ValidationException("The measurement type select does not exist");
 //            }
-            myMeasurement.setMeasurementType(myType);
+            myMeasurement.setMeasurementtypeid (Integer.parseInt(m.getMeasurementTypeId()));
             myMeasurement.setValue(m.getValue());
             myMeasurement.setCaptureddate(m.getCapturedDate());
             myMeasurement.setCreationdate(CreationDate);
@@ -104,9 +104,9 @@ public class ProcessService {
 
             for (ProcessMeasurement m : p.getProceMeasurements()) {
                 MeasurementReport myMeasure = new MeasurementReport();
-                myMeasure.setMeasurementTypeId(m.getMeasurementType().getMeasurementtypeid().toString());
+//                myMeasure.setMeasurementTypeId(m.getMeasurementType().getMeasurementtypeid().toString());
                 myMeasure.setValue(m.getValue());
-                myMeasure.setAlternativeLabel(m.getMeasurementType().getLabel());
+//                myMeasure.setAlternativeLabel(m.getMeasurementType().getLabel());
                 myApp.getMeasurementReportList().add(myMeasure);
             }
             response.getProcessReports().add(myApp);
