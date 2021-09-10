@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT})
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping(value = "/V1/Admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminAPI {
 
@@ -63,7 +63,7 @@ public class AdminAPI {
     @Autowired
     CollectorVersionService collectorVersionService;
 
-	@Autowired
+    @Autowired
     TeamService teamService;
 
     @Autowired
@@ -72,7 +72,7 @@ public class AdminAPI {
     @GetMapping("/Role/Permissions/{RoleName}")
     public ResponseEntity<List<Page>> ListRolePermissions(@PathVariable String RoleName) {
 
-        if (roleService.getRole(RoleName)== null) {
+        if (roleService.getRole(RoleName) == null) {
             throw new ValidationException("No such role");
         }
 
@@ -104,7 +104,7 @@ public class AdminAPI {
             throw new ValidationException("The role already existed");
         }
 
-        if (roleRequest.getName() == null || roleRequest.getPages() == null || roleRequest.getDescription() == null ) {
+        if (roleRequest.getName() == null || roleRequest.getPages() == null || roleRequest.getDescription() == null) {
             throw new ValidationException("Not enough data provided");
         }
 
@@ -137,7 +137,7 @@ public class AdminAPI {
             throw new ValidationException("Not enough data provided");
         }
 
-        if (roleRequest.getName() == null || roleRequest.getPages() == null || roleRequest.getDescription() == null ) {
+        if (roleRequest.getName() == null || roleRequest.getPages() == null || roleRequest.getDescription() == null) {
             throw new ValidationException("Not enough data provided");
         }
 
@@ -177,13 +177,13 @@ public class AdminAPI {
 
 
     @PostMapping("/User/Role")
-    public ResponseEntity<UserResponse> SetRoleOfUser(@RequestParam String UserName, @RequestParam String RoleName , @RequestHeader(required = false) String Token) {
+    public ResponseEntity<UserResponse> SetRoleOfUser(@RequestParam String UserName, @RequestParam String RoleName, @RequestHeader(required = false) String Token) {
 
         if (!userService.existsByEmail(UserName)) {
             throw new ValidationException("Username does not existed");
         }
 
-        if(roleService.getRole(RoleName) == null){
+        if (roleService.getRole(RoleName) == null) {
             throw new ValidationException("No such role");
         }
 
@@ -192,7 +192,6 @@ public class AdminAPI {
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
 
     }
-
 
 
     @PostMapping("/User")
@@ -210,7 +209,7 @@ public class AdminAPI {
             //return new ResponseEntity<>("Username already existed", HttpStatus.FOUND);
         }
 
-        if (roleService.getRole(user.getRole())== null) {
+        if (roleService.getRole(user.getRole()) == null) {
             throw new ValidationException("No such role");
         }
 
@@ -253,11 +252,11 @@ public class AdminAPI {
 
 
     @PutMapping("/User")
-    public ResponseEntity<Boolean> updateUser(@RequestBody  UserRequest user, @RequestHeader(required = true) String Token) {
+    public ResponseEntity<Boolean> updateUser(@RequestBody UserRequest user, @RequestHeader(required = true) String Token) {
         if (user != null) {
-            User myUser  = userService.findByEmail(user.getEmail());
+            User myUser = userService.findByEmail(user.getEmail());
 
-            if(myUser != null){
+            if (myUser != null) {
                 String UserName = Token != null ? jwtTokenUtil.getUsernameFromToken(Token) : "API";
 
                 myUser.setEmail(user.getEmail());
@@ -287,11 +286,11 @@ public class AdminAPI {
 
 
     @PostMapping("/User/{UserName}")
-    public ResponseEntity<Boolean> updateUserPassword(@PathVariable String UserName, @RequestBody  String Password, @RequestHeader(required = true) String Token) {
+    public ResponseEntity<Boolean> updateUserPassword(@PathVariable String UserName, @RequestBody String Password, @RequestHeader(required = true) String Token) {
         if (UserName != null) {
-            User myUser  = userService.findByEmail(UserName);
+            User myUser = userService.findByEmail(UserName);
 
-            if(myUser != null){
+            if (myUser != null) {
 
                 myUser.setPassword(Password);
 
@@ -305,7 +304,7 @@ public class AdminAPI {
     }
 
     @PostMapping("/User/{UserName}/reset")
-    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token){
+    public ResponseEntity<Boolean> sendTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String BackUrl, @RequestHeader(required = true) String Token) {
         if (UserName != null) {
             return ResponseEntity.ok(userService.sendRessetPassordEmail(UserName, BackUrl, Token));
         } else
@@ -314,16 +313,26 @@ public class AdminAPI {
 
     // here token is temporal for validation of password reset
     @GetMapping("/User/{UserName}/validate")
-    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String TemporalToken){
+    public ResponseEntity<Boolean> validateTemporalToken(@PathVariable String UserName, @RequestParam(required = true) String TemporalToken) {
         if (UserName != null && TemporalToken != null && !TemporalToken.equals("")) {
-            return ResponseEntity.ok(userService.checkTemporalToken(UserName,TemporalToken));
+            return ResponseEntity.ok(userService.checkTemporalToken(UserName, TemporalToken));
         } else
             throw new ValidationException("Not enough data provided");
     }
 
     //Add project
     @PostMapping("/Project")
-    public ResponseEntity<ProjectRequest> UpdateProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+    public ResponseEntity<ProjectRequest> createProject(@RequestBody ProjectRequest project, @RequestHeader(required = false) String Token) {
+        project.setProjectID(null);
+        ProjectRequest response = adminService.createProject(project, Token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/Project/{id}")
+    public ResponseEntity<ProjectRequest> updateProject(@PathVariable Integer id,
+                                                        @RequestBody ProjectRequest project,
+                                                        @RequestHeader(required = false) String Token) {
+        project.setProjectID(id);
         ProjectRequest response = adminService.updateProject(project, Token);
         return ResponseEntity.ok(response);
     }
@@ -332,6 +341,18 @@ public class AdminAPI {
     public ResponseEntity<ProjectRequest> getProjectById(@PathVariable int Id) {
         ProjectRequest response = adminService.getById(Id);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Project/active")
+    public ResponseEntity<ProjectListRequest> getActiveProjects() {
+        ProjectListRequest response = adminService.getActiveProjects();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Project/all")
+    public ResponseEntity<ProjectListRequest> getAllProjects() {
+        ProjectListRequest response = adminService.getAllProjects();
         return ResponseEntity.ok(response);
     }
 
@@ -408,13 +429,6 @@ public class AdminAPI {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
-    @GetMapping("/Project")
-    public ResponseEntity<ProjectListRequest> getActiveProjects() {
-        ProjectListRequest response = adminService.getActiveProjects();
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/Users")
     public ResponseEntity<UserListResponse> getActiveUsers(@RequestParam(required = false) String ProjectId) {
         UserListResponse response = adminService.getActiveUsers(ProjectId);
@@ -422,7 +436,7 @@ public class AdminAPI {
     }
 
     @GetMapping("/Users/projects/{UserName}")
-    public ResponseEntity<ProjectListRequest> getProjectsByUsername(@PathVariable String UserName,@RequestHeader(required = false) String Token) {
+    public ResponseEntity<ProjectListRequest> getProjectsByUsername(@PathVariable String UserName, @RequestHeader(required = false) String Token) {
 
         ProjectListRequest response = adminService.getProjectsByUsername(UserName);
         return ResponseEntity.ok(response);
@@ -431,7 +445,7 @@ public class AdminAPI {
     @GetMapping("/Classification/Category")
     public ResponseEntity<CategoryListResponse> getAllCategories(@RequestHeader(required = false) String Token) {
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         CategoryListResponse response = categoryService.getAllCategories(Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -442,7 +456,7 @@ public class AdminAPI {
                                                         UriComponentsBuilder ucBuilder,
                                                         @RequestHeader(required = false) String Token) {
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         CategoryResponse response = categoryService.addCategory(categoryRequest, Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -451,7 +465,7 @@ public class AdminAPI {
     @GetMapping("/Classification/Category/{CategoryId}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Integer CategoryId, @RequestHeader(required = false) String Token) {
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         CategoryResponse response = categoryService.getCategoryById(CategoryId, Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -462,12 +476,11 @@ public class AdminAPI {
                                                            UriComponentsBuilder ucBuilder,
                                                            @RequestHeader(required = false) String Token) {
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         CategoryResponse response = categoryService.UpdateCategory(categoryRequest, Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
 
     @PostMapping("/Classification/App")
@@ -476,7 +489,7 @@ public class AdminAPI {
                                                               @RequestHeader(required = false) String Token) {
 
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         AppCategoryResponse response = categoryService.addAppCategory(appCategoryRequest, Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -485,7 +498,7 @@ public class AdminAPI {
     @GetMapping("/Classification/App/{AppId}")
     public ResponseEntity<AppCategoryResponse> getAppCategoryById(@PathVariable Integer AppId, @RequestHeader(required = false) String Token) {
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         AppCategoryResponse response = categoryService.getAppCategoryById(AppId, Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -496,36 +509,47 @@ public class AdminAPI {
                                                                  UriComponentsBuilder ucBuilder,
                                                                  @RequestHeader(required = false) String Token) {
 
-        if(Token == null) Token = "";
+        if (Token == null) Token = "";
         AppCategoryResponse response = categoryService.UpdateAppCategory(appCategoryRequest, Token);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/User/Profile")
-    public ResponseEntity<ProfileRequest> updateProfileOfUser(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token){
+    public ResponseEntity<ProfileRequest> updateProfileOfUser(@RequestBody ProfileRequest profileRequest, @RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
-                profileService.updateProfileOfUser(profileRequest,Token),
+                profileService.updateProfileOfUser(profileRequest, Token),
                 HttpStatus.OK
         );
     }
 
     @DeleteMapping("/User/Profile")
     public boolean deleteProfile(@RequestParam Integer id, @RequestHeader(required = false) String token) {
-        return profileService.deleteProfile(id,token);
+        return profileService.deleteProfile(id, token);
 
     }
 
     @GetMapping("User/Profile")
     public ResponseEntity<ProfileRequest> findByMacaddress(@RequestParam String macaddress, @RequestHeader(required = false) String token) {
 
-        return new ResponseEntity<>(profileService.findByMacaddress(macaddress,token),
+        return new ResponseEntity<>(profileService.findByMacaddress(macaddress, token),
                 HttpStatus.OK);
     }
 
     @PostMapping("/Company")
-    public ResponseEntity<CompanyRequest> updateCompany(@RequestBody CompanyRequest companyRequest, @RequestHeader(required = false) String Token){
-        return new ResponseEntity<>(companyService.updateCompany(companyRequest,Token),
+    public ResponseEntity<CompanyRequest> createCompany(@RequestBody CompanyRequest companyRequest,
+                                                        @RequestHeader(required = false) String Token) {
+        companyRequest.setCompanyid(null);
+        return new ResponseEntity<>(companyService.createCompany(companyRequest, Token),
+                HttpStatus.OK);
+    }
+
+    @PutMapping("/Company/{id}")
+    public ResponseEntity<CompanyRequest> updateCompany(@PathVariable Integer id,
+                                                        @RequestBody CompanyRequest companyRequest,
+                                                        @RequestHeader(required = false) String Token) {
+        companyRequest.setCompanyid(id);
+        return new ResponseEntity<>(companyService.updateCompany(companyRequest, Token),
                 HttpStatus.OK);
     }
 
@@ -543,10 +567,19 @@ public class AdminAPI {
     }
 
     @GetMapping("/Company/all")
+    public ResponseEntity<CompanyListRequest> findAllCompanies(@RequestHeader(required = false) String Token) {
+
+        return new ResponseEntity<>(
+                companyService.getAllCompanies(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Company/active")
     public ResponseEntity<CompanyListRequest> findAllActiveCompanies(@RequestHeader(required = false) String Token) {
 
         return new ResponseEntity<>(
-                companyService.getActiveCompanies(Token),
+                companyService.getAllActiveCompanies(Token),
                 HttpStatus.OK
         );
     }
@@ -563,9 +596,20 @@ public class AdminAPI {
     }
 
     @PostMapping("/Team")
-    public ResponseEntity<TeamRequest> updateTeam(@RequestBody TeamRequest teamRequest, @RequestHeader(required = false) String Token){
+    public ResponseEntity<TeamRequest> createTeam(@RequestBody TeamRequest teamRequest,
+                                                  @RequestHeader(required = false) String Token) {
+        teamRequest.setTeamid(null);
+        return new ResponseEntity<>(teamService.createTeam(teamRequest, Token),
+                HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(teamService.updateTeam(teamRequest,Token),
+    @PutMapping("/Team/{id}")
+    public ResponseEntity<TeamRequest> updateTeam(@PathVariable Integer id,
+                                                  @RequestBody TeamRequest teamRequest,
+                                                  @RequestHeader(required = false) String Token) {
+        teamRequest.setTeamid(id);
+
+        return new ResponseEntity<>(teamService.updateTeam(teamRequest, Token),
                 HttpStatus.OK);
     }
 
@@ -575,6 +619,14 @@ public class AdminAPI {
     }
 
     @GetMapping("/Team/all")
+    public ResponseEntity<TeamListRequest> findAllTeams(@RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teamService.getAllTeams(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Team/active")
     public ResponseEntity<TeamListRequest> findAllActiveTeams(@RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teamService.getActiveTeams(Token),
@@ -584,7 +636,7 @@ public class AdminAPI {
 
     @GetMapping("/Team")
     public ResponseEntity<TeamListRequest> findTeamBy(@RequestParam(required = false) Integer teamId, @RequestParam(required = false) Integer companyId,
-            @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
+                                                      @RequestParam(required = false) Integer projectId, @RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teamService.getTeamsBy(teamId, companyId, projectId, Token),
                 HttpStatus.OK
@@ -592,8 +644,19 @@ public class AdminAPI {
     }
 
     @PostMapping("/Teammember")
-    public ResponseEntity<TeammembersRequest> updateTeammember(@RequestBody TeammembersRequest teammembersRequest, @RequestHeader(required = false) String Token){
-        return new ResponseEntity<>(teammemberService.updateTeammember(teammembersRequest,Token),
+    public ResponseEntity<TeammembersRequest> createTeammember(@RequestBody TeammembersRequest teammembersRequest,
+                                                               @RequestHeader(required = false) String Token) {
+        teammembersRequest.setMemberid(null);
+        return new ResponseEntity<>(teammemberService.createTeammember(teammembersRequest, Token),
+                HttpStatus.OK);
+    }
+
+    @PutMapping("/Teammember/{id}")
+    public ResponseEntity<TeammembersRequest> updateTeammember(@PathVariable Integer id,
+                                                               @RequestBody TeammembersRequest teammembersRequest,
+                                                               @RequestHeader(required = false) String Token) {
+        teammembersRequest.setMemberid(id);
+        return new ResponseEntity<>(teammemberService.updateTeammember(teammembersRequest, Token),
                 HttpStatus.OK);
     }
 
@@ -602,10 +665,18 @@ public class AdminAPI {
         return teammemberService.deleteTeammember(id, Token);
     }
 
-    @GetMapping("/Teammember/all")
+    @GetMapping("/Teammember/active")
     public ResponseEntity<TeammembersListRequest> findAllActiveTeammembers(@RequestHeader(required = false) String Token) {
         return new ResponseEntity<>(
                 teammemberService.getActiveTeammembers(Token),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/Teammember/all")
+    public ResponseEntity<TeammembersListRequest> findAllTeammembers(@RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teammemberService.getAllTeammembers(Token),
                 HttpStatus.OK
         );
     }
@@ -619,11 +690,11 @@ public class AdminAPI {
         );
     }
 
-        @GetMapping("/WorkingTree")
-        public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token){
-            return new ResponseEntity<>(
-                    teammemberService.getWorkingTree(email, Token),
-                    HttpStatus.OK
-            );
-        }
+    @GetMapping("/WorkingTree")
+    public ResponseEntity<WorkingTreeListRequest> getWorkingTree(@RequestParam(required = false) String email, @RequestHeader(required = false) String Token) {
+        return new ResponseEntity<>(
+                teammemberService.getWorkingTree(email, Token),
+                HttpStatus.OK
+        );
     }
+}

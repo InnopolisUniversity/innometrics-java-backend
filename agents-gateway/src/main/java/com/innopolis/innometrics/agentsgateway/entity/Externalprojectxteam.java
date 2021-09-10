@@ -9,8 +9,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "agents_x_project")
-public class Agentsxproject {
+@Table(name = "externalproject_x_team")
+public class Externalprojectxteam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
@@ -20,17 +20,15 @@ public class Agentsxproject {
     @JoinColumn(name = "agentid")
     private Agentconfig agentConfig;
 
-    @Column
+    @Column(insertable = false, updatable = false)
     private Integer agentid;
 
+    // todo maybe import an external entity?
     @Column
-    private Integer projectid;
+    private Integer teamid;
 
     @Column
-    private String key;
-
-    @Column
-    private String token;
+    private String repoid;
 
     @Column
     private String isactive;
@@ -51,7 +49,7 @@ public class Agentsxproject {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Agentsxproject() {
+    public Externalprojectxteam() {
     }
 
     public Integer getConfigid() {
@@ -78,28 +76,20 @@ public class Agentsxproject {
         this.agentid = agentid;
     }
 
-    public Integer getProjectid() {
-        return projectid;
+    public Integer getTeamid() {
+        return teamid;
     }
 
-    public void setProjectid(Integer projectid) {
-        this.projectid = projectid;
+    public void setTeamid(Integer teamid) {
+        this.teamid = teamid;
     }
 
-    public String getKey() {
-        return key;
+    public String getRepoid() {
+        return repoid;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public void setRepoid(String repoid) {
+        this.repoid = repoid;
     }
 
     public String getIsactive() {

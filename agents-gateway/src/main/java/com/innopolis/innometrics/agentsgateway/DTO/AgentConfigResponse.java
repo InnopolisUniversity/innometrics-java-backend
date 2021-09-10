@@ -17,4 +17,8 @@ public class AgentConfigResponse {
     public void setMethodsConfig(List<MethodConfigDTO> methodsConfig) {
         this.methodsConfig = methodsConfig;
     }
+
+    public void addMethodConfig(MethodConfigDTO methodConfig) {
+        methodsConfig.add(methodConfig);
+    }
 }

@@ -24,16 +24,24 @@ public class TeamService {
     @HystrixCommand(commandKey = "updateTeam", fallbackMethod = "updateTeamFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public TeamRequest updateTeam(TeamRequest teamRequest, String token){
+    public TeamRequest updateTeam(TeamRequest teamRequest, String token) {
+        String uri = baseURL + "/" + teamRequest.getTeamid();
+        return uploadTeam(teamRequest, token, uri, HttpMethod.PUT);
+    }
 
+    public TeamRequest createTeam(TeamRequest teamRequest, String token) {
         String uri = baseURL;
+        return uploadTeam(teamRequest, token, uri, HttpMethod.POST);
+    }
+
+    private TeamRequest uploadTeam(TeamRequest teamRequest, String token, String uri, HttpMethod method) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
         HttpEntity<TeamRequest> entity = new HttpEntity<>(teamRequest, headers);
 
-        ResponseEntity<TeamRequest> response = restTemplate.exchange(uri, HttpMethod.POST, entity, TeamRequest.class);
+        ResponseEntity<TeamRequest> response = restTemplate.exchange(uri, method, entity, TeamRequest.class);
 
         HttpStatus status = response.getStatusCode();
         if (status == HttpStatus.NO_CONTENT) return null;
@@ -62,8 +70,7 @@ public class TeamService {
         try {
             restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, entity, Object.class);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e);
             return false;
         }
@@ -73,8 +80,19 @@ public class TeamService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public TeamListRequest getActiveTeams(String token) {
-        String uri =baseURL + "/all";
+        String uri = baseURL + "/active";
+        return getTeams(token, uri);
+    }
 
+    @HystrixCommand(commandKey = "getAllTeams", fallbackMethod = "getAllTeamsFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public TeamListRequest getAllTeams(String token) {
+        String uri = baseURL + "/all";
+        return getTeams(token, uri);
+    }
+
+    private TeamListRequest getTeams(String token, String uri) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
@@ -109,7 +127,7 @@ public class TeamService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("teamId", teamId).queryParam("companyId", companyId).queryParam("projectId", projectId);
 
-        ResponseEntity<TeamListRequest> responseEntity = restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,TeamListRequest.class);
+        ResponseEntity<TeamListRequest> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, TeamListRequest.class);
 
         return responseEntity.getBody();
 

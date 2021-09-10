@@ -1,57 +1,34 @@
-package com.innopolis.innometrics.agentsgateway.entity;
+package com.innopolis.innometrics.agentsgateway.DTO;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-
-import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Table(name = "agents_x_project")
-public class Agentsxproject {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
+public class AgentsProjectDTO {
     private Integer configid;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "agentid")
-    private Agentconfig agentConfig;
-
-    @Column
     private Integer agentid;
-
-    @Column
     private Integer projectid;
-
-    @Column
     private String key;
-
-    @Column
     private String token;
-
-    @Column
     private String isactive;
-
-    @CreationTimestamp
-    @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
-
-    @CreatedBy
-    @Column(name = "createdby", insertable = false, updatable = false)
     private String createdby;
-
-    @UpdateTimestamp
-    @Column(name = "lastupdate", insertable = false)
     private Date lastupdate;
-
-    @LastModifiedBy
-    @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Agentsxproject() {
+    public AgentsProjectDTO() {
+    }
+
+    public AgentsProjectDTO(Integer configid, Integer agentid, Integer projectid, String key, String token,
+                            String isactive, Date creationdate, String createdby, Date lastupdate, String updateby) {
+        this.configid = configid;
+        this.agentid = agentid;
+        this.projectid = projectid;
+        this.key = key;
+        this.token = token;
+        this.isactive = isactive;
+        this.creationdate = creationdate;
+        this.createdby = createdby;
+        this.lastupdate = lastupdate;
+        this.updateby = updateby;
     }
 
     public Integer getConfigid() {
@@ -60,14 +37,6 @@ public class Agentsxproject {
 
     public void setConfigid(Integer configid) {
         this.configid = configid;
-    }
-
-    public Agentconfig getAgentConfig() {
-        return agentConfig;
-    }
-
-    public void setAgentConfig(Agentconfig agentConfig) {
-        this.agentConfig = agentConfig;
     }
 
     public Integer getAgentid() {

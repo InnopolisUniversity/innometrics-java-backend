@@ -1,5 +1,10 @@
 package com.innopolis.innometrics.agentsgateway.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -52,15 +57,19 @@ public class Agentconfig {
     @Column
     private String isactive;
 
+    @CreationTimestamp
     @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
 
+    @CreatedBy
     @Column(name = "createdby", insertable = false, updatable = false)
     private String createdby;
 
+    @UpdateTimestamp
     @Column(name = "lastupdate", insertable = false)
     private Date lastupdate;
 
+    @LastModifiedBy
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
@@ -75,6 +84,18 @@ public class Agentconfig {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "agentid")
     private Set<Reposxproject> reposconfig = new HashSet<Reposxproject>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agentid")
+    private Set<Agentsxproject> agentsProject = new HashSet<Agentsxproject>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agentid")
+    private Set<Externalprojectxteam> externalProjectTeam = new HashSet<Externalprojectxteam>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agentid")
+    private Set<Agentsxcompany> agentsCompany = new HashSet<Agentsxcompany>();
 
     public Agentconfig() {
     }
@@ -205,6 +226,30 @@ public class Agentconfig {
 
     public void setReposconfig(Set<Reposxproject> reposconfig) {
         this.reposconfig = reposconfig;
+    }
+
+    public Set<Externalprojectxteam> getExternalProjectTeam() {
+        return externalProjectTeam;
+    }
+
+    public Set<Agentsxproject> getAgentsProject() {
+        return agentsProject;
+    }
+
+    public void setAgentsProject(Set<Agentsxproject> agentsProject) {
+        this.agentsProject = agentsProject;
+    }
+
+    public void setExternalProjectTeam(Set<Externalprojectxteam> externalProject) {
+        this.externalProjectTeam = externalProject;
+    }
+
+    public Set<Agentsxcompany> getAgentsCompany() {
+        return agentsCompany;
+    }
+
+    public void setAgentsCompany(Set<Agentsxcompany> agentsCompany) {
+        this.agentsCompany = agentsCompany;
     }
 
     public String getAccesstokenendpoint() {

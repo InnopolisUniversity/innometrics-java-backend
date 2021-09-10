@@ -29,16 +29,24 @@ public class TeammemberService {
     @HystrixCommand(commandKey = "updateTeammember", fallbackMethod = "updateTeammemberFallback", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
-    public TeammembersRequest updateTeammember(TeammembersRequest teammembersRequest, String token){
+    public TeammembersRequest updateTeammember(TeammembersRequest teammembersRequest, String token) {
+        String uri = baseURL + "/" + teammembersRequest.getMemberid();
+        return uploadTeammember(teammembersRequest, token, uri, HttpMethod.PUT);
+    }
 
+    public TeammembersRequest createTeammember(TeammembersRequest teammembersRequest, String token) {
         String uri = baseURL;
+        return uploadTeammember(teammembersRequest, token, uri, HttpMethod.POST);
+    }
+
+    private TeammembersRequest uploadTeammember(TeammembersRequest teammembersRequest, String token, String uri, HttpMethod method) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
         HttpEntity<TeammembersRequest> entity = new HttpEntity<>(teammembersRequest, headers);
 
-        ResponseEntity<TeammembersRequest> response = restTemplate.exchange(uri, HttpMethod.POST, entity, TeammembersRequest.class);
+        ResponseEntity<TeammembersRequest> response = restTemplate.exchange(uri, method, entity, TeammembersRequest.class);
 
         HttpStatus status = response.getStatusCode();
         if (status == HttpStatus.NO_CONTENT) return null;
@@ -68,8 +76,7 @@ public class TeammemberService {
         try {
             restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, entity, Object.class);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e);
             return false;
         }
@@ -79,8 +86,19 @@ public class TeammemberService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public TeammembersListRequest getActiveTeammembers(String token) {
-        String uri =baseURL + "/all";
+        String uri = baseURL + "/active";
+        return getTeammembers(token, uri);
+    }
 
+    @HystrixCommand(commandKey = "getAllTeammembers", fallbackMethod = "getAllTeammembersFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
+    })
+    public TeammembersListRequest getAllTeammembers(String token) {
+        String uri = baseURL + "/all";
+        return getTeammembers(token, uri);
+    }
+
+    private TeammembersListRequest getTeammembers(String token, String uri) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", token);
 
@@ -115,7 +133,7 @@ public class TeammemberService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("teamId", teamId).queryParam("memberId", memberId).queryParam("email", email);
 
-        ResponseEntity<TeammembersListRequest> responseEntity = restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,TeammembersListRequest.class);
+        ResponseEntity<TeammembersListRequest> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, TeammembersListRequest.class);
 
         return responseEntity.getBody();
 
@@ -131,7 +149,8 @@ public class TeammemberService {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "60000")
     })
     public WorkingTreeListRequest getWorkingTree(String email, String Token) {
-        String uri = "http://INNOMETRICS-AUTH-SERVER/AdminAPI/WorkingTree";;
+        String uri = "http://INNOMETRICS-AUTH-SERVER/AdminAPI/WorkingTree";
+        ;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", Token);
@@ -141,7 +160,7 @@ public class TeammemberService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParam("email", email);
 
-        ResponseEntity<WorkingTreeListRequest> responseEntity = restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,WorkingTreeListRequest.class);
+        ResponseEntity<WorkingTreeListRequest> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, WorkingTreeListRequest.class);
 
         return responseEntity.getBody();
 

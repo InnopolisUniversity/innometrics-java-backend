@@ -1,69 +1,43 @@
-package com.innopolis.innometrics.agentsgateway.entity;
+package com.innopolis.innometrics.agentsgateway.DTO;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-@Entity
-@Table(name = "agent_data_config")
-public class Agentdataconfig {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
+public class DataConfigDTO implements Serializable {
     private Integer datacofingid;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "agentid")
-    private Agentconfig agentConfig;
-
-    @Column(insertable = false, updatable = false)
     private Integer agentid;
-
-    @Column
     private String schemaname;
-
-    @Column
     private String tablename;
-
-    @Column
     private String eventdatefield;
-
-    @Column
     private String eventauthorfield;
-
-    @Column
     private String eventdescriptionfield;
-
-    @Column
+    private String isactive;
+    private Date creationdate;
+    private String createdby;
+    private Date lastupdate;
+    private String updateby;
     private String eventtype;
 
-    @Column
-    private String isactive;
+    public DataConfigDTO() {
+    }
 
-    @CreationTimestamp
-    @Column(name = "creationdate", insertable = false, updatable = false)
-    private Date creationdate;
-
-    @CreatedBy
-    @Column(name = "createdby", insertable = false, updatable = false)
-    private String createdby;
-
-    @UpdateTimestamp
-    @Column(name = "lastupdate", insertable = false)
-    private Date lastupdate;
-
-    @LastModifiedBy
-    @Column(name = "updateby", insertable = false)
-    private String updateby;
-
-    public Agentdataconfig() {
+    public DataConfigDTO(Integer datacofingid, Integer agentid, String schemaname, String tablename,
+                         String eventdatefield, String eventauthorfield, String eventdescriptionfield,
+                         String isactive, Date creationdate, String createdby, Date lastupdate,
+                         String updateby, String eventtype) {
+        this.datacofingid = datacofingid;
+        this.agentid = agentid;
+        this.schemaname = schemaname;
+        this.tablename = tablename;
+        this.eventdatefield = eventdatefield;
+        this.eventauthorfield = eventauthorfield;
+        this.eventdescriptionfield = eventdescriptionfield;
+        this.isactive = isactive;
+        this.creationdate = creationdate;
+        this.createdby = createdby;
+        this.lastupdate = lastupdate;
+        this.updateby = updateby;
+        this.eventtype = eventtype;
     }
 
     public Integer getDatacofingid() {
@@ -72,14 +46,6 @@ public class Agentdataconfig {
 
     public void setDatacofingid(Integer datacofingid) {
         this.datacofingid = datacofingid;
-    }
-
-    public Agentconfig getAgentConfig() {
-        return agentConfig;
-    }
-
-    public void setAgentConfig(Agentconfig agentConfig) {
-        this.agentConfig = agentConfig;
     }
 
     public Integer getAgentid() {
@@ -130,14 +96,6 @@ public class Agentdataconfig {
         this.eventdescriptionfield = eventdescriptionfield;
     }
 
-    public String getEventtype() {
-        return eventtype;
-    }
-
-    public void setEventtype(String eventtype) {
-        this.eventtype = eventtype;
-    }
-
     public String getIsactive() {
         return isactive;
     }
@@ -176,5 +134,13 @@ public class Agentdataconfig {
 
     public void setUpdateby(String updateby) {
         this.updateby = updateby;
+    }
+
+    public String getEventtype() {
+        return eventtype;
+    }
+
+    public void setEventtype(String eventtype) {
+        this.eventtype = eventtype;
     }
 }

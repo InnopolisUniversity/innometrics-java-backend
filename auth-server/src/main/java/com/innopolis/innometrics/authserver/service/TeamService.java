@@ -47,7 +47,7 @@ public class TeamService {
         return detail;
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id) throws Exception {
 
         Team entity = teamRepository.findById(id).orElse(null);
         assertNotNull(entity,
@@ -150,6 +150,13 @@ public class TeamService {
                 "No active teams found " );
         return convertFromList(activeTeams);
 
+    }
+
+    public TeamListRequest findAllTeams(){
+        List<Team> allTeams = teamRepository.findAll();
+        assertNotNull(allTeams,
+                "No teams found " );
+        return convertFromList(allTeams);
     }
 
     private TeamListRequest convertFromList(List<Team> teamList){

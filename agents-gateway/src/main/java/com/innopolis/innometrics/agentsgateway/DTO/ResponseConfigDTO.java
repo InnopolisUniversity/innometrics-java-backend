@@ -1,57 +1,37 @@
-package com.innopolis.innometrics.agentsgateway.entity;
+package com.innopolis.innometrics.agentsgateway.DTO;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
-@Entity
-@Table(name = "agentresponseconfig")
-public class Agentresponseconfig {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "configresponseid", updatable = false)
+public class ResponseConfigDTO implements Serializable {
     private Integer configresponseid;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "methodid")
-    private Agentconfigmethods agentconfigmethods;
-
-    @Column
+    private Integer methodid;
     private String responseparam;
-
-    @Column
     private String paramname;
-
-    @Column
     private String paramtype;
-
-    @Column
     private String isactive;
-
-    @CreationTimestamp
-    @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
-
-    @CreatedBy
-    @Column(name = "createdby", insertable = false, updatable = false)
     private String createdby;
-
-    @UpdateTimestamp
-    @Column(name = "lastupdate", insertable = false)
     private Date lastupdate;
-
-    @LastModifiedBy
-    @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Agentresponseconfig() {
+    public ResponseConfigDTO() {
     }
 
+    public ResponseConfigDTO(Integer configresponseid, Integer methodid, String responseparam, String paramname,
+                             String paramtype, String isactive, Date creationdate, String createdby, Date lastupdate,
+                             String updateby) {
+        this.configresponseid = configresponseid;
+        this.methodid = methodid;
+        this.responseparam = responseparam;
+        this.paramname = paramname;
+        this.paramtype = paramtype;
+        this.isactive = isactive;
+        this.creationdate = creationdate;
+        this.createdby = createdby;
+        this.lastupdate = lastupdate;
+        this.updateby = updateby;
+    }
 
     public Integer getConfigresponseid() {
         return configresponseid;
@@ -61,12 +41,12 @@ public class Agentresponseconfig {
         this.configresponseid = configresponseid;
     }
 
-    public Agentconfigmethods getAgentconfigmethods() {
-        return agentconfigmethods;
+    public Integer getMethodid() {
+        return methodid;
     }
 
-    public void setAgentconfigmethods(Agentconfigmethods agentconfigmethods) {
-        this.agentconfigmethods = agentconfigmethods;
+    public void setMethodid(Integer methodid) {
+        this.methodid = methodid;
     }
 
     public String getResponseparam() {

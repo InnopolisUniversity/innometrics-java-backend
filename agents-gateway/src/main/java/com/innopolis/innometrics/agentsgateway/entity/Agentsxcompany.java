@@ -9,8 +9,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "agents_x_project")
-public class Agentsxproject {
+@Table(name = "agents_x_company")
+public class Agentsxcompany {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
@@ -20,11 +20,12 @@ public class Agentsxproject {
     @JoinColumn(name = "agentid")
     private Agentconfig agentConfig;
 
-    @Column
+    @Column(insertable = false, updatable = false)
     private Integer agentid;
 
+    // todo maybe import an external entity?
     @Column
-    private Integer projectid;
+    private Integer companyid;
 
     @Column
     private String key;
@@ -51,7 +52,7 @@ public class Agentsxproject {
     @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Agentsxproject() {
+    public Agentsxcompany() {
     }
 
     public Integer getConfigid() {
@@ -78,12 +79,12 @@ public class Agentsxproject {
         this.agentid = agentid;
     }
 
-    public Integer getProjectid() {
-        return projectid;
+    public Integer getCompanyid() {
+        return companyid;
     }
 
-    public void setProjectid(Integer projectid) {
-        this.projectid = projectid;
+    public void setCompanyid(Integer companyid) {
+        this.companyid = companyid;
     }
 
     public String getKey() {

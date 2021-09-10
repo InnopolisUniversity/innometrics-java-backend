@@ -1,51 +1,33 @@
-package com.innopolis.innometrics.agentsgateway.entity;
+package com.innopolis.innometrics.agentsgateway.DTO;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
-@Entity
-@Table(name = "repos_x_project")
-public class Reposxproject {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false)
+public class ExternalProjectTeamDTO implements Serializable {
     private Integer configid;
-
-    @Column
     private Integer agentid;
-
-    @Column
-    private Integer projectid;
-
-    @Column
+    private Integer teamid;
     private String repoid;
-
-    @Column
     private String isactive;
-
-    @CreationTimestamp
-    @Column(name = "creationdate", insertable = false, updatable = false)
     private Date creationdate;
-
-    @CreatedBy
-    @Column(name = "createdby", insertable = false, updatable = false)
     private String createdby;
-
-    @UpdateTimestamp
-    @Column(name = "lastupdate", insertable = false)
     private Date lastupdate;
-
-    @LastModifiedBy
-    @Column(name = "updateby", insertable = false)
     private String updateby;
 
-    public Reposxproject() {
+    public ExternalProjectTeamDTO() {
+    }
+
+    public ExternalProjectTeamDTO(Integer configid, Integer agentid, Integer teamid, String repoid, String isactive,
+                                  Date creationdate, String createdby, Date lastupdate, String updateby) {
+        this.configid = configid;
+        this.agentid = agentid;
+        this.teamid = teamid;
+        this.repoid = repoid;
+        this.isactive = isactive;
+        this.creationdate = creationdate;
+        this.createdby = createdby;
+        this.lastupdate = lastupdate;
+        this.updateby = updateby;
     }
 
     public Integer getConfigid() {
@@ -64,12 +46,12 @@ public class Reposxproject {
         this.agentid = agentid;
     }
 
-    public Integer getProjectid() {
-        return projectid;
+    public Integer getTeamid() {
+        return teamid;
     }
 
-    public void setProjectid(Integer projectid) {
-        this.projectid = projectid;
+    public void setTeamid(Integer teamid) {
+        this.teamid = teamid;
     }
 
     public String getRepoid() {
