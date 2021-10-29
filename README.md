@@ -36,4 +36,4 @@ The architecture of the backend facilitates the scale, fault-tolerance and adapt
 
 ## Have Question or Feedback?
 
-Contact us via email: [Xavier Vasquez](https://github.com/xavzelada)
+Contact us via email: [Xavier Vasquez](https://github.com/xavzelada) 
