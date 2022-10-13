@@ -40,9 +40,9 @@ public class AgentAdminController {
     AgentsxcompanyService agentsxcompanyService;
 
     @GetMapping("/AgentConfiguration")
-    public ResponseEntity<AgentConfigResponse> getAgentConfiguration(@RequestParam Integer AgentID,
-                                                                     @RequestParam(required = false) String CallType) {
-        AgentConfigResponse response = this.agentconfigService.getAgentConfig(AgentID, CallType);
+    public ResponseEntity<AgentConfigResponse> getAgentConfiguration(@RequestParam Integer agentID,
+                                                                     @RequestParam(required = false) String callType) {
+        AgentConfigResponse response = this.agentconfigService.getAgentConfig(agentID, callType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -51,8 +51,8 @@ public class AgentAdminController {
      */
 
     @GetMapping(value = "/Agent", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AgentListResponse> getAgentList(@RequestParam Integer ProjectId) {
-        AgentListResponse response = this.agentconfigService.getAgentList(ProjectId);
+    public ResponseEntity<AgentListResponse> getAgentList(@RequestParam Integer projectId) {
+        AgentListResponse response = this.agentconfigService.getAgentList(projectId);
         return response == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<>(response, HttpStatus.OK);
@@ -1334,7 +1334,7 @@ public class AgentAdminController {
 
         Reposxproject reposxproject = new Reposxproject();
 
-        reposxproject.setAgentConfig(agentconfig);
+        reposxproject.setConfigid(agentconfig.getAgentid());
         reposxproject.setAgentid(agentid);
         // todo maybe assign external Project entity?
         reposxproject.setProjectid(projectid);

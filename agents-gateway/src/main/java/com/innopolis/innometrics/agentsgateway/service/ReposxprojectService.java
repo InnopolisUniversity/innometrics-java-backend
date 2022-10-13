@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ public class ReposxprojectService {
 
     public Reposxproject putReposProject(Integer configId, Reposxproject reposxproject) throws Exception {
         return this.reposxprojectRepository.findById(configId).map(reposProject -> {
-            reposProject.setAgentConfig(reposxproject.getAgentConfig());
+            reposProject.setConfigid(reposxproject.getConfigid());
             reposProject.setAgentid(reposxproject.getAgentid());
             // todo maybe pass external entity?
             reposProject.setProjectid(reposxproject.getProjectid());
@@ -73,7 +74,7 @@ public class ReposxprojectService {
 
     private List<Reposxproject> deleteReposProjectList(List<Reposxproject> reposProjectList) {
         if (reposProjectList == null || reposProjectList.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
         List<Reposxproject> deletedReposProjectsList = new ArrayList<>(reposProjectList.size());
         for (Reposxproject reposxproject : reposProjectList) {
