@@ -19,8 +19,6 @@ databaseChangeLog:
                   name: companyid
                   type: Integer
                   constraints:
-                    foreignKeyName: fk_company_agents
-                    references: innometricsauth.company(companyid)
                     nullable: false
               - column:
                   name: agentid
@@ -79,8 +77,6 @@ databaseChangeLog:
                   name: teamid
                   type: Integer
                   constraints:
-                    foreignKeyName: fk_teams_auth_project
-                    references: innometricsauth.teams(teamid)
                     nullable: false
               - column:
                   name: agentid
