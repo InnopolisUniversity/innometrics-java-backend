@@ -33,6 +33,30 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw clean install
+
+      - name: /[Auth/] Build JAR file
+        working-directory: ./auth-server
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+
+      - name: /[Config/] Build JAR file
+        working-directory: ./config-service
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+          
+      - name: /[Collector/] Build JAR file
+        working-directory: ./activities-collector
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+
+      - name: /[API/] Build JAR file
+        working-directory: ./InnoMetrics-RestAPI
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
       
       - name: /[Eureka/] Push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -43,3 +67,43 @@ jobs:
           tags: aldeeyar/innometrics-eureka:latest
           build-args: |
             JAR_FILE=./eureka-server/target/innometrics-eureka-server.jar
+
+      - name: /[Auth/] Push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: ./auth-server/Dockerfile
+          push: true
+          tags: aldeeyar/innometrics-auth:latest
+          build-args: |
+            JAR_FILE=./auth-server/target/innometrics-auth-server.jar
+
+      - name: /[Config/] Push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: ./config-service/Dockerfile
+          push: true
+          tags: aldeeyar/innometrics-config:latest
+          build-args: |
+            JAR_FILE=./auth-server/target/innometrics-config-service.jar
+
+      - name: /[Collector/] Push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: ./activities-collector/Dockerfile
+          push: true
+          tags: aldeeyar/innometrics-collector:latest
+          build-args: |
+            JAR_FILE=./activities-collector/target/InnoMetrics-Collector-Server.jar
+
+      - name: /[API/] Push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: ./InnoMetrics-RestAPI/Dockerfile
+          push: true
+          tags: aldeeyar/innometrics-api:latest
+          build-args: |
+            JAR_FILE=./InnoMetrics-RestAPI/target/InnoMetrics-RestAPI.jar
