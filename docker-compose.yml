@@ -1,0 +1,72 @@
+version: "3.9"
+services:
+  eureka:
+    depends_on: 
+      - postgres
+    image: "aldeeyar/innometrics-eureka:latest"
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: "curl --fail --silent localhost:8761/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  auth:
+    depends_on: 
+      - postgres
+      - eureka
+    image: "aldeeyar/innometrics-auth:latest"
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: "curl --fail --silent localhost:9092/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  api:
+    depends_on: 
+      - postgres
+      - eureka
+    image: "aldeeyar/innometrics-api:latest"
+    ports:
+      - "9091:9091"
+    healthcheck:
+      test: "curl --fail --silent localhost:9091/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  config:
+    depends_on: 
+      - postgres
+      - eureka
+    image: "aldeeyar/innometrics-config:latest"
+    ports:
+      - "9094:9094"
+    healthcheck:
+      test: "curl --fail --silent localhost:9094/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  collector:
+    depends_on: 
+      - postgres
+      - eureka
+    image: "aldeeyar/innometrics-collector:latest"
+    ports:
+      - "9093:9093"
+    healthcheck:
+      test: "curl --fail --silent localhost:9093/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  postgres:
+    image: "postgres:15-alpine"
+    ports:
+      - "5432:5433"
+    environment:
+      POSTGRES_PASSWORD: password
