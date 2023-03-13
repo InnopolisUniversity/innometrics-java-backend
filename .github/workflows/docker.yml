@@ -86,7 +86,7 @@ jobs:
           push: true
           tags: aldeeyar/innometrics-config:latest
           build-args: |
-            JAR_FILE=./auth-server/target/innometrics-config-service.jar
+            JAR_FILE=./config-service/target/innometrics-config-service.jar
 
       - name: /[Collector/] Push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
