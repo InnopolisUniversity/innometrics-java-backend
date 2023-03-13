@@ -30,7 +30,7 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: [Eureka]Build and analyze
+      - name: /[Eureka/]Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_EUREKA }}
@@ -38,7 +38,7 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=innometrics-eureka
-      - name: [Auth]Build and analyze
+      - name: /[Auth/]Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_AUTH }}
@@ -46,7 +46,7 @@ jobs:
           chmod +x mvnw
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=innometrics-auth
         working-directory: ./auth-server
-      - name: [Config]Build and analyze
+      - name: /[Config/]Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_CONFIG }}
@@ -54,7 +54,7 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=innometrics-config
-      - name: [Collector]Build and analyze
+      - name: /[Collector/]Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_COLLECTOR }}
@@ -62,7 +62,7 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=innometrics-collector
-      - name: [API]Build and analyze
+      - name: /[API/]Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}

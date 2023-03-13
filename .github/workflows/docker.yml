@@ -28,13 +28,13 @@ jobs:
         with:
           images: aldeeyar/innometrics-eureka
 
-      - name: [Eureka] Build JAR file
+      - name: /[Eureka/] Build JAR file
         working-directory: ./eureka-server
         run: |
           chmod +x mvnw
           ./mvnw clean install
       
-      - name: [Eureka] Push Docker image
+      - name: /[Eureka/] Push Docker image
         working-directory: ./eureka-server
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
