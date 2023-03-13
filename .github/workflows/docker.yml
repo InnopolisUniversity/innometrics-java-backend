@@ -41,3 +41,5 @@ jobs:
           context: .
           push: true
           tags: aldeeyar/innometrics-eureka:latest
+          build-args: |
+            JAR_FILE=./target/innometrics-eureka-server.jar
