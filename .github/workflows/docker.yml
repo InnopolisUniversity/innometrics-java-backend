@@ -61,6 +61,12 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw clean install
+          
+      - name: /[Agents/] Build JAR file
+        working-directory: ./agents-gateway
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
       
       - name: /[Eureka/] Push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -111,3 +117,13 @@ jobs:
           tags: aldeeyar/innometrics-api:latest
           build-args: |
             JAR_FILE=./InnoMetrics-RestAPI/target/InnoMetrics-RestAPI.jar
+
+      - name: /[Agents/] Push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: ./agents-gateway/Dockerfile
+          push: true
+          tags: aldeeyar/innometrics-agents:latest
+          build-args: |
+            JAR_FILE=./agents-gateway/target/InnoMetrics-Collector-Server.jar
