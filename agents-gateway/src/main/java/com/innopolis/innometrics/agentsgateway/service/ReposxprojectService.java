@@ -1,13 +1,14 @@
 package com.innopolis.innometrics.agentsgateway.service;
 
-import com.innopolis.innometrics.agentsgateway.entity.Reposxproject;
-import com.innopolis.innometrics.agentsgateway.repository.ReposxprojectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.innopolis.innometrics.agentsgateway.entity.Reposxproject;
+import com.innopolis.innometrics.agentsgateway.repository.ReposxprojectRepository;
 
 @Service
 public class ReposxprojectService {
@@ -43,7 +44,6 @@ public class ReposxprojectService {
 
     public Reposxproject putReposProject(Integer configId, Reposxproject reposxproject) throws Exception {
         return this.reposxprojectRepository.findById(configId).map(reposProject -> {
-            reposProject.setAgentConfig(reposxproject.getAgentConfig());
             reposProject.setAgentid(reposxproject.getAgentid());
             // todo maybe pass external entity?
             reposProject.setProjectid(reposxproject.getProjectid());
