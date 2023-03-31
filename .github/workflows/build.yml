@@ -70,3 +70,11 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=innometrics-api
+      - name: /[Agent/]Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}
+        working-directory: ./agents-gateway
+        run: |
+          chmod +x mvnw
+          ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=agents-gateway
