@@ -126,4 +126,4 @@ jobs:
           push: true
           tags: aldeeyar/innometrics-agents:latest
           build-args: |
-            JAR_FILE=./agents-gateway/target/InnoMetrics-Collector-Server.jar
+            JAR_FILE=./agents-gateway/target/InnoMetrics-Agents-gateway.jar
