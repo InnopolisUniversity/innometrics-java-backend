@@ -593,6 +593,7 @@ public class AgentAdminController {
         }
         Agentconfigdetails agentconfigdetails = this.convertToAgentconfigdetailsEntity(detailsConfigDTO);
         if (agentconfigdetails == null) {
+            System.out.println("VRUN");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Agentconfigdetails response = this.agentconfigdetailsService.postDetails(agentconfigdetails);
@@ -679,6 +680,7 @@ public class AgentAdminController {
         }
         Agentconfigmethods agentconfigmethods = this.agentconfigmethodsService.getMethodById(methodid);
         if (agentconfigmethods == null) {
+            System.out.println("VVV");
             return null;
         }
 
