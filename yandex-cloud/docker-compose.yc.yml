@@ -1,0 +1,65 @@
+version: "3.9"
+services:
+  eureka:
+    image: {{ env.EUREKA_IMAGE }}
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: "curl --fail --silent localhost:8761/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: always
+  auth:
+    depends_on: 
+      - eureka
+    image: {{ env.AUTH_IMAGE }}
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: "curl --fail --silent localhost:9092/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: always
+  api:
+    depends_on: 
+      - eureka
+    image: {{ env.API_IMAGE }}
+    ports:
+      - "9091:9091"
+    healthcheck:
+      test: "curl --fail --silent localhost:9091/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: always
+  config:
+    depends_on: 
+      - eureka
+    image: {{ env.CONFIG_IMAGE}}
+    ports:
+      - "9094:9094"
+    healthcheck:
+      test: "curl --fail --silent localhost:9094/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: always
+  collector:
+    depends_on: 
+      - eureka
+    image: {{ env.COLLECTOR_IMAGE}}
+    ports:
+      - "9093:9093"
+    healthcheck:
+      test: "curl --fail --silent localhost:9093/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: always
