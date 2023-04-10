@@ -82,7 +82,7 @@ jobs:
           context: .
           file: ./eureka-server/Dockerfile
           push: true
-          tags: ${{ EUREKA_IMAGE }}
+          tags: ${{ env.EUREKA_IMAGE }}
           build-args: |
             JAR_FILE=./eureka-server/target/innometrics-eureka-server.jar
 
@@ -92,7 +92,7 @@ jobs:
           context: .
           file: ./auth-server/Dockerfile
           push: true
-          tags: ${{ AUTH_IMAGE }}
+          tags: ${{ env.AUTH_IMAGE }}
           build-args: |
             JAR_FILE=./auth-server/target/innometrics-auth-server.jar
 
@@ -102,7 +102,7 @@ jobs:
           context: .
           file: ./config-service/Dockerfile
           push: true
-          tags: ${{ CONFIG_IMAGE }}
+          tags: ${{ env.CONFIG_IMAGE }}
           build-args: |
             JAR_FILE=./config-service/target/innometrics-config-service.jar
 
@@ -112,7 +112,7 @@ jobs:
           context: .
           file: ./activities-collector/Dockerfile
           push: true
-          tags: ${{ COLLECTOR_IMAGE }}
+          tags: ${{ env.COLLECTOR_IMAGE }}
           build-args: |
             JAR_FILE=./activities-collector/target/InnoMetrics-Collector-Server.jar
 
@@ -122,7 +122,7 @@ jobs:
           context: .
           file: ./InnoMetrics-RestAPI/Dockerfile
           push: true
-          tags: ${{ API_IMAGE }}
+          tags: ${{ env.API_IMAGE }}
           build-args: |
             JAR_FILE=./InnoMetrics-RestAPI/target/InnoMetrics-RestAPI.jar
 
@@ -132,6 +132,6 @@ jobs:
           context: .
           file: ./agents-gateway/Dockerfile
           push: true
-          tags: ${{ AGENTS_IMAGE }}
+          tags: ${{ env.AGENTS_IMAGE }}
           build-args: |
             JAR_FILE=./agents-gateway/target/InnoMetrics-Agents-gateway.jar
