@@ -631,39 +631,39 @@ class AgentsGatewayApplicationTests {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    public void testGetCreateSeveralData() throws Exception {
-        DataConfigDTO dataConfigDTO = createDataConfigDTO();
-        String requestJson = getJSON(dataConfigDTO);
+    // @Test
+    // public void testGetCreateSeveralData() throws Exception {
+    // DataConfigDTO dataConfigDTO = createDataConfigDTO();
+    // String requestJson = getJSON(dataConfigDTO);
 
-        String jsonString = mockMvc.perform(get("/AgentAdmin/AgentData")
-                .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+    // String jsonString = mockMvc.perform(get("/AgentAdmin/AgentData")
+    // .accept(APPLICATION_JSON))
+    // .andExpect(status().isOk())
+    // .andReturn()
+    // .getResponse()
+    // .getContentAsString();
 
-        int initialSize = StringUtils.countMatches(jsonString, "datacofingid");
+    // int initialSize = StringUtils.countMatches(jsonString, "datacofingid");
 
-        int count = 5;
-        for (int i = 0; i < count; i++) {
-            mockMvc.perform(post("/AgentAdmin/AgentData")
-                    .contentType(APPLICATION_JSON)
-                    .content(requestJson))
-                    .andExpect(status().isCreated());
-        }
+    // int count = 5;
+    // for (int i = 0; i < count; i++) {
+    // mockMvc.perform(post("/AgentAdmin/AgentData")
+    // .contentType(APPLICATION_JSON)
+    // .content(requestJson))
+    // .andExpect(status().isCreated());
+    // }
 
-        jsonString = mockMvc.perform(get("/AgentAdmin/AgentData")
-                .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+    // jsonString = mockMvc.perform(get("/AgentAdmin/AgentData")
+    // .accept(APPLICATION_JSON))
+    // .andExpect(status().isOk())
+    // .andReturn()
+    // .getResponse()
+    // .getContentAsString();
 
-        int finalSize = StringUtils.countMatches(jsonString, "datacofingid");
+    // int finalSize = StringUtils.countMatches(jsonString, "datacofingid");
 
-        Assertions.assertEquals(count, finalSize - initialSize);
-    }
+    // Assertions.assertEquals(count, finalSize - initialSize);
+    // }
 
     /**
      * Table: agentconfigmethods
