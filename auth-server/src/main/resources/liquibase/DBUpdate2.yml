@@ -14,5 +14,4 @@ databaseChangeLog:
                   constraints:
                     references: innometricsauth.role(name)
                     foreignKeyName: fk_role
-#                    references: innometricsauth.company(companyid)
                     nullable: false

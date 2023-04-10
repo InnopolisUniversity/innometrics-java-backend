@@ -1,4 +1,5 @@
 FROM openjdk:8
-ADD innometrics-auth-server.jar innometrics-auth-server.jar
+ARG JAR_FILE
+ADD $JAR_FILE innometrics-auth-server.jar
 EXPOSE 9092
-ENTRYPOINT ["java", "-jar", "innometrics-auth-server.jar", "--spring.profiles.active=qa"]
+ENTRYPOINT ["java", "-jar", "innometrics-auth-server.jar", "--spring.profiles.active=dev"]

@@ -1,12 +1,21 @@
 package com.innopolis.innometrics.agentsgateway.entity;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
-
-import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "agents_x_project")
@@ -17,7 +26,7 @@ public class Agentsxproject {
     private Integer configid;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "agentid")
+    @JoinColumn(name = "agentid", updatable = false, insertable = false)
     private Agentconfig agentConfig;
 
     @Column

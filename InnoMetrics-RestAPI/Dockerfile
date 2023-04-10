@@ -1,4 +1,5 @@
 FROM openjdk:8
-ADD InnoMetrics-RestAPI.jar InnoMetrics-RestAPI.jar
+ARG JAR_FILE
+ADD $JAR_FILE InnoMetrics-RestAPI.jar
 EXPOSE 9091
-ENTRYPOINT ["java", "-jar", "InnoMetrics-RestAPI.jar", "--spring.profiles.active=qa"]
+ENTRYPOINT ["java", "-jar", "InnoMetrics-RestAPI.jar", "--spring.profiles.active=dev"]

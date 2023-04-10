@@ -3,6 +3,7 @@ databaseChangeLog:
       id: SchemaCreation_innometrics
       author: xvasquez
       changes:
+          # SOMETHING WRONG SAME SCHEMA IN ACTIVITIES COLLECTOR!!!
       - sql: "CREATE SCHEMA innometrics;"
   - changeSet:
       id: DatabaseCreation_innometrics

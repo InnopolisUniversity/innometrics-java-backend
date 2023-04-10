@@ -1,23 +1,69 @@
 package com.innopolis.innometrics.agentsgateway.controller;
 
-import com.innopolis.innometrics.agentsgateway.DTO.*;
-import com.innopolis.innometrics.agentsgateway.entity.*;
-import com.innopolis.innometrics.agentsgateway.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.innopolis.innometrics.agentsgateway.DTO.AgentConfigResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.AgentListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.AgentResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.AgentsCompanyDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.AgentsCompanyListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.AgentsProjectDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.AgentsProjectListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.DataConfigDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.DataListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.DetailsConfigDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.DetailsListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.ExternalProjectTeamDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.ExternalProjectTeamListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.MethodConfigDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.MethodsListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.ParamsConfigDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.ReposProjectDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.ReposProjectListResponse;
+import com.innopolis.innometrics.agentsgateway.DTO.ResponseConfigDTO;
+import com.innopolis.innometrics.agentsgateway.DTO.ResponseListResponse;
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfig;
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfigdetails;
+import com.innopolis.innometrics.agentsgateway.entity.Agentconfigmethods;
+import com.innopolis.innometrics.agentsgateway.entity.Agentdataconfig;
+import com.innopolis.innometrics.agentsgateway.entity.Agentresponseconfig;
+import com.innopolis.innometrics.agentsgateway.entity.Agentsxcompany;
+import com.innopolis.innometrics.agentsgateway.entity.Agentsxproject;
+import com.innopolis.innometrics.agentsgateway.entity.Externalprojectxteam;
+import com.innopolis.innometrics.agentsgateway.entity.Reposxproject;
+import com.innopolis.innometrics.agentsgateway.service.AgentconfigService;
+import com.innopolis.innometrics.agentsgateway.service.AgentconfigdetailsService;
+import com.innopolis.innometrics.agentsgateway.service.AgentconfigmethodsService;
+import com.innopolis.innometrics.agentsgateway.service.AgentdataconfigService;
+import com.innopolis.innometrics.agentsgateway.service.AgentresponseconfigService;
+import com.innopolis.innometrics.agentsgateway.service.AgentsxcompanyService;
+import com.innopolis.innometrics.agentsgateway.service.AgentsxprojectService;
+import com.innopolis.innometrics.agentsgateway.service.ExternalprojectxteamService;
+import com.innopolis.innometrics.agentsgateway.service.ReposxprojectService;
+
 @RestController
 @RequestMapping(value = "/AgentAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "*", allowedHeaders = "*",
-        methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE})
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = { RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT,
+        RequestMethod.DELETE })
 public class AgentAdminController {
 
     @Autowired
@@ -41,7 +87,7 @@ public class AgentAdminController {
 
     @GetMapping("/AgentConfiguration")
     public ResponseEntity<AgentConfigResponse> getAgentConfiguration(@RequestParam Integer AgentID,
-                                                                     @RequestParam(required = false) String CallType) {
+            @RequestParam(required = false) String CallType) {
         AgentConfigResponse response = this.agentconfigService.getAgentConfig(AgentID, CallType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -90,8 +136,7 @@ public class AgentAdminController {
                 this.convertToAgentResponseDto(response),
                 response.getAgentid().equals(agent.getAgentid())
                         ? HttpStatus.OK
-                        : HttpStatus.CREATED
-        );
+                        : HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/Agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -124,8 +169,7 @@ public class AgentAdminController {
                 agentConfig.getAuthorizationbaseurl(),
                 agentConfig.getRequesttokenendpoint(),
                 agentConfig.getApikey(),
-                agentConfig.getApisecret()
-        );
+                agentConfig.getApisecret());
     }
 
     private Agentconfig convertToAgentconfigEntity(AgentResponse agentResponse) {
@@ -205,7 +249,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/AgentData/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DataConfigDTO> putData(@PathVariable Integer id,
-                                                 @RequestBody DataConfigDTO dataConfigDTO) {
+            @RequestBody DataConfigDTO dataConfigDTO) {
         if (id == null || dataConfigDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -218,8 +262,7 @@ public class AgentAdminController {
                 this.convertToDataConfigDto(response),
                 response.getDatacofingid().equals(dataConfigDTO.getDatacofingid())
                         ? HttpStatus.OK
-                        : HttpStatus.CREATED
-        );
+                        : HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/AgentData/data/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -273,8 +316,7 @@ public class AgentAdminController {
                 agentdataconfig.getCreatedby(),
                 agentdataconfig.getLastupdate(),
                 agentdataconfig.getUpdateby(),
-                agentdataconfig.getEventtype()
-        );
+                agentdataconfig.getEventtype());
     }
 
     private Agentdataconfig convertToAgentdataconfigEntity(DataConfigDTO dataConfigDTO) {
@@ -345,7 +387,7 @@ public class AgentAdminController {
 
     @GetMapping(value = "/AgentConfigMethodsOperation/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MethodConfigDTO> getMethodsByAgentidAndOperation(@PathVariable Integer id,
-                                                                           @RequestParam(value = "operation") String operation) {
+            @RequestParam(value = "operation") String operation) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -382,8 +424,7 @@ public class AgentAdminController {
                 this.convertToMethodConfigDto(response),
                 response.getMethodid().equals(method.getMethodid())
                         ? HttpStatus.OK
-                        : HttpStatus.CREATED
-        );
+                        : HttpStatus.CREATED);
     }
 
     // Delete by methodid - delete a method specifying its ID
@@ -416,7 +457,8 @@ public class AgentAdminController {
         return this.convertToMethodsListResponseEntity(deletedMethodsList);
     }
 
-    private ResponseEntity<MethodsListResponse> convertToMethodsListResponseEntity(List<Agentconfigmethods> methodsList) {
+    private ResponseEntity<MethodsListResponse> convertToMethodsListResponseEntity(
+            List<Agentconfigmethods> methodsList) {
         if (methodsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -486,7 +528,8 @@ public class AgentAdminController {
             for (ParamsConfigDTO paramsConfigDTO : parameters) {
                 // maybe we shouldn't create empty Agentconfigdetails,
                 // but get by id which is already exist? For example:
-                // List<Agentconfigdetails> configDetailsList = this.agentconfigdetailsService.getDetailsByMethodId(id);
+                // List<Agentconfigdetails> configDetailsList =
+                // this.agentconfigdetailsService.getDetailsByMethodId(id);
                 Agentconfigdetails agentconfigdetails = new Agentconfigdetails();
                 agentconfigdetails.setParamname(paramsConfigDTO.getParamname());
                 agentconfigdetails.setParamtype(paramsConfigDTO.getParamtype());
@@ -550,6 +593,7 @@ public class AgentAdminController {
         }
         Agentconfigdetails agentconfigdetails = this.convertToAgentconfigdetailsEntity(detailsConfigDTO);
         if (agentconfigdetails == null) {
+            System.out.println("VRUN");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Agentconfigdetails response = this.agentconfigdetailsService.postDetails(agentconfigdetails);
@@ -558,7 +602,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/AgentDetails/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DetailsConfigDTO> putDetails(@PathVariable Integer id,
-                                                       @RequestBody DetailsConfigDTO detailsConfigDTO) {
+            @RequestBody DetailsConfigDTO detailsConfigDTO) {
         if (id == null || detailsConfigDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -571,8 +615,7 @@ public class AgentAdminController {
                 this.convertToDetailsConfigDto(response),
                 response.getConfigDetId().equals(detailsConfigDTO.getConfigDetId())
                         ? HttpStatus.OK
-                        : HttpStatus.CREATED
-        );
+                        : HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/AgentDetails/details/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -599,7 +642,8 @@ public class AgentAdminController {
         return this.convertToDetailsListResponseEntity(deletedDetailsList);
     }
 
-    private ResponseEntity<DetailsListResponse> convertToDetailsListResponseEntity(List<Agentconfigdetails> detailsList) {
+    private ResponseEntity<DetailsListResponse> convertToDetailsListResponseEntity(
+            List<Agentconfigdetails> detailsList) {
         if (detailsList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -625,8 +669,7 @@ public class AgentAdminController {
                 agentconfigdetails.getCreationdate(),
                 agentconfigdetails.getCreatedby(),
                 agentconfigdetails.getLastupdate(),
-                agentconfigdetails.getUpdateby()
-        );
+                agentconfigdetails.getUpdateby());
     }
 
     private Agentconfigdetails convertToAgentconfigdetailsEntity(DetailsConfigDTO detailsConfigDTO) {
@@ -637,6 +680,7 @@ public class AgentAdminController {
         }
         Agentconfigmethods agentconfigmethods = this.agentconfigmethodsService.getMethodById(methodid);
         if (agentconfigmethods == null) {
+            System.out.println("VVV");
             return null;
         }
 
@@ -711,7 +755,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/AgentResponse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseConfigDTO> putResponse(@PathVariable Integer id,
-                                                         @RequestBody ResponseConfigDTO responseConfigDTO) {
+            @RequestBody ResponseConfigDTO responseConfigDTO) {
         if (id == null || responseConfigDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -724,8 +768,7 @@ public class AgentAdminController {
                 this.convertToResponseConfigDto(response),
                 response.getConfigresponseid().equals(responseConfigDTO.getConfigresponseid())
                         ? HttpStatus.OK
-                        : HttpStatus.CREATED
-        );
+                        : HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/AgentResponse/response/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -753,7 +796,8 @@ public class AgentAdminController {
         return this.convertToResponsesListResponseEntity(deletedResponseList);
     }
 
-    private ResponseEntity<ResponseListResponse> convertToResponsesListResponseEntity(List<Agentresponseconfig> responsesList) {
+    private ResponseEntity<ResponseListResponse> convertToResponsesListResponseEntity(
+            List<Agentresponseconfig> responsesList) {
         if (responsesList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -775,8 +819,7 @@ public class AgentAdminController {
                 agentresponseconfig.getCreationdate(),
                 agentresponseconfig.getCreatedby(),
                 agentresponseconfig.getLastupdate(),
-                agentresponseconfig.getUpdateby()
-        );
+                agentresponseconfig.getUpdateby());
     }
 
     private Agentresponseconfig convertToAgentresponseconfigEntity(ResponseConfigDTO responseConfigDTO) {
@@ -807,7 +850,8 @@ public class AgentAdminController {
 
     @GetMapping(value = "/ExternalProjectTeam", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExternalProjectTeamListResponse> getExternalProjectTeamList() {
-        List<Externalprojectxteam> externalProjectTeamList = this.externalprojectxteamService.getExternalProjectTeamList();
+        List<Externalprojectxteam> externalProjectTeamList = this.externalprojectxteamService
+                .getExternalProjectTeamList();
         return this.convertToExternalProjectTeamListResponseEntity(externalProjectTeamList);
     }
 
@@ -828,7 +872,8 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Get by agentid - get all ExternalProjectTeam entries which belong to specified agentid
+    // Get by agentid - get all ExternalProjectTeam entries which belong to
+    // specified agentid
     @GetMapping(value = "/ExternalProjectTeam/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExternalProjectTeamListResponse> getExternalProjectTeamByAgentId(@PathVariable Integer id) {
 
@@ -840,11 +885,13 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Externalprojectxteam> externalProjectTeamList = this.externalprojectxteamService.getExternalProjectTeamByAgentId(id);
+        List<Externalprojectxteam> externalProjectTeamList = this.externalprojectxteamService
+                .getExternalProjectTeamByAgentId(id);
         return this.convertToExternalProjectTeamListResponseEntity(externalProjectTeamList);
     }
 
-    // Get by teamid - get all ExternalProjectTeam entries which belong to specified teamid
+    // Get by teamid - get all ExternalProjectTeam entries which belong to specified
+    // teamid
     @GetMapping(value = "/ExternalProjectTeam/team/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExternalProjectTeamListResponse> getExternalProjectTeamByTeamId(@PathVariable Integer id) {
 
@@ -854,12 +901,14 @@ public class AgentAdminController {
 
         // todo check if external Team entity with specified id exists
 
-        List<Externalprojectxteam> externalProjectTeamList = this.externalprojectxteamService.getExternalProjectTeamByTeamId(id);
+        List<Externalprojectxteam> externalProjectTeamList = this.externalprojectxteamService
+                .getExternalProjectTeamByTeamId(id);
         return this.convertToExternalProjectTeamListResponseEntity(externalProjectTeamList);
     }
 
     @PostMapping(value = "/ExternalProjectTeam", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExternalProjectTeamDTO> postExternalProjectTeam(@RequestBody ExternalProjectTeamDTO externalProjectTeamDTO) {
+    public ResponseEntity<ExternalProjectTeamDTO> postExternalProjectTeam(
+            @RequestBody ExternalProjectTeamDTO externalProjectTeamDTO) {
         if (externalProjectTeamDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -868,7 +917,8 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
-            Externalprojectxteam response = this.externalprojectxteamService.postExternalProjectTeam(externalprojectxteam);
+            Externalprojectxteam response = this.externalprojectxteamService
+                    .postExternalProjectTeam(externalprojectxteam);
             return new ResponseEntity<>(this.convertToExternalProjectTeamDto(response), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -877,7 +927,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/ExternalProjectTeam/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExternalProjectTeamDTO> putExternalProjectTeam(@PathVariable Integer id,
-                                                                         @RequestBody ExternalProjectTeamDTO externalProjectTeamDTO) {
+            @RequestBody ExternalProjectTeamDTO externalProjectTeamDTO) {
         if (id == null || externalProjectTeamDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -886,13 +936,13 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
-            Externalprojectxteam response = this.externalprojectxteamService.putExternalProjectTeam(id, externalprojectxteam);
+            Externalprojectxteam response = this.externalprojectxteamService.putExternalProjectTeam(id,
+                    externalprojectxteam);
             return new ResponseEntity<>(
                     this.convertToExternalProjectTeamDto(response),
                     response.getConfigid().equals(externalProjectTeamDTO.getConfigid())
                             ? HttpStatus.OK
-                            : HttpStatus.CREATED
-            );
+                            : HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -903,14 +953,16 @@ public class AgentAdminController {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Externalprojectxteam deletedExternalProjectTeam = this.externalprojectxteamService.deleteExternalProjectTeamById(id);
+        Externalprojectxteam deletedExternalProjectTeam = this.externalprojectxteamService
+                .deleteExternalProjectTeamById(id);
         return deletedExternalProjectTeam == null
                 ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<>(this.convertToExternalProjectTeamDto(deletedExternalProjectTeam), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/ExternalProjectTeam/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExternalProjectTeamListResponse> deleteExternalProjectTeamByAgentId(@PathVariable Integer id) {
+    public ResponseEntity<ExternalProjectTeamListResponse> deleteExternalProjectTeamByAgentId(
+            @PathVariable Integer id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -918,7 +970,8 @@ public class AgentAdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Externalprojectxteam> deletedExternalProjectTeamList = this.externalprojectxteamService.deleteExternalProjectTeamByAgentId(id);
+        List<Externalprojectxteam> deletedExternalProjectTeamList = this.externalprojectxteamService
+                .deleteExternalProjectTeamByAgentId(id);
         return this.convertToExternalProjectTeamListResponseEntity(deletedExternalProjectTeamList);
     }
 
@@ -929,11 +982,13 @@ public class AgentAdminController {
         }
         // todo check if external Team entity with specified id exists
 
-        List<Externalprojectxteam> deletedExternalProjectTeamList = this.externalprojectxteamService.deleteExternalProjectTeamByTeamId(id);
+        List<Externalprojectxteam> deletedExternalProjectTeamList = this.externalprojectxteamService
+                .deleteExternalProjectTeamByTeamId(id);
         return this.convertToExternalProjectTeamListResponseEntity(deletedExternalProjectTeamList);
     }
 
-    private ResponseEntity<ExternalProjectTeamListResponse> convertToExternalProjectTeamListResponseEntity(List<Externalprojectxteam> externalProjectTeamList) {
+    private ResponseEntity<ExternalProjectTeamListResponse> convertToExternalProjectTeamListResponseEntity(
+            List<Externalprojectxteam> externalProjectTeamList) {
         if (externalProjectTeamList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -955,8 +1010,7 @@ public class AgentAdminController {
                 externalprojectxteam.getCreationdate(),
                 externalprojectxteam.getCreatedby(),
                 externalprojectxteam.getLastupdate(),
-                externalprojectxteam.getUpdateby()
-        );
+                externalprojectxteam.getUpdateby());
     }
 
     private Externalprojectxteam convertToExternalprojectxteamEntity(ExternalProjectTeamDTO externalProjectTeamDTO) {
@@ -1008,7 +1062,8 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Get by agentid - get all AgentsCompany entries which belong to specified agentid
+    // Get by agentid - get all AgentsCompany entries which belong to specified
+    // agentid
     @GetMapping(value = "/AgentsCompany/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsCompanyListResponse> getAgentsCompanyByAgentId(@PathVariable Integer id) {
         if (id == null) {
@@ -1021,7 +1076,8 @@ public class AgentAdminController {
         return this.convertToAgentsCompanyListResponseEntity(agentsCompanyList);
     }
 
-    // Get by companyid - get all AgentsCompany entries which belong to specified companyid
+    // Get by companyid - get all AgentsCompany entries which belong to specified
+    // companyid
     @GetMapping(value = "/AgentsCompany/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsCompanyListResponse> getAgentsCompanyByCompanyId(@PathVariable Integer id) {
         if (id == null) {
@@ -1052,7 +1108,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/AgentsCompany/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsCompanyDTO> putAgentsCompany(@PathVariable Integer id,
-                                                             @RequestBody AgentsCompanyDTO agentsCompanyDTO) {
+            @RequestBody AgentsCompanyDTO agentsCompanyDTO) {
         if (id == null || agentsCompanyDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -1066,8 +1122,7 @@ public class AgentAdminController {
                     this.convertToAgentsCompanyDto(response),
                     response.getConfigid().equals(agentsCompanyDTO.getConfigid())
                             ? HttpStatus.OK
-                            : HttpStatus.CREATED
-            );
+                            : HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -1108,7 +1163,8 @@ public class AgentAdminController {
         return this.convertToAgentsCompanyListResponseEntity(deletedAgentsCompanyList);
     }
 
-    private ResponseEntity<AgentsCompanyListResponse> convertToAgentsCompanyListResponseEntity(List<Agentsxcompany> agentsCompanyList) {
+    private ResponseEntity<AgentsCompanyListResponse> convertToAgentsCompanyListResponseEntity(
+            List<Agentsxcompany> agentsCompanyList) {
         if (agentsCompanyList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -1131,8 +1187,7 @@ public class AgentAdminController {
                 agentsxcompany.getCreationdate(),
                 agentsxcompany.getCreatedby(),
                 agentsxcompany.getLastupdate(),
-                agentsxcompany.getUpdateby()
-        );
+                agentsxcompany.getUpdateby());
     }
 
     private Agentsxcompany convertToAgentsxcompanyEntity(AgentsCompanyDTO agentsCompanyDTO) {
@@ -1188,7 +1243,8 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Get by agentid - get all ReposProject entries which belong to specified agentid
+    // Get by agentid - get all ReposProject entries which belong to specified
+    // agentid
     @GetMapping(value = "/ReposProject/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReposProjectListResponse> getReposProjectByAgentId(@PathVariable Integer id) {
 
@@ -1204,7 +1260,8 @@ public class AgentAdminController {
         return this.convertToReposProjectListResponseEntity(reposProjectList);
     }
 
-    // Get by projectid - get all ReposProject entries which belong to specified projectid
+    // Get by projectid - get all ReposProject entries which belong to specified
+    // projectid
     @GetMapping(value = "/ReposProject/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReposProjectListResponse> getReposProjectByProjectId(@PathVariable Integer id) {
 
@@ -1237,7 +1294,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/ReposProject/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReposProjectDTO> putReposProject(@PathVariable Integer id,
-                                                           @RequestBody ReposProjectDTO reposProjectDTO) {
+            @RequestBody ReposProjectDTO reposProjectDTO) {
         if (id == null || reposProjectDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -1251,8 +1308,7 @@ public class AgentAdminController {
                     this.convertToReposProjectDto(response),
                     response.getConfigid().equals(reposProjectDTO.getConfigid())
                             ? HttpStatus.OK
-                            : HttpStatus.CREATED
-            );
+                            : HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -1293,7 +1349,8 @@ public class AgentAdminController {
         return this.convertToReposProjectListResponseEntity(deletedReposProjectList);
     }
 
-    private ResponseEntity<ReposProjectListResponse> convertToReposProjectListResponseEntity(List<Reposxproject> reposProjectList) {
+    private ResponseEntity<ReposProjectListResponse> convertToReposProjectListResponseEntity(
+            List<Reposxproject> reposProjectList) {
         if (reposProjectList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -1315,8 +1372,7 @@ public class AgentAdminController {
                 reposxproject.getCreationdate(),
                 reposxproject.getCreatedby(),
                 reposxproject.getLastupdate(),
-                reposxproject.getUpdateby()
-        );
+                reposxproject.getUpdateby());
     }
 
     private Reposxproject convertToReposxprojectEntity(ReposProjectDTO reposProjectDTO) {
@@ -1334,7 +1390,6 @@ public class AgentAdminController {
 
         Reposxproject reposxproject = new Reposxproject();
 
-        reposxproject.setAgentConfig(agentconfig);
         reposxproject.setAgentid(agentid);
         // todo maybe assign external Project entity?
         reposxproject.setProjectid(projectid);
@@ -1371,7 +1426,8 @@ public class AgentAdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Get by agentid - get all AgentsProject entries which belong to specified agentid
+    // Get by agentid - get all AgentsProject entries which belong to specified
+    // agentid
     @GetMapping(value = "/AgentsProject/agent/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsProjectListResponse> getAgentsProjectByAgentId(@PathVariable Integer id) {
 
@@ -1387,7 +1443,8 @@ public class AgentAdminController {
         return this.convertToAgentsProjectListResponseEntity(agentsProjectList);
     }
 
-    // Get by projectid - get all AgentsProject entries which belong to specified projectid
+    // Get by projectid - get all AgentsProject entries which belong to specified
+    // projectid
     @GetMapping(value = "/AgentsProject/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsProjectListResponse> getAgentsProjectByProjectId(@PathVariable Integer id) {
 
@@ -1401,16 +1458,18 @@ public class AgentAdminController {
         return this.convertToAgentsProjectListResponseEntity(agentsProjectList);
     }
 
-    // Get by agentid and projectid - get AgentsProject entry specifying its agentid and projectid
+    // Get by agentid and projectid - get AgentsProject entry specifying its agentid
+    // and projectid
     @GetMapping(value = "/AgentsProject/config", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsProjectDTO> getAgentsProjectByAgentIdAndProjectId(@RequestParam Integer agentid,
-                                                                                  @RequestParam Integer projectid) {
+            @RequestParam Integer projectid) {
 
         if (agentid == null || projectid == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Agentsxproject agentsxproject = this.agentsxprojectService.getAgentsProjectByAgentIdAndProjectId(agentid, projectid);
+        Agentsxproject agentsxproject = this.agentsxprojectService.getAgentsProjectByAgentIdAndProjectId(agentid,
+                projectid);
         if (agentsxproject == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -1438,7 +1497,7 @@ public class AgentAdminController {
 
     @PutMapping(value = "/AgentsProject/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentsProjectDTO> putAgentsProject(@PathVariable Integer id,
-                                                             @RequestBody AgentsProjectDTO agentsProjectDTO) {
+            @RequestBody AgentsProjectDTO agentsProjectDTO) {
         if (id == null || agentsProjectDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -1452,8 +1511,7 @@ public class AgentAdminController {
                     this.convertToAgentsProjectDto(response),
                     response.getConfigid().equals(agentsProjectDTO.getConfigid())
                             ? HttpStatus.OK
-                            : HttpStatus.CREATED
-            );
+                            : HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -1494,7 +1552,8 @@ public class AgentAdminController {
         return this.convertToAgentsProjectListResponseEntity(deletedAgentsProjectList);
     }
 
-    private ResponseEntity<AgentsProjectListResponse> convertToAgentsProjectListResponseEntity(List<Agentsxproject> agentsProjectList) {
+    private ResponseEntity<AgentsProjectListResponse> convertToAgentsProjectListResponseEntity(
+            List<Agentsxproject> agentsProjectList) {
         if (agentsProjectList == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -1517,8 +1576,7 @@ public class AgentAdminController {
                 agentsxproject.getCreationdate(),
                 agentsxproject.getCreatedby(),
                 agentsxproject.getLastupdate(),
-                agentsxproject.getUpdateby()
-        );
+                agentsxproject.getUpdateby());
     }
 
     private Agentsxproject convertToAgentsxprojectEntity(AgentsProjectDTO agentsProjectDTO) {
