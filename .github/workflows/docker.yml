@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Publish Docker Image
 
 env:
   EUREKA_IMAGE: aldeeyar/innometrics-eureka:${{ github.sha }}
